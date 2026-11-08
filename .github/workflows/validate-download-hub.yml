@@ -1,0 +1,27 @@
+name: Validate MAXTROIT Download Hub
+
+on:
+  push:
+    branches:
+      - fix/admin-public-audit
+
+permissions:
+  contents: read
+
+jobs:
+  syntax-and-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Check JavaScript syntax
+        run: |
+          for file in admin.js app.js download.js firebase.js firebase-config.js; do
+            node --check "$file"
+          done
+      - name: Check nine regression invariants
+        run: node tests/invariants.mjs
