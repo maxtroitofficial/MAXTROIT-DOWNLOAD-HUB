@@ -132,3 +132,10 @@ input[type=color]{height:46px;padding:5px;cursor:pointer}
 .custom-site-section h2{font:700 clamp(26px,4vw,42px) "Space Grotesk";margin:0 0 14px}
 .custom-site-section p{color:var(--muted);line-height:1.8;max-width:760px;white-space:pre-wrap}
 .custom-site-cta .custom-site-section-inner{padding:28px;border:1px solid var(--line);border-radius:18px;background:var(--panel)}
+
+.section-order-item{align-items:flex-start}
+.section-order-fields{display:grid;gap:9px;flex:1;min-width:0}
+.section-order-fields>label{display:grid;gap:5px;color:var(--muted);font-size:12px}
+.section-order-fields input,.section-order-fields textarea{width:100%;min-width:0}
+.section-order-actions{display:flex;gap:5px;flex-wrap:wrap}
+@media(max-width:620px){.section-order-item{display:grid}.section-order-actions{justify-content:flex-end}}
