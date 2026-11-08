@@ -17,6 +17,7 @@ assert.match(admin, /preserveAlpha\?"image\/png":"image\/jpeg"/);
 assert.match(admin, /collection\("downloads"\)\.get\(\)/);
 assert.match(app, /collection\("downloads"\)\.get\(\)/);
 assert.match(admin, /old\.created!==undefined&&old\.created!==null/);
+assert.match(admin, /\.set\(item,\{merge:true\}\)/);
 assert.doesNotMatch(admin, /orderBy\(["']created["']\)/);
 
 // 4. Public search filters the already-loaded array locally.
@@ -32,7 +33,7 @@ assert.match(admin, /out\.length>280000/);
 
 // 7. Brand rendering preserves the OFFICIAL emphasis.
 assert.match(app, /function setBrand/);
-assert.match(app, /<b>OFFICIAL<\\/b>/);
+assert.ok(app.includes("<b>OFFICIAL</b>"));
 
 // 8. Firebase requests have a finite timeout and explicit offline messaging.
 assert.match(admin, /function withTimeout/);
