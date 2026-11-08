@@ -1,33 +1,37 @@
 # MAXTROIT DOWNLOAD HUB
 
-Mobile-first download website with separate public and admin panels.
+Mobile-first download website with separate public and admin panels, backed by Firebase Authentication and Cloud Firestore.
 
 ## Panels
-- Public user panel: `index.html` — search, categories and download cards. It has no admin link.
-- Admin panel: `admin.html` — Firebase email/password login; the configured admin UID is checked in the page and enforced again by Firestore Security Rules.
-- Download page: `download.html?id=DOCUMENT_ID`.
+- Public website: `index.html` — live downloads, local search, category filtering and download details.
+- Admin panel: `admin.html` — Firebase email/password login with an allow-listed administrator UID.
+- Download details: `download.html?id=DOCUMENT_ID`.
 
-## Firebase setup (required for shared data and secure admin writes)
-1. Create a Firebase project at https://console.firebase.google.com/ and register a Web App.
-2. Enable **Authentication → Sign-in method → Email/Password**.
-3. Create your admin user under **Authentication → Users**. Do not send its password to anyone.
-4. Create a **Cloud Firestore** database.
-5. Open the admin user's Authentication details and copy its UID.
-6. Edit `firebase-config.js`: replace the sample values with the Web App config and replace `PASTE_ADMIN_UID` with the admin UID.
-7. In Firestore → Rules, publish the contents of `firestore.rules`, replacing its `PASTE_ADMIN_UID` with the same UID.
-8. Deploy the website over HTTPS (for example, GitHub Pages).
+## Firebase setup
+1. Enable **Authentication → Sign-in method → Email/Password**.
+2. Create the administrator account in Firebase Authentication.
+3. Create a Cloud Firestore database.
+4. Set the Firebase web app values and administrator UID in `firebase-config.js`.
+5. Publish `firestore.rules` in the Firebase Console.
+6. Deploy the static site over HTTPS.
 
-The Firebase web config is intended to be present in frontend code. Never add service-account JSON, private keys, or passwords to this repository.
+The Firebase web configuration is intended for frontend use. Never commit service-account JSON, private keys, passwords, or access tokens.
 
-## Data model
-Collection: `downloads`. Each document contains:
-`title`, `description`, `category`, `thumbnail`, `url`, `created`.
+## Firestore data model
+Collection: `downloads`. Documents use `title`, `description`, `category`, `thumbnail`, `url`, and optionally `created`.
 
-Firestore rules allow public reads so visitors can see downloads. Only the configured authenticated UID can create, edit, or delete download documents. The admin panel also checks the UID, but **the Firestore rules are the actual security boundary**.
+The website and admin panel read the collection without requiring the optional `created` field, then sort locally. Existing records without that field remain visible. Editing an old record may add a `created` timestamp to that record; no bulk migration is performed.
 
-## Current limitations
-- Firebase is not connected until the setup above is completed.
-- Image fields currently accept image URLs; direct image upload/storage UI is not implemented.
-- Download page has a visible 5-second wait; it is a presentation delay, not a security control.
-- Admin can add, edit and delete download records after Firebase setup.
-- This project has not yet been browser/device QA tested or deployed.
+Collection: `siteConfig`, document `public`. This stores public brand text and optional logo/banner image data.
+
+## Image handling
+New gallery images are resized before being stored in Firestore document fields. Logos preserve transparency using WebP where supported, with PNG fallback. New thumbnails are resized to a maximum 600 px edge and use WebP where supported. Existing image data remains readable. Image data is subject to Firestore document size limits.
+
+## Admin security
+Firestore rules allow public reads of downloads and the public site settings document. Only the configured authenticated administrator UID can write. The rules—not the client-side UID check—are the security boundary. Keep the UID in `firebase-config.js` and `firestore.rules` aligned.
+
+## Operational notes
+- Admin save/delete success is reported separately from a subsequent list refresh failure.
+- Requests have a timeout message. If a write times out, its final server-side result may be uncertain; check the list before retrying.
+- The dashboard reports whether its Firestore read succeeded; it does not claim that the public website is externally reachable.
+- Browser/device testing and Firebase Console configuration must be verified in the target environment before deployment.
