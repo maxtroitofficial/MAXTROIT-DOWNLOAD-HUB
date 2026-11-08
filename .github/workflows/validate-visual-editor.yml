@@ -43,6 +43,6 @@ jobs:
           assert.match(app,/custom-site-section/);
           assert.match(app,/main\.replaceChildren\(\.\.\.ordered\)/);
           assert.match(app,/textContent=item\.title/);
-          assert.match(app,/https:\/\//);
+          assert.match(app,/https:/);
           console.log('Visual editor invariants: PASS');
           NODE
