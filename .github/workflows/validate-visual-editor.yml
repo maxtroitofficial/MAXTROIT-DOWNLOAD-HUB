@@ -1,0 +1,48 @@
+name: Validate Website Visual Editor
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [feature/full-website-editor]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: JavaScript syntax
+        run: |
+          for file in admin.js app.js download.js firebase.js firebase-config.js; do
+            node --check "$file"
+          done
+      - name: Existing regression invariants
+        run: node tests/invariants.mjs
+      - name: Visual editor feature invariants
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import assert from 'node:assert/strict';
+          const admin=fs.readFileSync('admin.js','utf8');
+          const app=fs.readFileSync('app.js','utf8');
+          const html=fs.readFileSync('admin.html','utf8');
+          for (const field of ['navLabel','heroTitle','heroDescription','collectionTitle','footerDescription','colorBackground','colorAccent']) assert.ok(admin.includes(field), 'Missing editable field: '+field);
+          assert.match(admin,/customSections/);
+          assert.match(admin,/sectionOrder/);
+          assert.match(admin,/add-custom-section/);
+          assert.match(admin,/data-section-up/);
+          assert.match(admin,/data-section-down/);
+          assert.match(html,/visual-builder/);
+          assert.match(html,/new-section-type/);
+          assert.match(app,/custom-site-section/);
+          assert.match(app,/main\.replaceChildren\(\.\.\.ordered\)/);
+          assert.match(app,/textContent=item\.title/);
+          assert.match(app,/https:\/\//);
+          console.log('Visual editor invariants: PASS');
+          NODE
