@@ -199,3 +199,14 @@
  .admin-accordion .site-editor-group-body>.wide{grid-column:1}
  .vb-canvas-wrap iframe,#view-visual .vb-canvas-wrap iframe{min-height:360px}
 }
+
+/* Dashboard v5: actionable recent-publishing workspace */
+.overview-recent-list{display:grid;gap:9px}
+.overview-recent-item{display:flex;align-items:center;gap:12px;min-width:0;padding:10px 12px;border:1px solid var(--admin-line,rgba(220,139,205,.18));border-radius:13px;background:rgba(255,255,255,.025)}
+.overview-recent-icon{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;overflow:hidden;border-radius:11px;background:rgba(240,154,200,.12);color:#f09ac8;font-weight:800}
+.overview-recent-icon img{width:100%;height:100%;object-fit:cover}
+.overview-recent-info{display:grid;gap:4px;min-width:0;flex:1}
+.overview-recent-info strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;color:var(--admin-text,#fff5ff)}
+.overview-recent-info small{font-size:11px;color:var(--admin-muted,#c0a9c4)}
+.overview-recent-item .secondary-button{min-height:36px;padding:7px 12px}
+@media(max-width:620px){.recent-panel .panel-heading{display:grid;grid-template-columns:1fr}.recent-panel .panel-heading button{width:100%}.overview-recent-item{padding:9px}.overview-recent-icon{width:38px;height:38px;flex-basis:38px}}
