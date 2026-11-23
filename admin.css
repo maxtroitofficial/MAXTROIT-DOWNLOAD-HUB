@@ -280,3 +280,5 @@ button,input,select,textarea{max-width:100%}
    height:min(58dvh,600px)!important;
  }
 }
+
+#fs-preview-label{max-width:92%!important;line-height:1.2;overflow-wrap:break-word!important;word-break:normal!important}
