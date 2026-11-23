@@ -210,3 +210,45 @@ button,input,select,textarea{max-width:100%}
  #flash-editor-panel:not([hidden]) .flash-editor-controls{grid-template-columns:minmax(0,1fr)}
  #flash-editor-panel:not([hidden]) .flash-editor-actions{grid-template-columns:minmax(0,1fr)}
 }
+
+
+/* Final mobile preview sizing and readable public/private status */
+@media(max-width:850px){
+ #flash-editor-panel:not([hidden]) #fs-stage{
+   width:min(100%,380px)!important;
+   height:min(68dvh,680px)!important;
+   min-height:420px!important;
+   max-height:none!important;
+   aspect-ratio:9/16;
+   flex:0 0 auto;
+ }
+}
+@media(max-width:480px){
+ #flash-editor-panel:not([hidden]) #fs-stage{
+   width:min(100%,360px)!important;
+   height:min(66dvh,650px)!important;
+   min-height:390px!important;
+ }
+}
+#fs-preview-label{
+ max-width:92%!important;
+ width:max-content;
+ white-space:normal;
+ overflow-wrap:normal!important;
+ word-break:normal!important;
+ hyphens:none;
+ line-height:1.2;
+}
+.flash-public-switch #startup-switch-status{
+ display:block;
+ width:100%;
+ text-align:center;
+ font-weight:700;
+ font-size:clamp(13px,3.5vw,17px);
+ line-height:1.35;
+ padding:8px 10px;
+ border-radius:10px;
+ background:rgba(255,255,255,.09);
+}
+.flash-public-switch:has(#startup-master-switch:checked) #startup-switch-status{color:#8ff0b2}
+.flash-public-switch:has(#startup-master-switch:not(:checked)) #startup-switch-status{color:#ffcf85}
