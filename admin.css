@@ -155,3 +155,16 @@ button,input,select,textarea{max-width:100%}
  button{touch-action:manipulation}
  .flash-editor-controls input[type=range]{min-height:38px}
 }
+
+/* Flash Screen mobile workflow: keep preview visible while controls scroll below. */
+@media(max-width:850px){
+ .flash-editor-panel{display:flex;flex-direction:column;gap:12px;overflow:visible}
+ .flash-editor-live{position:sticky;top:0;z-index:12;order:0;background:#1b1430;padding:10px;border:1px solid #6845a5;border-radius:14px;box-shadow:0 8px 22px rgba(0,0,0,.24)}
+ .flash-editor-controls{order:1;display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+ #fs-stage{width:min(100%,230px);height:auto;aspect-ratio:9/16;min-height:0;max-height:42dvh;margin:8px auto}
+ .flash-live-heading{gap:8px}
+ .flash-editor-actions{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+ .flash-editor-actions button{width:100%;min-height:46px}
+ .fs-loop-option{display:flex;align-items:center;gap:9px;min-height:42px;padding:8px 10px;border:1px solid #6845a5;border-radius:10px}
+ #fs-loop-preview{width:20px;height:20px;flex:0 0 20px}
+}
