@@ -252,3 +252,31 @@ button,input,select,textarea{max-width:100%}
 }
 .flash-public-switch:has(#startup-master-switch:checked) #startup-switch-status{color:#8ff0b2}
 .flash-public-switch:has(#startup-master-switch:not(:checked)) #startup-switch-status{color:#ffcf85}
+
+
+/* Stable mobile preview dimensions: size from viewport height, never shrink to grid leftovers. */
+@media(max-width:850px){
+ #flash-editor-panel:not([hidden]) .flash-editor-live{
+   min-height:0;
+   overflow-y:auto!important;
+   overflow-x:hidden!important;
+   flex:0 0 auto;
+ }
+ #flash-editor-panel:not([hidden]) #fs-stage{
+   display:block;
+   height:min(60dvh,640px)!important;
+   width:auto!important;
+   min-width:0!important;
+   min-height:0!important;
+   max-width:calc(100% - 12px)!important;
+   max-height:none!important;
+   aspect-ratio:9/16!important;
+   flex:0 0 auto!important;
+   margin:12px auto 18px!important;
+ }
+}
+@media(max-width:480px){
+ #flash-editor-panel:not([hidden]) #fs-stage{
+   height:min(58dvh,600px)!important;
+ }
+}
