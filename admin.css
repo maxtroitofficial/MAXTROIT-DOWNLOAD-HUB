@@ -76,3 +76,21 @@
  .flash-editor-live{min-height:0}
  #fs-stage{width:auto;height:min(62dvh,640px);min-height:320px;max-height:none;flex:0 0 auto}
 }
+
+/* Mobile Flash Screen editor: natural document flow, no overlapping preview. */
+@media(max-width:850px){
+ .preview-area{height:auto;min-height:calc(100dvh - 56px);overflow:visible;flex:0 0 auto}
+ .flash-editor-panel{display:flex;flex:0 0 auto;flex-direction:column;height:auto;min-height:0;overflow:visible;align-items:stretch}
+ .flash-editor-live{order:1;width:100%;min-height:0;overflow:visible}
+ .flash-editor-controls{order:2;width:100%;max-height:none;min-height:0;overflow:visible;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start}
+ #fs-stage{width:min(100%,290px);height:auto;min-height:0;max-height:none;aspect-ratio:9/16;flex:0 0 auto;margin:12px auto}
+}
+@media(max-width:480px){
+ .preview-heading{align-items:flex-start;flex-wrap:wrap}
+ .preview-heading>span{flex:1 1 100%;order:3}
+ .flash-live-heading{gap:12px}
+ .flash-public-switch{gap:8px}
+ #fs-stage{width:min(100%,270px)}
+ .flash-editor-controls{grid-template-columns:minmax(0,1fr)}
+ .flash-editor-controls .flash-section-heading,.flash-editor-actions,#fs-status{grid-column:1}
+}
