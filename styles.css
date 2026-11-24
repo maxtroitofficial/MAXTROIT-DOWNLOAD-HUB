@@ -559,8 +559,7 @@ body>.topbar{z-index:5}
 
 /* Prevent default-content flash while Firebase settings initialize */
 .site-startup{display:none}
-html.site-loading body>*:not(.site-startup){visibility:hidden}
-html.site-loading .site-startup{visibility:visible;display:flex;position:fixed;inset:0;z-index:99999;align-items:center;justify-content:center;flex-direction:column;gap:16px;background:radial-gradient(ellipse at 50% 0%,#4a174b 0%,#24102f 36%,#16091f 78%);color:#fff;font:600 14px system-ui,sans-serif;letter-spacing:.04em}
+/* Do not show a startup interstitial while Firebase config is loading. The overlay is shown only when the loaded public config explicitly enables Flash Screen. */
 .site-startup-mark{display:grid;place-items:center;width:min(58vw,220px);height:min(58vw,220px);border:0;background:transparent;border-radius:0;font-size:30px;box-shadow:none;overflow:visible}
 
 .site-startup-mark img{width:100%;height:100%;object-fit:contain;padding:0;border:0;border-radius:0;box-shadow:none}
