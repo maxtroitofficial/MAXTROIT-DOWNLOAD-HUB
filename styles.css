@@ -1197,7 +1197,10 @@ html[data-cached-brand-logo="true"] #hero-art-logo{
 
 /* Final Flash Screen cleanup: no puzzle seams, particles or outside-logo shine. */
 .site-startup-mark:before,.site-startup-mark:after{content:none!important;display:none!important;animation:none!important}
-.site-startup-mark img{animation:none!important;clip-path:none!important;filter:none!important;opacity:1!important;transform:none!important}
-.site-startup-mark .startup-logo-shine{width:100%!important;height:100%!important;inset:0!important;left:0!important;top:0!important;transform:none!important;overflow:hidden!important;mask-size:contain!important;-webkit-mask-size:contain!important}
+.site-startup-mark .startup-logo-shine{width:100%!important;height:100%!important;inset:0!important;left:0!important;top:0!important;transform:none!important;overflow:hidden!important;mask-mode:alpha!important;-webkit-mask-size:100% 100%!important;mask-size:100% 100%!important;mask-position:center!important;-webkit-mask-position:center!important;mask-repeat:no-repeat!important;-webkit-mask-repeat:no-repeat!important}
 .site-startup-mark .startup-logo-shine:after{top:0!important;bottom:0!important}
 .startup-puzzle-grid,.startup-puzzle-piece,.startup-puzzle-complete{display:none!important;animation:none!important}
+
+/* Keep the original logo reveal animation; constrain the shine with the logo alpha mask. */
+.site-startup-mark img{position:relative;z-index:2;object-fit:contain;animation:startupLogoAssemble 1.45s cubic-bezier(.16,.8,.25,1) .12s forwards!important}
+.site-startup-mark .startup-logo-shine{z-index:3!important;pointer-events:none!important}
