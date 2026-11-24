@@ -57,3 +57,8 @@
 @keyframes mxCassetteSpin{from{transform:rotate(-8deg)}to{transform:rotate(352deg)}}
 @media(prefers-reduced-motion:reduce){.mx-music-player.is-playing .mx-cassette{animation:none}}
 @media(max-width:600px){.mx-music-player{right:12px;bottom:14px;width:82px}.mx-music-disc{width:68px;height:68px}.mx-cassette{transform:scale(.92) rotate(-8deg)}}
+
+/* YouTube links use YouTube's visible embedded player, not extracted audio. */
+.mx-music-player:has(#mx-youtube-frame:not([hidden])){width:min(340px,calc(100vw - 24px));align-items:stretch;gap:8px;padding:10px;border:1px solid #ffffff25;border-radius:16px;background:rgba(9,13,29,.96);box-shadow:0 12px 38px #0009;}
+#mx-youtube-frame[hidden]{display:none}
+.mx-music-player:has(#mx-youtube-frame:not([hidden])) .mx-music-track{max-width:100%;}
