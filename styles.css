@@ -1164,7 +1164,7 @@ html[data-hub-animations="on"][data-anim-background="on"] body:not(.admin-body) 
 
 
 /* Restore the original pink halo behind the Flash Screen logo; keep the logo clean. */
-#site-startup-mark{position:relative!important;isolation:isolate!important;overflow:visible!important}
+#site-startup-mark{position:absolute!important;isolation:isolate!important;overflow:visible!important}
 #site-startup-mark.startup-glow-active:before{content:""!important;display:block!important;position:absolute!important;inset:-34%!important;z-index:0!important;pointer-events:none!important;border-radius:50%!important;background:radial-gradient(ellipse at center,rgba(255,105,195,.42) 0%,rgba(236,72,153,.30) 28%,rgba(190,70,255,.18) 48%,transparent 72%)!important;filter:blur(13px)!important;opacity:.9!important;transform:scale(.88)!important;animation:maxtroitStartupPinkHalo 2.8s ease-in-out infinite!important}
 #site-startup-mark.startup-glow-active>img{position:relative!important;z-index:1!important;filter:drop-shadow(0 0 8px rgba(255,105,195,.58)) drop-shadow(0 0 17px rgba(190,70,255,.32))!important}
 @keyframes maxtroitStartupPinkHalo{0%,100%{opacity:.62;transform:scale(.82)}50%{opacity:1;transform:scale(1.12)}}
