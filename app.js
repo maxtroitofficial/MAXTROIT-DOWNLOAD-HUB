@@ -77,7 +77,7 @@ function applyVisualEdits(edits){
  const apply=()=>{
   for(const [selector,patch] of Object.entries(edits.elements||{})){
    let el;try{el=document.querySelector(selector)}catch(e){}if(!el||!patch)continue;
-   if(typeof patch.text==="string"&&!el.matches("img,svg,video,canvas")&&el.textContent!==patch.text)el.textContent=patch.text;
+   if(typeof patch.text==="string"&&!el.matches("img,svg,video,canvas")&&el.children.length===0&&el.textContent!==patch.text)el.textContent=patch.text;
    if(typeof patch.src==="string"&&el.matches("img")&&el.getAttribute("src")!==patch.src)el.src=patch.src;
    if(typeof patch.href==="string"&&el.matches("a")&&el.getAttribute("href")!==patch.href)el.href=patch.href;
    if(typeof patch.hidden==="boolean"&&el.hidden!==patch.hidden)el.hidden=patch.hidden;
