@@ -409,3 +409,8 @@ body.music-workspace #admin-app>.topbar{flex:0 0 auto}
 #music-admin .music-art-disc[data-shape="diamond"]{clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);border-radius:0}
 #music-admin .music-art-disc[data-shape="heart"]{clip-path:polygon(50% 94%,8% 53%,4% 42%,5% 30%,12% 18%,23% 13%,34% 16%,50% 32%,66% 16%,77% 13%,88% 18%,95% 30%,96% 42%,92% 53%);border-radius:0}
 #music-admin .music-art-disc img{width:100%;height:100%;object-fit:cover;object-position:center;border-radius:0}
+
+/* Persistent admin section back navigation */
+#admin-back{background:#eeeaff;border-color:#bdb0ff;color:#4c35c8;white-space:nowrap}
+@media(max-width:850px){.top-actions{grid-template-columns:repeat(6,minmax(0,1fr))}.top-actions button{font-size:11px;padding:8px 3px}}
+@media(max-width:480px){.top-actions{grid-template-columns:repeat(6,minmax(0,1fr))}.top-actions button{font-size:9px;padding:7px 1px}}
