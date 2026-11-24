@@ -1187,3 +1187,9 @@ html[data-cached-brand-logo="true"] #hero-art-logo{
  background-position:center!important;
  background-repeat:no-repeat!important;
 }
+
+/* Configurable logo shine sweep */
+.startup-logo-shine,.fs-logo-shine{position:absolute;z-index:4;pointer-events:none;overflow:hidden;transform:translate(-50%,-50%);border-radius:50%;isolation:isolate}
+.startup-logo-shine:after,.fs-logo-shine:after{content:"";position:absolute;inset:-35% auto -35% -80%;width:var(--shine-width,22%);background:linear-gradient(100deg,transparent 0%,color-mix(in srgb,var(--shine-color,#fff) 15%,transparent) 30%,var(--shine-color,#fff) 50%,color-mix(in srgb,var(--shine-color,#fff) 15%,transparent) 70%,transparent 100%);filter:blur(5px);opacity:var(--shine-alpha,.75);transform:skewX(-22deg);animation:startupShineSweep var(--shine-duration,1300ms) ease-in-out infinite}
+@keyframes startupShineSweep{0%{left:-80%}100%{left:180%}}
+#fs-stage .fs-logo-shine{z-index:5}
