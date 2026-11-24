@@ -91,3 +91,14 @@
 /* Keep the Play/Pause badge hidden until the visitor taps the disc. */
 .mx-music-player:not(.mx-user-interacted) .mx-disc-state{display:none!important}
 .mx-music-player.mx-user-interacted .mx-disc-state{right:2px;bottom:2px;width:20px;height:20px}
+
+/* Artwork shape choices: crop the image cleanly inside each selected frame. */
+.music-art-preview .music-art-disc,.mx-music-disc{overflow:hidden}
+.music-art-preview .music-art-disc[data-shape="rounded"],#mx-music-player[data-art-shape="rounded"] .mx-music-disc{border-radius:24%;clip-path:none}
+.music-art-preview .music-art-disc[data-shape="square"],#mx-music-player[data-art-shape="square"] .mx-music-disc{border-radius:3%;clip-path:none}
+.music-art-preview .music-art-disc[data-shape="squircle"],#mx-music-player[data-art-shape="squircle"] .mx-music-disc{border-radius:30%;clip-path:none}
+.music-art-preview .music-art-disc[data-shape="hexagon"],#mx-music-player[data-art-shape="hexagon"] .mx-music-disc{border-radius:0;clip-path:polygon(25% 5%,75% 5%,100% 50%,75% 95%,25% 95%,0 50%)}
+.music-art-preview .music-art-disc[data-shape="diamond"],#mx-music-player[data-art-shape="diamond"] .mx-music-disc{border-radius:0;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)}
+.music-art-preview .music-art-disc img{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
+#mx-music-player.has-art #mx-music-artwork{border-radius:0;object-fit:cover;object-position:center}
+#music-art-remove{grid-column:1/-1;justify-self:start;background:#374151;color:#fff}
