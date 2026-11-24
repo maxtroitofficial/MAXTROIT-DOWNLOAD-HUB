@@ -87,3 +87,7 @@
 #mx-music-player:not(.has-art)[data-art-style="neon"] .mx-music-disc{background:radial-gradient(circle at center,#071326 0 18%,#13d8ef 19% 22%,#111827 23% 100%);border-color:#35eaff;box-shadow:0 0 18px #00d9ff99,inset 0 0 14px #00d9ff55}
 #mx-music-player:not(.has-art)[data-art-style="chrome"] .mx-music-disc{background:radial-gradient(circle at 35% 30%,#fff,#9ca3af 42%,#303846 72%,#e5e7eb);border-color:#e5e7eb}
 #mx-music-player:not(.has-art)[data-art-style="purple"] .mx-music-disc{background:radial-gradient(circle at 35% 25%,#e9d5ff,#7c3aed 42%,#241044 78%);border-color:#c4b5fd;box-shadow:0 0 20px #8b5cf699}
+
+/* Keep the Play/Pause badge hidden until the visitor taps the disc. */
+.mx-music-player:not(.mx-user-interacted) .mx-disc-state{display:none!important}
+.mx-music-player.mx-user-interacted .mx-disc-state{right:2px;bottom:2px;width:20px;height:20px}
