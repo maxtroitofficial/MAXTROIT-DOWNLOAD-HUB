@@ -368,3 +368,11 @@ body.music-workspace #admin-app>.topbar{flex:0 0 auto}
  #music-global-pause{width:100%}
  .music-track-row{align-items:flex-start}
 }
+
+.music-import{margin:18px 0;padding:16px 18px;border:1px solid #dcdff0;border-radius:14px;background:#f7f8fc}
+.music-import h3{margin:0 0 6px;color:#26314a;font-size:15px}
+.music-import p{margin:0 0 12px;color:#66738b;font-size:12px}
+.music-import input[type=file]{display:block;width:100%;margin:0 0 10px;font-size:13px}
+.music-import textarea{display:block;width:100%;min-height:110px;resize:vertical;padding:11px 12px;border:1px solid #cfd6e2;border-radius:9px;background:#fff;color:#182033;font:12px/1.5 ui-monospace,monospace}
+#music-import{margin-top:10px;min-height:42px;padding:9px 16px;background:#5b45d6;border-color:#5b45d6;color:#fff}
+@media(max-width:700px){.music-import{padding:12px}.music-import button{width:100%}}
