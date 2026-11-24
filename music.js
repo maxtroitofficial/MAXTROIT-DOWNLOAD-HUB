@@ -28,7 +28,8 @@ audio.addEventListener("pause",()=>{paint();save()});
 audio.addEventListener("timeupdate",()=>{if(Math.floor(audio.currentTime)%5===0)save()});
 
  // Change track only on a deliberate double-tap/click on the player artwork.
- let lastArtworkTap=0,lastTrackChange=0;
+ let lastArtworkTap=0,lastTrackChange=0,swipeStart=null;
+ player.addEventListener("pointerdown",e=>{if(e.pointerType==="touch")swipeStart={x:e.clientX,y:e.clientY,id:e.pointerId}},{passive:true});
  function artworkDoubleTap(e){
   if(e.target.closest("#mx-music-toggle")||globalPause||cfg.musicEnabled===false||!queue.length)return;
   const now=Date.now();
@@ -38,7 +39,7 @@ audio.addEventListener("timeupdate",()=>{if(Math.floor(audio.currentTime)%5===0)
   }else lastArtworkTap=now;
  }
  player.addEventListener("dblclick",artworkDoubleTap);
- player.addEventListener("pointerup",e=>{if(e.pointerType==="touch")artworkDoubleTap(e)},{passive:false});
+ player.addEventListener("pointerup",e=>{if(e.pointerType!=="touch")return;if(swipeStart&&swipeStart.id===e.pointerId){const dx=e.clientX-swipeStart.x,dy=e.clientY-swipeStart.y;swipeStart=null;if(dx>55&&Math.abs(dx)>Math.abs(dy)*1.25){e.preventDefault();e.stopPropagation();lastArtworkTap=0;if(!globalPause&&cfg.musicEnabled!==false&&queue.length&&Date.now()-lastTrackChange>500){lastTrackChange=Date.now();player.classList.add("mx-user-interacted");failed.delete(currentIndex);playNext()}return}if(dx< -55||Math.abs(dy)>55){lastArtworkTap=0;return}}artworkDoubleTap(e)},{passive:false});
 
  toggle.addEventListener("click",()=>{player.classList.add("mx-user-interacted");if(globalPause||cfg.musicEnabled===false)return;if(synthContext&&currentIndex>=0&&queue[currentIndex]?.type==="synth"){if(synthPlaying)stopSynth();else startSynth(currentIndex);return}if(audio.paused){if(currentIndex>=0&&!failed.has(currentIndex)){const p=audio.play();if(p&&p.catch)p.catch(e=>handlePlayError(e,currentIndex))}else{failed.clear();playNext()}}else audio.pause()});
 function apply(data){cfg=data||{};const rawArt=String(cfg.musicArtworkUrl||""),art=/^data:image\/(jpeg|png|webp);base64,[a-z0-9+/=]+$/i.test(rawArt)?rawArt:validUrl(rawArt),style=["vinyl","neon","chrome","purple","custom"].includes(cfg.musicArtworkStyle)?cfg.musicArtworkStyle:"vinyl";player.dataset.artStyle=style;player.dataset.artShape=["circle","rounded","square","squircle","hexagon","diamond","heart"].includes(cfg.musicArtworkShape)?cfg.musicArtworkShape:"circle";if(artwork){artwork.onload=()=>{player.classList.add("has-art")};artwork.onerror=()=>{player.classList.remove("has-art")};if(art){artwork.src=art;player.classList.add("has-art")}else{artwork.removeAttribute("src");player.classList.remove("has-art")}player.style.setProperty("--mx-art-speed",Math.max(2,Math.min(20,Number(cfg.musicArtworkSpeed)||4))+"s")}const configured=Array.isArray(cfg.musicTracks)?cfg.musicTracks:DEFAULT_TRACKS;
