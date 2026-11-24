@@ -6,83 +6,29 @@ const toggle=document.getElementById("mx-music-toggle");
 const label=document.getElementById("mx-music-track");
 if(!player||!audio||!toggle||!label)return;
 
-const DEFAULT_TRACKS=[
-  {
-    "id": "blue-meadow-in-green-sky",
-    "title": "Blue Meadow in Green Sky",
-    "url": "https://raw.githubusercontent.com/jfpx/cc0-media-library/main/music/adventure/synth/blue-meadow-in-green-sky.ogg"
-  },
-  {
-    "id": "ambient-relaxing-loop",
-    "title": "Ambient Relaxing Loop",
-    "url": "https://raw.githubusercontent.com/jfpx/cc0-media-library/main/music/calm/ambient/ambient-relaxing-loop.ogg"
-  },
-  {
-    "id": "the-journey-begins",
-    "title": "The Journey Begins",
-    "url": "https://raw.githubusercontent.com/jfpx/cc0-media-library/main/music/cinematic/rpg/the-journey-begins.ogg"
-  },
-  {
-    "id": "heavenly-loop",
-    "title": "Heavenly Loop",
-    "url": "https://raw.githubusercontent.com/jfpx/cc0-media-library/main/music/dreamy/ambient/heavenly-loop.ogg"
-  },
-  {
-    "id": "challenge-accepted",
-    "title": "Challenge Accepted",
-    "url": "https://raw.githubusercontent.com/jfpx/cc0-media-library/main/music/energetic/chiptune/challenge-accepted.ogg"
-  },
-  {
-    "id": "shrine",
-    "title": "Shrine",
-    "url": "https://raw.githubusercontent.com/jfpx/cc0-media-library/main/music/mysterious/synth/shrine.ogg"
-  },
-  {
-    "id": "unsolved-investigation",
-    "title": "Unsolved Investigation",
-    "url": "https://raw.githubusercontent.com/jfpx/cc0-media-library/main/music/suspense/ambient/unsolved-investigation.ogg"
-  },
-  {
-    "id": "underwater-ambient-pad",
-    "title": "Underwater Ambient Pad",
-    "url": "https://raw.githubusercontent.com/jfpx/cc0-media-library/main/music/underwater/ambient/underwater-ambient-pad.ogg"
-  },
-  {
-    "id": "abstraction-010fad54d780f3cb3ad6e8cc",
-    "title": "Ambient Game Track 09",
-    "url": "https://raw.githubusercontent.com/jfpx/cc0-media-library/main/music/unspecified/ambient/abstraction-010fad54d780f3cb3ad6e8cc.ogg"
-  },
-  {
-    "id": "abstraction-01554511f570d5ec1ba6338d",
-    "title": "Ambient Game Track 10",
-    "url": "https://raw.githubusercontent.com/jfpx/cc0-media-library/main/music/unspecified/ambient/abstraction-01554511f570d5ec1ba6338d.ogg"
-  },
-  {
-    "id": "abstraction-110c843f2885eabd0a9d814c",
-    "title": "Ambient Game Track 11",
-    "url": "https://raw.githubusercontent.com/jfpx/cc0-media-library/main/music/unspecified/ambient/abstraction-110c843f2885eabd0a9d814c.ogg"
-  }
-];
+const DEFAULT_TRACKS=[{"id":"maxtroit-arcade-synth","title":"MAXTROIT Arcade Synth","type":"synth","category":"Gaming"}];
 const KEY="maxtroitMusicState";
-let cfg={},queue=[],currentIndex=-1,failed=new Set(),globalPause=false,started=false,firestoreBound=false;
+let cfg={},queue=[],currentIndex=-1,failed=new Set(),globalPause=false,started=false,firestoreBound=false,synthContext=null,synthMaster=null,synthTimer=null,synthStep=0,synthPlaying=false;
 const validUrl=v=>{try{const u=new URL(String(v||""));return u.protocol==="https:"?u.href:""}catch(e){return""}};
 const volume=()=>Math.max(0,Math.min(1,Number(cfg.musicVolume??35)/100));
 function save(){try{localStorage.setItem(KEY,JSON.stringify({id:queue[currentIndex]?.id||"",time:audio.currentTime||0,paused:audio.paused}))}catch(e){}}
-function paint(){const playing=!audio.paused;toggle.disabled=globalPause||cfg.musicEnabled===false||!queue.length;toggle.setAttribute("aria-label",playing?"Pause music":"Play music");toggle.setAttribute("aria-pressed",String(playing));player.classList.toggle("is-playing",playing)}
+function paint(){const playing=synthPlaying||!audio.paused;toggle.disabled=globalPause||cfg.musicEnabled===false||!queue.length;toggle.setAttribute("aria-label",playing?"Pause music":"Play music");toggle.setAttribute("aria-pressed",String(playing));player.classList.toggle("is-playing",playing)}
 function show(enabled){player.hidden=!enabled}
-function nextIndex(){if(!queue.length)return -1;let candidates=queue.map((_,i)=>i).filter(i=>!failed.has(i)&&i!==currentIndex);if(!candidates.length&&currentIndex>=0&&!failed.has(currentIndex))candidates=[currentIndex];if(!candidates.length){label.textContent="Music tracks unavailable · Check connection";paint();return -1}if(cfg.musicShuffle===false)return candidates[0];return candidates[Math.floor(Math.random()*candidates.length)]}
-function playIndex(index,fromUser){if(index<0||index>=queue.length)return;const track=queue[index],url=validUrl(track.url);if(!url){failed.add(index);return playIndex(nextIndex(),fromUser)}currentIndex=index;label.textContent=track.title||"Gaming track";audio.pause();audio.src=url;audio.preload="auto";audio.volume=volume();audio.load();let p;try{p=audio.play()}catch(e){handlePlayError(e,index);return}if(p&&p.catch)p.catch(e=>handlePlayError(e,index));paint();save()}
+function nextIndex(){if(!queue.length)return -1;let candidates=queue.map((_,i)=>i).filter(i=>!failed.has(i)&&i!==currentIndex&&queue[i].type!=="synth");if(!candidates.length)candidates=queue.map((_,i)=>i).filter(i=>queue[i].type==="synth"&&!failed.has(i)&&i!==currentIndex);if(!candidates.length&&currentIndex>=0&&!failed.has(currentIndex))candidates=[currentIndex];if(!candidates.length){label.textContent="Music tracks unavailable · Check connection";paint();return -1}if(cfg.musicShuffle===false)return candidates[0];return candidates[Math.floor(Math.random()*candidates.length)]}
+function stopSynth(){if(synthTimer){clearInterval(synthTimer);synthTimer=null}if(synthMaster&&synthContext){try{synthMaster.gain.setTargetAtTime(.0001,synthContext.currentTime,.04)}catch(e){}}synthPlaying=false;paint();save()}
+function startSynth(index){try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)throw Error("Web Audio unavailable");if(!synthContext){synthContext=new AC();synthMaster=synthContext.createGain();synthMaster.gain.value=.0001;synthMaster.connect(synthContext.destination)}currentIndex=index;label.textContent=queue[index]?.title||"MAXTROIT Arcade Synth";const resume=synthContext.state==="suspended"?synthContext.resume():Promise.resolve();Promise.resolve(resume).then(()=>{synthMaster.gain.setTargetAtTime(volume()*.42,synthContext.currentTime,.18);synthPlaying=true;if(!synthTimer){const melody=[523.25,0,659.25,783.99,0,659.25,587.33,0,523.25,0,392,523.25,0,392,349.23,0,440,0,523.25,659.25,0,587.33,523.25,0,392,0,349.23,392,0,440,523.25,0];const bass=[130.81,0,130.81,0,174.61,0,174.61,0,196,0,196,0,174.61,0,174.61,0];let next=synthContext.currentTime+.04;synthStep=0;const schedule=()=>{while(next<synthContext.currentTime+.18){const m=melody[synthStep%melody.length],b=bass[Math.floor(synthStep/2)%bass.length];if(b){const o=synthContext.createOscillator(),g=synthContext.createGain();o.type="triangle";o.frequency.value=b/2;o.connect(g);g.connect(synthMaster);g.gain.setValueAtTime(.0001,next);g.gain.exponentialRampToValueAtTime(.13,next+.025);g.gain.exponentialRampToValueAtTime(.0001,next+.23);o.start(next);o.stop(next+.24)}if(m){const o=synthContext.createOscillator(),g=synthContext.createGain();o.type="square";o.frequency.value=m;o.connect(g);g.connect(synthMaster);g.gain.setValueAtTime(.0001,next);g.gain.exponentialRampToValueAtTime(.045,next+.012);g.gain.exponentialRampToValueAtTime(.0001,next+.19);o.start(next);o.stop(next+.2)}next+=.267;synthStep++}};schedule();synthTimer=setInterval(schedule,70)}paint();save()}).catch(()=>{label.textContent="Tap cassette once to start music";paint()})}catch(e){label.textContent="Audio is not supported in this browser";paint()}}
+function playIndex(index,fromUser){if(index<0||index>=queue.length)return;const track=queue[index];if(track.type==="synth"){audio.pause();startSynth(index);return}const url=validUrl(track.url);if(!url){failed.add(index);return playIndex(nextIndex(),fromUser)}currentIndex=index;label.textContent=track.title||"Gaming track";audio.pause();audio.src=url;audio.preload="auto";audio.volume=volume();audio.load();let p;try{p=audio.play()}catch(e){handlePlayError(e,index);return}if(p&&p.catch)p.catch(e=>handlePlayError(e,index));paint();save()}
 function handlePlayError(error,index){paint();if(error?.name==="NotAllowedError"){label.textContent="Tap cassette once to start music";return}failed.add(index);label.textContent="Track unavailable · Trying another…";const next=nextIndex();if(next>=0)setTimeout(()=>playIndex(next,false),250)}
-function playNext(){const next=nextIndex();if(next>=0)playIndex(next,false)}
+function playNext(){const next=nextIndex();if(next>=0)playIndex(next,false);else{const fallback=queue.findIndex(t=>t.type==="synth");if(fallback>=0)playIndex(fallback,false)}}
 audio.addEventListener("ended",()=>{if(!globalPause&&cfg.musicEnabled!==false)playNext()});
 audio.addEventListener("error",()=>{if(!queue.length||globalPause)return;const bad=currentIndex;if(bad>=0)failed.add(bad);label.textContent="Track unavailable · Trying another…";const next=nextIndex();if(next>=0)setTimeout(()=>playIndex(next,false),250);else{label.textContent="Music unavailable · Check track links";paint()}});
 audio.addEventListener("play",()=>{paint();save()});
 audio.addEventListener("pause",()=>{paint();save()});
 audio.addEventListener("timeupdate",()=>{if(Math.floor(audio.currentTime)%5===0)save()});
-toggle.addEventListener("click",()=>{if(globalPause||cfg.musicEnabled===false)return;if(audio.paused){if(currentIndex>=0&&!failed.has(currentIndex)){const p=audio.play();if(p&&p.catch)p.catch(e=>handlePlayError(e,currentIndex))}else{failed.clear();playNext()}}else audio.pause()});
+toggle.addEventListener("click",()=>{if(globalPause||cfg.musicEnabled===false)return;if(synthContext&&currentIndex>=0&&queue[currentIndex]?.type==="synth"){if(synthPlaying)stopSynth();else startSynth(currentIndex);return}if(audio.paused){if(currentIndex>=0&&!failed.has(currentIndex)){const p=audio.play();if(p&&p.catch)p.catch(e=>handlePlayError(e,currentIndex))}else{failed.clear();playNext()}}else audio.pause()});
 function apply(data){cfg=data||{};const configured=Array.isArray(cfg.musicTracks)&&cfg.musicTracks.length?cfg.musicTracks:DEFAULT_TRACKS;
-const staleLibrary=configured.length>0&&configured.every(t=>String(t.url||"").includes("raw.githubusercontent.com/jfpx/cc0-media-library/music-v1/"));
-queue=(staleLibrary?DEFAULT_TRACKS:configured).filter(t=>t&&validUrl(t.url));failed.clear();globalPause=cfg.musicGlobalPause===true;const enabled=cfg.musicEnabled!==false&&queue.length>0;show(enabled);if(!enabled){audio.pause();label.textContent=cfg.musicEnabled===false?"Music is OFF":"No music tracks configured";paint();return}if(globalPause){audio.pause();label.textContent="Music paused by admin";paint();return}paint();if(!started){started=true;let saved={};try{saved=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){}const restored=queue.findIndex(t=>t.id===saved.id);if(restored>=0){currentIndex=restored;label.textContent=queue[restored].title||"Gaming track";if(Number(saved.time)>0)audio.addEventListener("loadedmetadata",()=>{try{audio.currentTime=Math.min(Number(saved.time),Math.max(0,audio.duration-1))}catch(e){}},{once:true});if(saved.paused===false)playIndex(restored,false);else{audio.src=validUrl(queue[restored].url);audio.volume=volume();paint()}}else playNext()}}
+const cleaned=configured.filter(t=>t&&(t.type==="synth"||(validUrl(t.url)&&!String(t.url).includes("raw.githubusercontent.com/jfpx/cc0-media-library/"))));
+queue=cleaned.length?cleaned.slice():DEFAULT_TRACKS.slice();if(!queue.some(t=>t.type==="synth"))queue.push(DEFAULT_TRACKS[0]);failed.clear();globalPause=cfg.musicGlobalPause===true;const enabled=cfg.musicEnabled!==false&&queue.length>0;show(enabled);if(!enabled){audio.pause();stopSynth();label.textContent=cfg.musicEnabled===false?"Music is OFF":"No music tracks configured";paint();return}if(globalPause){audio.pause();stopSynth();label.textContent="Music paused by admin";paint();return}paint();if(!started){started=true;let saved={};try{saved=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){}const restored=queue.findIndex(t=>t.id===saved.id);if(restored>=0){currentIndex=restored;label.textContent=queue[restored].title||"Gaming track";if(Number(saved.time)>0)audio.addEventListener("loadedmetadata",()=>{try{audio.currentTime=Math.min(Number(saved.time),Math.max(0,audio.duration-1))}catch(e){}},{once:true});if(saved.paused===false)playIndex(restored,false);else{audio.src=validUrl(queue[restored].url);audio.volume=volume();paint()}}else playNext()}}
 function bindFirestore(){if(firestoreBound)return true;if(!window.hubCloud?.ready||!window.hubCloud.db)return false;firestoreBound=true;try{window.hubCloud.db.collection("siteConfig").doc("public").onSnapshot(s=>apply(s.exists?s.data():{}),e=>{console.warn("Music settings unavailable; using built-in playlist.",e);if(!started)apply({});});return true}catch(e){console.warn("Music setup failed; using built-in playlist.",e);if(!started)apply({});return false}}
 if(!bindFirestore()){let attempts=0;const wait=setInterval(()=>{attempts++;if(bindFirestore()){clearInterval(wait);return}if(attempts>=30){clearInterval(wait);if(!started)apply({})}},200)}
 })();
