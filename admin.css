@@ -315,3 +315,56 @@ html,body{height:100%;min-height:0;overflow:hidden}
  #admin-app>.preview-area>.preview-heading{min-height:28px;font-size:11px}
  #site-preview:not([hidden]){border-radius:5px}
 }
+
+
+/* Dedicated Music System workspace inside Admin Panel */
+#music-admin[hidden]{display:none!important}
+#music-admin:not([hidden]){
+ display:block!important;
+ flex:1 1 auto;
+ min-height:0;
+ width:min(100% - 28px,1100px);
+ margin:18px auto;
+ padding:22px;
+ overflow:auto;
+ background:#fff;
+ border:1px solid #dfe4ed;
+ border-radius:16px;
+ box-shadow:0 8px 28px rgba(20,30,55,.06);
+ color:#182033;
+}
+.music-admin-head{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-bottom:18px;border-bottom:1px solid #e8ebf1}
+.music-admin-head h2{margin:0;font-size:22px}
+.music-admin-head p{margin:6px 0 0;color:#68748a;font-size:14px}
+.music-switch{display:flex!important;align-items:center;gap:9px;padding:10px 14px;border:1px solid #dce2ed;border-radius:12px;background:#f7f8fc;font-weight:700}
+.music-switch input,.music-admin-options input[type=checkbox]{width:19px;height:19px;accent-color:#5b45d6}
+.music-admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:20px 0;padding:18px;background:#f7f8fc;border:1px solid #e8ebf1;border-radius:14px}
+.music-admin-grid label,.music-admin-options label{display:flex;flex-direction:column;gap:7px;min-width:0;font-size:13px;font-weight:700;color:#47536a}
+.music-admin-grid input,.music-admin-grid select{width:100%;min-width:0;min-height:44px;padding:10px 12px;border:1px solid #cfd6e2;border-radius:9px;background:#fff;color:#182033}
+#music-add{align-self:end;min-height:44px;background:#5b45d6;border-color:#5b45d6;color:white}
+.music-admin-options{display:grid;grid-template-columns:1fr 1.4fr auto;align-items:end;gap:14px;padding:16px 18px;border:1px solid #e8ebf1;border-radius:14px}
+.music-admin-options label:first-child{flex-direction:row;align-items:center;min-height:44px}
+.music-admin-options label:nth-child(2){display:grid;grid-template-columns:1fr auto;align-items:center}
+.music-admin-options input[type=range]{grid-column:1/-1;width:100%;accent-color:#5b45d6}
+#music-global-pause{min-height:44px}
+#music-admin-status{min-height:22px;margin:18px 0 10px;color:#53617a;font-size:13px}
+.music-track-list{display:grid;gap:8px}
+.music-track-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border:1px solid #e4e8ef;border-radius:10px;background:#fff}
+.music-track-row small{display:block;margin-top:4px;color:#718096}
+.music-note{margin:18px 0 0;padding:12px 14px;border-radius:10px;background:#f7f8fc;color:#68748a;font-size:12px;line-height:1.5}
+#music-admin-tab{background:#f0edff;border-color:#cfc5ff;color:#4934b6}
+#music-admin-tab[aria-pressed="true"]{background:#5b45d6;border-color:#5b45d6;color:#fff}
+#music-admin-tab[hidden]{display:none!important}
+body.music-workspace #admin-app>.preview-area,
+body.music-workspace #admin-app>.tool-dock{display:none!important}
+body.music-workspace #admin-app{overflow:auto!important}
+body.music-workspace #admin-app>.topbar{flex:0 0 auto}
+@media(max-width:700px){
+ #music-admin:not([hidden]){width:calc(100% - 16px);margin:8px auto;padding:14px;border-radius:12px}
+ .music-admin-head h2{font-size:19px}
+ .music-admin-grid{grid-template-columns:minmax(0,1fr);padding:12px;gap:12px}
+ #music-add{width:100%}
+ .music-admin-options{grid-template-columns:minmax(0,1fr);padding:12px;gap:12px}
+ #music-global-pause{width:100%}
+ .music-track-row{align-items:flex-start}
+}
