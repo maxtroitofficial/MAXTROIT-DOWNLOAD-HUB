@@ -82,3 +82,8 @@
 #mx-music-player.has-art:not(.is-playing) .mx-music-disc{animation-play-state:paused}
 @keyframes mxMusicDiscSpin{to{transform:rotate(360deg)}}
 @media(max-width:600px){.music-art-editor{grid-template-columns:minmax(0,1fr) 100px}.music-art-disc{width:88px;height:88px}}
+
+/* Preset disc finishes */
+#mx-music-player:not(.has-art)[data-art-style="neon"] .mx-music-disc{background:radial-gradient(circle at center,#071326 0 18%,#13d8ef 19% 22%,#111827 23% 100%);border-color:#35eaff;box-shadow:0 0 18px #00d9ff99,inset 0 0 14px #00d9ff55}
+#mx-music-player:not(.has-art)[data-art-style="chrome"] .mx-music-disc{background:radial-gradient(circle at 35% 30%,#fff,#9ca3af 42%,#303846 72%,#e5e7eb);border-color:#e5e7eb}
+#mx-music-player:not(.has-art)[data-art-style="purple"] .mx-music-disc{background:radial-gradient(circle at 35% 25%,#e9d5ff,#7c3aed 42%,#241044 78%);border-color:#c4b5fd;box-shadow:0 0 20px #8b5cf699}
