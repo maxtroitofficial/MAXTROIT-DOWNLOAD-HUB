@@ -414,3 +414,8 @@ body.music-workspace #admin-app>.topbar{flex:0 0 auto}
 #admin-back{background:#eeeaff;border-color:#bdb0ff;color:#4c35c8;white-space:nowrap}
 @media(max-width:850px){.top-actions{grid-template-columns:repeat(6,minmax(0,1fr))}.top-actions button{font-size:11px;padding:8px 3px}}
 @media(max-width:480px){.top-actions{grid-template-columns:repeat(6,minmax(0,1fr))}.top-actions button{font-size:9px;padding:7px 1px}}
+
+/* Flash editor logo-only shine sweep */
+#fs-stage .fs-logo-shine{position:absolute!important;z-index:25!important;display:block;pointer-events:none;overflow:hidden;border-radius:0;transform:translate(-50%,-50%);isolation:isolate;mask-image:var(--shine-mask);-webkit-mask-image:var(--shine-mask);mask-size:contain;-webkit-mask-size:contain;mask-position:center;-webkit-mask-position:center;mask-repeat:no-repeat;-webkit-mask-repeat:no-repeat}
+#fs-stage .fs-logo-shine:after{content:"";position:absolute;top:-20%;bottom:-20%;left:-45%;width:max(18%,var(--shine-width,22%));background:linear-gradient(100deg,transparent 0%,var(--shine-color,#fff) 48%,var(--shine-color,#fff) 52%,transparent 100%);filter:blur(3px);opacity:var(--shine-alpha,.75);mix-blend-mode:screen;transform:translateX(0) skewX(-22deg);animation:startupShineSweep var(--shine-duration,1300ms) ease-in-out infinite!important}
+@keyframes startupShineSweep{0%{transform:translateX(0) skewX(-22deg)}100%{transform:translateX(780%) skewX(-22deg)}}
