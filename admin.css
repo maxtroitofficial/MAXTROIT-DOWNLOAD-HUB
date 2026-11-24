@@ -394,3 +394,7 @@ body.music-workspace #admin-app>.topbar{flex:0 0 auto}
 #music-admin #music-art-status{grid-column:1/-1;min-height:18px}
 @keyframes musicArtSpin{to{transform:rotate(360deg)}}
 @media(max-width:650px){#music-admin .music-art-editor{grid-template-columns:minmax(0,1fr) 112px;padding:12px;gap:10px}#music-admin .music-art-preview{min-height:130px}#music-admin .music-art-disc{width:104px;height:104px}}
+
+#music-admin .music-art-editor .music-art-upload{display:grid;gap:7px}
+#music-admin .music-art-editor input[type=file]{min-height:auto;padding:10px;background:#fff}
+#music-admin .music-art-editor #music-art-style{min-height:46px}
