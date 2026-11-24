@@ -1176,3 +1176,14 @@ html[data-startup-disabled="true"] .site-startup{display:none!important;visibili
 body[data-brand-logo-pending="true"] #brand-mark,
 body[data-brand-logo-pending="true"] #hero-logo-icon,
 body[data-brand-logo-pending="true"] #hero-art-logo{visibility:hidden}
+
+/* First-paint logo continuity: cached image is applied via <html> CSS before body parsing. */
+html[data-cached-brand-logo="true"] #brand-mark,
+html[data-cached-brand-logo="true"] #hero-logo-icon,
+html[data-cached-brand-logo="true"] #hero-art-logo{
+ color:transparent!important;
+ background-image:var(--cached-brand-logo)!important;
+ background-size:contain!important;
+ background-position:center!important;
+ background-repeat:no-repeat!important;
+}
