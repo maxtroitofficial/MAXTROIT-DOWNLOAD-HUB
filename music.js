@@ -7,17 +7,61 @@ const label=document.getElementById("mx-music-track");
 if(!player||!audio||!toggle||!label)return;
 
 const DEFAULT_TRACKS=[
-{id:"happy-end-music",title:"Happy End Music",url:"https://raw.githubusercontent.com/jfpx/cc0-media-library/music-v1/music/upbeat/synth/happy-end-music.ogg"},
-{id:"the-journey-begins",title:"The Journey Begins",url:"https://raw.githubusercontent.com/jfpx/cc0-media-library/music-v1/music/cinematic/rpg/the-journey-begins.ogg"},
-{id:"electronic-loop-01",title:"Electronic Game Loop 01",url:"https://raw.githubusercontent.com/jfpx/cc0-media-library/music-v1/music/unspecified/electronic/abstraction-01bff13f05e762766741d30c.ogg"},
-{id:"electronic-loop-08",title:"Ludum Dare Electronic 08",url:"https://raw.githubusercontent.com/jfpx/cc0-media-library/music-v1/music/unspecified/electronic/abstraction-076c1debeae5f7ec29f66acb.ogg"},
-{id:"electronic-loop-02",title:"Ludum Dare Electronic 02",url:"https://raw.githubusercontent.com/jfpx/cc0-media-library/music-v1/music/unspecified/electronic/abstraction-30db5715f7b08ce3924416f6.ogg"},
-{id:"electronic-loop-10",title:"Electronic Game Loop 10",url:"https://raw.githubusercontent.com/jfpx/cc0-media-library/music-v1/music/unspecified/electronic/abstraction-3dfe3354a4cce53ab5ddcb82.ogg"},
-{id:"electronic-loop-11",title:"Electronic Game Loop 11",url:"https://raw.githubusercontent.com/jfpx/cc0-media-library/music-v1/music/unspecified/electronic/abstraction-417fa91b83fab8b8be52a4e5.ogg"},
-{id:"electronic-loop-12",title:"Electronic Game Loop 12",url:"https://raw.githubusercontent.com/jfpx/cc0-media-library/music-v1/music/unspecified/electronic/abstraction-42d521c3eff005c80eb52792.ogg"},
-{id:"electronic-loop-38",title:"Ludum Dare Electronic 38",url:"https://raw.githubusercontent.com/jfpx/cc0-media-library/music-v1/music/unspecified/electronic/abstraction-485c2342c9a329e48dfcce91.ogg"},
-{id:"retro-chiptune-12",title:"Retro Chiptune 12",url:"https://raw.githubusercontent.com/jfpx/cc0-media-library/music-v1/music/unspecified/chiptune/abstraction-660328d005f5c812d0f52f63.ogg"},
-{id:"retro-chiptune-01",title:"Retro Chiptune 01",url:"https://raw.githubusercontent.com/jfpx/cc0-media-library/music-v1/music/unspecified/chiptune/abstraction-6f85ef477e9372f5cb5b348c.ogg"}
+  {
+    "id": "blue-meadow-in-green-sky",
+    "title": "Blue Meadow in Green Sky",
+    "url": "https://raw.githubusercontent.com/jfpx/cc0-media-library/main/music/adventure/synth/blue-meadow-in-green-sky.ogg"
+  },
+  {
+    "id": "ambient-relaxing-loop",
+    "title": "Ambient Relaxing Loop",
+    "url": "https://raw.githubusercontent.com/jfpx/cc0-media-library/main/music/calm/ambient/ambient-relaxing-loop.ogg"
+  },
+  {
+    "id": "the-journey-begins",
+    "title": "The Journey Begins",
+    "url": "https://raw.githubusercontent.com/jfpx/cc0-media-library/main/music/cinematic/rpg/the-journey-begins.ogg"
+  },
+  {
+    "id": "heavenly-loop",
+    "title": "Heavenly Loop",
+    "url": "https://raw.githubusercontent.com/jfpx/cc0-media-library/main/music/dreamy/ambient/heavenly-loop.ogg"
+  },
+  {
+    "id": "challenge-accepted",
+    "title": "Challenge Accepted",
+    "url": "https://raw.githubusercontent.com/jfpx/cc0-media-library/main/music/energetic/chiptune/challenge-accepted.ogg"
+  },
+  {
+    "id": "shrine",
+    "title": "Shrine",
+    "url": "https://raw.githubusercontent.com/jfpx/cc0-media-library/main/music/mysterious/synth/shrine.ogg"
+  },
+  {
+    "id": "unsolved-investigation",
+    "title": "Unsolved Investigation",
+    "url": "https://raw.githubusercontent.com/jfpx/cc0-media-library/main/music/suspense/ambient/unsolved-investigation.ogg"
+  },
+  {
+    "id": "underwater-ambient-pad",
+    "title": "Underwater Ambient Pad",
+    "url": "https://raw.githubusercontent.com/jfpx/cc0-media-library/main/music/underwater/ambient/underwater-ambient-pad.ogg"
+  },
+  {
+    "id": "abstraction-010fad54d780f3cb3ad6e8cc",
+    "title": "Ambient Game Track 09",
+    "url": "https://raw.githubusercontent.com/jfpx/cc0-media-library/main/music/unspecified/ambient/abstraction-010fad54d780f3cb3ad6e8cc.ogg"
+  },
+  {
+    "id": "abstraction-01554511f570d5ec1ba6338d",
+    "title": "Ambient Game Track 10",
+    "url": "https://raw.githubusercontent.com/jfpx/cc0-media-library/main/music/unspecified/ambient/abstraction-01554511f570d5ec1ba6338d.ogg"
+  },
+  {
+    "id": "abstraction-110c843f2885eabd0a9d814c",
+    "title": "Ambient Game Track 11",
+    "url": "https://raw.githubusercontent.com/jfpx/cc0-media-library/main/music/unspecified/ambient/abstraction-110c843f2885eabd0a9d814c.ogg"
+  }
 ];
 const KEY="maxtroitMusicState";
 let cfg={},queue=[],currentIndex=-1,failed=new Set(),globalPause=false,started=false,firestoreBound=false;
