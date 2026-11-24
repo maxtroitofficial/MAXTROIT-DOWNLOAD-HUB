@@ -296,3 +296,22 @@ button,input,select,textarea{max-width:100%}
 /* Flash editor has one dedicated Save & Apply action; hide unrelated site-wide actions in this mode. */
 body:has(#flash-editor-panel:not([hidden])) #save,body:has(#flash-editor-panel:not([hidden])) #publish{display:none!important}
 #fs-preview-logo,#fs-preview-label{touch-action:none!important}
+
+
+/* Website Preview: use the full available screen like the real site */
+html,body{height:100%;min-height:0;overflow:hidden}
+#admin-app:not([hidden]){height:100dvh;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+#admin-app>.topbar{flex:0 0 auto}
+#admin-app>.preview-area{flex:1 1 auto;width:100%;height:auto!important;min-height:0;overflow:hidden;display:flex;flex-direction:column;padding:6px 8px;gap:6px}
+#admin-app>.preview-area>.preview-heading{flex:0 0 auto;min-height:30px;align-items:center}
+#site-preview:not([hidden]){display:block;flex:1 1 0;width:100%;height:100%;min-height:0;border-radius:8px}
+@media(max-width:650px){
+ #admin-app>.topbar{min-height:48px;padding:5px 7px;gap:4px}
+ #admin-app>.topbar .brand strong{font-size:12px}
+ #admin-app>.topbar .brand span{display:none}
+ #admin-app>.topbar .top-actions{gap:3px}
+ #admin-app>.topbar .top-actions button{font-size:10px;padding:7px 6px}
+ #admin-app>.preview-area{padding:4px;gap:4px}
+ #admin-app>.preview-area>.preview-heading{min-height:28px;font-size:11px}
+ #site-preview:not([hidden]){border-radius:5px}
+}
