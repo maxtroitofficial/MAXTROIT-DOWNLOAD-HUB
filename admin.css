@@ -292,3 +292,7 @@ button,input,select,textarea{max-width:100%}
 #fs-preview-logo,#fs-preview-label{z-index:4;touch-action:none;user-select:none;-webkit-user-select:none}
 #fs-preview-label{min-width:30px;max-width:92%;cursor:grab!important;padding:4px 8px;border:1px dashed transparent;border-radius:6px}
 #fs-preview-label:active,#fs-preview-logo:active{cursor:grabbing!important}
+
+/* Flash editor has one dedicated Save & Apply action; hide unrelated site-wide actions in this mode. */
+body:has(#flash-editor-panel:not([hidden])) #save,body:has(#flash-editor-panel:not([hidden])) #publish{display:none!important}
+#fs-preview-logo,#fs-preview-label{touch-action:none!important}
