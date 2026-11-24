@@ -62,3 +62,23 @@
 .mx-music-player:has(#mx-youtube-frame:not([hidden])){width:min(340px,calc(100vw - 24px));align-items:stretch;gap:8px;padding:10px;border:1px solid #ffffff25;border-radius:16px;background:rgba(9,13,29,.96);box-shadow:0 12px 38px #0009;}
 #mx-youtube-frame[hidden]{display:none}
 .mx-music-player:has(#mx-youtube-frame:not([hidden])) .mx-music-track{max-width:100%;}
+
+/* Rotating disc artwork editor */
+.music-art-editor{display:grid;grid-template-columns:minmax(0,1fr) 130px;gap:12px;align-items:center;margin:16px 0;padding:16px;border:1px solid #e3e7ef;border-radius:14px;background:#f8f9fc}
+.music-art-editor h3{margin:0 0 5px;font-size:16px;color:#26314a}.music-art-editor p{margin:0;color:#68748a;font-size:12px;line-height:1.5}
+.music-art-editor label{display:grid;gap:6px;font-size:12px;font-weight:700;color:#47536a}
+.music-art-editor input,.music-art-editor select{width:100%;min-width:0;min-height:42px;padding:9px;border:1px solid #cfd6e2;border-radius:8px;background:#fff;color:#182033}
+.music-art-preview{grid-column:2;grid-row:1/4;display:grid;place-items:center}
+.music-art-disc{width:112px;height:112px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle,#26314a 0 12%,#ddd 13% 17%,#111827 18% 100%);border:5px solid #d7dce8;box-shadow:0 5px 15px #0003;overflow:hidden;animation:musicArtSpin 4s linear infinite}
+.music-art-disc img{width:100%;height:100%;object-fit:cover;border-radius:50%}.music-art-disc span{color:white;font-weight:900}
+@keyframes musicArtSpin{to{transform:rotate(360deg)}}
+#music-art-save{grid-column:1/-1;justify-self:start;background:#5b45d6;color:#fff}
+#music-art-status{grid-column:1/-1;min-height:16px}
+#mx-music-artwork{display:none;width:100%;height:100%;object-fit:cover;border-radius:50%}
+#mx-music-player.has-art .mx-cassette{display:none}
+#mx-music-player.has-art .mx-music-disc{padding:5px}
+#mx-music-player.has-art #mx-music-artwork{display:block}
+#mx-music-player.has-art .mx-music-disc{animation:mxMusicDiscSpin var(--mx-art-speed,4s) linear infinite}
+#mx-music-player.has-art:not(.is-playing) .mx-music-disc{animation-play-state:paused}
+@keyframes mxMusicDiscSpin{to{transform:rotate(360deg)}}
+@media(max-width:600px){.music-art-editor{grid-template-columns:minmax(0,1fr) 100px}.music-art-disc{width:88px;height:88px}}
