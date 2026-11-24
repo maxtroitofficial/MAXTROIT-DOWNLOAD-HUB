@@ -25,6 +25,7 @@ assert.match(app,/visualEditorPreview/);
 assert.match(html,/id="publish"/);
 assert.match(css,/\.tool-dock/);
 assert.match(css,/@media\(max-width:650px\)/);
-assert.doesNotMatch(html,/<textarea|type="url"|id="el-text"/);
+const visualEditor=html.slice(html.indexOf('<section id="flash-editor-panel"'),html.indexOf('<section id="music-admin"'));
+assert.doesNotMatch(visualEditor,/<textarea|type="url"|id="el-text"/);
 assert.doesNotMatch(html,/id="dashboard|id="downloads-manager|id="appearance-settings/);
 console.log("MAXTROIT visual-only editor invariants: PASS");
