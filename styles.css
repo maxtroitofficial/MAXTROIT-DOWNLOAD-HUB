@@ -1169,3 +1169,6 @@ html[data-hub-animations="on"][data-anim-background="on"] body:not(.admin-body) 
 #site-startup-mark.startup-glow-active>img{position:relative!important;z-index:1!important}
 @keyframes maxtroitStartupPinkHalo{0%,100%{opacity:.62;transform:scale(.82)}50%{opacity:1;transform:scale(1.12)}}
 @media(prefers-reduced-motion:reduce){#site-startup-mark.startup-glow-active:before{animation:none!important;opacity:.8!important}}
+
+/* When Flash Screen is private/off, never paint the startup overlay; keep page content gated until Firebase finishes initialization. */
+html[data-startup-disabled="true"] .site-startup{display:none!important;visibility:hidden!important}
