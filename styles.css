@@ -1171,3 +1171,8 @@ html[data-hub-animations="on"][data-anim-background="on"] body:not(.admin-body) 
 
 /* When Flash Screen is private/off, never paint the startup overlay; keep page content gated until Firebase finishes initialization. */
 html[data-startup-disabled="true"] .site-startup{display:none!important;visibility:hidden!important}
+
+/* Prevent the hard-coded initial-letter placeholder from flashing before the saved logo is hydrated. */
+body[data-brand-logo-pending="true"] #brand-mark,
+body[data-brand-logo-pending="true"] #hero-logo-icon,
+body[data-brand-logo-pending="true"] #hero-art-logo{visibility:hidden}
