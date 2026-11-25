@@ -1217,3 +1217,69 @@ html[data-cached-brand-logo="true"] #hero-art-logo{
 .startup-puzzle-piece{filter:none!important;box-shadow:none!important}
 .startup-puzzle-grid{animation:none!important}
 .startup-puzzle-piece{animation-name:startupPuzzleJoin,startupPuzzleSeamFade}
+
+
+/* Full-page MAXTROIT layouts: preserve every original section and live download feature. */
+:root[data-template="creator"]{--bg:#080d1b;--panel:#111d32;--panel2:#162640;--line:#293d5b;--text:#f5f8ff;--muted:#a8b7ce;--cyan:#ffb347;--violet:#ff6b8a;--green:#72e0b2}
+body[data-template="creator"]{background:radial-gradient(ellipse at 12% 8%,#3b2454 0,transparent 35%),linear-gradient(160deg,#080d1b,#101a31 55%,#17112b);color:#f5f8ff}
+body[data-template="creator"]>.topbar{height:82px;padding-inline:max(5%,calc((100% - 1240px)/2));background:#090e1deF;border-bottom:1px solid #ffb34755}
+body[data-template="creator"] .brand-mark{border-radius:14px;background:linear-gradient(140deg,#ffb347,#ff6b8a);color:#15101b}
+body[data-template="creator"] .brand b,body[data-template="creator"] .footer-brand b{color:#ffb347}
+body[data-template="creator"] .hero{min-height:570px;grid-template-columns:1.15fr .85fr;padding-block:86px 76px}
+body[data-template="creator"] .hero h1{font-size:clamp(48px,7vw,82px);letter-spacing:-3px}
+body[data-template="creator"] .hero h1 span{background:linear-gradient(90deg,#ffca75,#ff6b8a);background-clip:text;color:transparent}
+body[data-template="creator"] .hero-art{min-height:390px;border-radius:34px;border:1px solid #ffb34766;background:radial-gradient(ellipse at 50% 40%,#56345e,#17152d 70%);box-shadow:0 30px 90px #0008}
+body[data-template="creator"] .hero-logo{width:150px;height:150px;border-radius:36px;background:linear-gradient(140deg,#ffb347,#ff6b8a);box-shadow:0 20px 70px #ff6b8a55}
+body[data-template="creator"] .hero-logo-badge{border:1px solid #ffb34766;background:#211b31;border-radius:16px}
+body[data-template="creator"] .trust-row{padding:28px 0;border-color:#ffffff22}
+body[data-template="creator"] .latest-uploads,body[data-template="creator"] .card{border:1px solid #34415b;border-radius:20px;background:linear-gradient(145deg,#17243b,#10192b);box-shadow:0 16px 42px #0003}
+body[data-template="creator"] .latest-uploads{padding:22px;margin-bottom:30px}
+body[data-template="creator"] .card-image{background:linear-gradient(135deg,#4a315e,#243d60)}
+body[data-template="creator"] .card-link,body[data-template="creator"] .tag{border-radius:999px}
+body[data-template="creator"] footer{border-top:1px solid #ffffff22;background:#080d1bd9;padding:40px 5%}
+body[data-template="creator"] .collection{padding-bottom:100px}
+
+:root[data-template="market"]{--bg:#f3f5f9;--panel:#fff;--panel2:#e9eef5;--line:#d9e1ec;--text:#172338;--muted:#65748b;--cyan:#2563eb;--violet:#7c3aed;--green:#16845c}
+body[data-template="market"]{background:#f3f5f9;color:#172338}
+body[data-template="market"]>.topbar{height:76px;padding-inline:max(5%,calc((100% - 1240px)/2));background:#fff;border-bottom:1px solid #d9e1ec;box-shadow:0 5px 22px #1723380a}
+body[data-template="market"] .brand-mark{border-radius:11px;background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff}
+body[data-template="market"] .brand b,body[data-template="market"] .footer-brand b{color:#2563eb}
+body[data-template="market"] .header-link,body[data-template="market"] .text-link{color:#35445e}
+body[data-template="market"] .hero{min-height:430px;padding-block:58px 45px;grid-template-columns:1fr .72fr}
+body[data-template="market"] .hero-copy{padding:34px 0}
+body[data-template="market"] .hero h1{font-size:clamp(40px,5vw,62px);letter-spacing:-2px}
+body[data-template="market"] .hero h1 span{background:linear-gradient(90deg,#2563eb,#7c3aed);background-clip:text;color:transparent}
+body[data-template="market"] .hero-art{min-height:320px;border-radius:24px;background:linear-gradient(145deg,#dbeafe,#ede9fe);border:1px solid #cbd5e1}
+body[data-template="market"] .hero-logo{background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;border-radius:24px;box-shadow:0 16px 40px #5264b344}
+body[data-template="market"] .hero-logo-badge{background:#fff;border:1px solid #dbe3ee;border-radius:12px}
+body[data-template="market"] .trust-row{border-color:#d9e1ec}
+body[data-template="market"] .trust-row div{border-color:#d9e1ec}
+body[data-template="market"] .latest-uploads{padding:22px;background:#fff;border:1px solid #d9e1ec;border-radius:16px;margin-bottom:28px}
+body[data-template="market"] .card{background:#fff;border:1px solid #d9e1ec;border-radius:15px;box-shadow:0 8px 24px #1723380a}
+body[data-template="market"] .card:hover{border-color:#9bb7ef;box-shadow:0 15px 34px #17233818}
+body[data-template="market"] .card-image{background:linear-gradient(135deg,#dbeafe,#ede9fe)}
+body[data-template="market"] .card-link{color:#2456bb;border-color:#d9e1ec}
+body[data-template="market"] .tag{background:#e8efff;color:#2456bb}
+body[data-template="market"] input,body[data-template="market"] select{background:#fff;border-color:#cbd5e1;color:#172338}
+body[data-template="market"] footer{background:#fff;border-top:1px solid #d9e1ec;padding:38px 5%;color:#172338}
+
+:root[data-template="arcade"]{--bg:#080b12;--panel:#111824;--panel2:#182333;--line:#26384d;--text:#f4f8ff;--muted:#9aacc1;--cyan:#00e5ff;--violet:#a855f7;--green:#7df0b5}
+body[data-template="arcade"]{background:#080b12;color:#f4f8ff}
+body[data-template="arcade"]>.topbar{height:72px;padding-inline:max(5%,calc((100% - 1240px)/2));background:#0a101bee;border-bottom:2px solid #00e5ff66}
+body[data-template="arcade"] .brand-mark{border-radius:8px;background:linear-gradient(135deg,#00e5ff,#a855f7);color:#08111b;box-shadow:0 0 24px #00e5ff55}
+body[data-template="arcade"] .brand b,body[data-template="arcade"] .footer-brand b{color:#00e5ff}
+body[data-template="arcade"] .hero{min-height:470px;padding-block:60px;grid-template-columns:1fr .8fr}
+body[data-template="arcade"] .hero h1{font-size:clamp(44px,6vw,72px);text-transform:uppercase;letter-spacing:-2px}
+body[data-template="arcade"] .hero h1 span{background:linear-gradient(90deg,#00e5ff,#a855f7);background-clip:text;color:transparent}
+body[data-template="arcade"] .hero-art{min-height:340px;border:2px solid #00e5ff66;border-radius:12px;background:linear-gradient(145deg,#142a3a,#211637);box-shadow:0 0 55px #00e5ff1c,inset 0 0 40px #a855f722}
+body[data-template="arcade"] .hero-logo{border-radius:12px;background:linear-gradient(135deg,#00e5ff,#a855f7);color:#08111b;box-shadow:0 0 36px #00e5ff66}
+body[data-template="arcade"] .hero-logo-badge{background:#111c2a;border:1px solid #00e5ff66;border-radius:10px}
+body[data-template="arcade"] .trust-row{border-color:#26384d}
+body[data-template="arcade"] .latest-uploads{padding:20px;border:1px solid #26384d;border-left:4px solid #00e5ff;border-radius:10px;background:#101a28;margin-bottom:28px}
+body[data-template="arcade"] .card{border-radius:10px;background:linear-gradient(145deg,#111e2d,#0d1420);border:1px solid #26384d}
+body[data-template="arcade"] .card:hover{border-color:#00e5ff;box-shadow:0 0 28px #00e5ff20}
+body[data-template="arcade"] .card-image{background:linear-gradient(135deg,#153a50,#35214e)}
+body[data-template="arcade"] .tag{background:#102f3d;color:#00e5ff;border-radius:5px}
+body[data-template="arcade"] .card-link{color:#00e5ff;border-color:#26465b}
+body[data-template="arcade"] footer{background:#090f18;border-top:1px solid #26384d;padding:38px 5%}
+@media(max-width:760px){body[data-template="creator"] .hero,body[data-template="market"] .hero,body[data-template="arcade"] .hero{grid-template-columns:1fr;min-height:0;padding-block:35px}body[data-template="creator"] .hero-art,body[data-template="market"] .hero-art,body[data-template="arcade"] .hero-art{min-height:230px}body[data-template="creator"] .hero h1{font-size:46px}}
