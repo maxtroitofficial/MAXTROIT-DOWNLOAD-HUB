@@ -94,7 +94,7 @@ async function showViewDetailsGate(finalUrl,item={}){
  try{if(window.hubCloud?.ready){const snap=await hubCloud.db.collection("siteConfig").doc("unlockLinkSettings").get();const saved=snap.exists?snap.data():null;if(saved&&Array.isArray(saved.tasks)&&saved.tasks.length){config={...config,enabled:saved.enabled!==false,tasks:saved.tasks};if(typeof saved.destinationUrl==="string"&&/^https:\/\//i.test(saved.destinationUrl))config.destinationUrl=saved.destinationUrl}}}catch(e){console.warn("Link Management System settings unavailable:",e)}
  if(item.viewDetailsGate&&typeof item.viewDetailsGate==="object")config={...config,...item.viewDetailsGate};
  const tasks=Array.isArray(config.tasks)?config.tasks.filter(t=>t&&t.enabled!==false&&typeof t.title==="string"&&/^https:\/\//i.test(String(t.url||""))):[];
- const destinationUrl=(()=>{try{const u=new URL(config.destinationUrl||finalUrl);return u.protocol==="https:"?u.href:finalUrl}catch(e){return finalUrl}})();
+ const destinationUrl=(()=>{try{const raw=String(config.destinationUrl||"").trim();if(!raw)return "";const u=new URL(raw);return u.protocol==="https:"?u.href:""}catch(e){return ""}})();
  let started=0,interval=null;
  const showSteps=()=>{
   timer.hidden=true;action.hidden=true;message.textContent="Tap each social button to complete its step.";tasksHost.hidden=false;tasksHost.replaceChildren();count.hidden=false;progress.hidden=false;
@@ -103,11 +103,11 @@ async function showViewDetailsGate(finalUrl,item={}){
    const button=document.createElement("a");button.className="vdu-step";button.href=task.url;button.target="_blank";button.rel="noopener noreferrer";const label=socialButtonLabel(task);const icon=document.createElement("span");icon.className="vdu-icon";icon.innerHTML=actionIcon(task);const text=document.createElement("span");text.textContent=label;button.append(icon,text);
    button.addEventListener("click",()=>{completed.add(index);button.classList.add("is-done");button.setAttribute("aria-label",task.title+" completed");updateProgress()});tasksHost.append(button);
   });
-  function updateProgress(){const done=completed.size,total=tasks.length;count.textContent="Steps Completed "+done+"/"+total;progressFill.style.width=(total?done/total*100:100)+"%";if(done===total){heading.textContent="Your Link is Ready";message.textContent="All steps completed. Your download is unlocked.";link.hidden=false;link.href=destinationUrl;link.textContent="Get Your Link ↗";link.scrollIntoView({behavior:"smooth",block:"nearest"})}}
+  function updateProgress(){const done=completed.size,total=tasks.length;count.textContent="Steps Completed "+done+"/"+total;progressFill.style.width=(total?done/total*100:100)+"%";if(done===total){heading.textContent=destinationUrl?"Your Link is Ready":"Download Link Not Set";if(destinationUrl){message.textContent="All steps completed. Your download is unlocked.";link.hidden=false;link.href=destinationUrl;link.textContent="Get Your Link ↗";link.scrollIntoView({behavior:"smooth",block:"nearest"})}else{message.textContent="All steps completed, but the admin has not set a final download URL. Please contact the site admin.";link.hidden=true;link.removeAttribute("href")}}}
   updateProgress();
-  if(!tasks.length){message.textContent="No social steps are configured.";link.hidden=false;link.href=destinationUrl;link.textContent="Get Your Link ↗"}
+  if(!tasks.length){if(destinationUrl){message.textContent="Your download is ready.";link.hidden=false;link.href=destinationUrl;link.textContent="Get Your Link ↗"}else{heading.textContent="Download Link Not Set";message.textContent="The admin has not set a final download URL yet.";link.hidden=true;link.removeAttribute("href")}}
  };
- const beginSteps=()=>{if(tasks.length)showSteps();else{message.textContent="Your download is ready.";link.hidden=false;link.href=finalUrl;link.textContent="Get Your Link ↗"}};
+ const beginSteps=()=>{if(tasks.length)showSteps();else if(destinationUrl){message.textContent="Your download is ready.";link.hidden=false;link.href=destinationUrl;link.textContent="Get Your Link ↗"}else{heading.textContent="Download Link Not Set";message.textContent="The admin has not set a final download URL yet.";link.hidden=true;link.removeAttribute("href")}};
  if(config.enabled===false){timer.hidden=true;beginSteps()}
  else{
   const seconds=Math.min(600,Math.max(1,Math.round(Number(config.timerMinutes)*60)||60));const key="maxtroit-view-details-start:"+encodeURIComponent(id||"");
