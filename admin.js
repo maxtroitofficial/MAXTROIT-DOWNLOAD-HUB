@@ -144,7 +144,7 @@ DELIVERY AND VALIDATION:
 3. Return the complete updated source file(s), not partial snippets. If one-file template upload is requested, return only the complete HTML document.
 4. Do not claim Firebase integration/deployment has been completed unless it was actually tested and deployed.
 5. If essential source files are missing, stop and ask the user to provide them rather than inventing a replacement.
-;
+`;
  const blob=new Blob([prompt],{type:"text/plain;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="MAXTROIT-AI-Template-Prompt.txt";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
  $("#design-studio-status").textContent="AI prompt download ho gaya. Is TXT ko kisi bhi AI ko bhejo, apna design idea add karo, aur generated HTML yahan upload karo.";
 });
