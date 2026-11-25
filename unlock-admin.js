@@ -47,7 +47,8 @@ function drawPreview(){
  };
  update();
 }
-dest.addEventListener("input",drawPreview);\ngrid.querySelectorAll("[data-action]").forEach(b=>b.onclick=()=>{
+dest.addEventListener("input",drawPreview);
+grid.querySelectorAll("[data-action]").forEach(b=>b.onclick=()=>{
  const key=b.dataset.action;
  if(key==="custom"){customRows.push({title:"",url:""});drawCustom();return}
  const i=Number(key);
