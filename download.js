@@ -31,7 +31,7 @@ async function findItem(){
  if(settings?.enabled!==false&&/^https:\/\//i.test(fallbackUrl))return {id,title:"Your Download",description:"Complete the steps below to access your download link.",category:"Other",url:fallbackUrl,isPublished:true,_virtualUnlockSettings:true};
  return null;
 }
-function actionIcon(task){const platform=String(task?.platform||"").toLowerCase();const icons={"youtube":"youtube","instagram":"instagram","facebook":"facebook","telegram":"telegram","whatsapp":"whatsapp","tiktok":"tiktok","discord":"discord","x-twitter":"x-twitter","snapchat":"snapchat","website":"globe","other":"link"};const brand=icons[platform]||(()=>{const s=String(task?.title||"").toLowerCase();return s.includes("youtube")||s.includes("subscribe")?"youtube":s.includes("instagram")?"instagram":s.includes("facebook")?"facebook":s.includes("telegram")?"telegram":s.includes("whatsapp")?"whatsapp":s.includes("tiktok")?"tiktok":s.includes("discord")?"discord":"x-twitter"})();const solid=brand==="globe"||brand==="link";return '<i class="'+(solid?"fa-solid":"fa-brands")+' fa-'+brand+'" aria-hidden="true"></i>'}
+function actionIcon(task){const platform=String(task?.platform||"").toLowerCase();const icons={"youtube":"youtube","instagram":"instagram","facebook":"facebook","telegram":"telegram","whatsapp":"whatsapp","discord":"discord","x-twitter":"x-twitter","snapchat":"snapchat","website":"globe","other":"link"};const brand=icons[platform]||(()=>{const s=String(task?.title||"").toLowerCase();return s.includes("youtube")||s.includes("subscribe")?"youtube":s.includes("instagram")?"instagram":s.includes("facebook")?"facebook":s.includes("telegram")?"telegram":s.includes("whatsapp")?"whatsapp":s.includes("discord")?"discord":"x-twitter"})();const solid=brand==="globe"||brand==="link";return '<i class="'+(solid?"fa-solid":"fa-brands")+' fa-'+brand+'" aria-hidden="true"></i>'}
 function socialButtonLabel(task){
  const raw=String(task?.url||"").trim(),given=String(task?.title||"").trim();
  if(given&&!/^https?:\/\//i.test(given)){const normal={"Remove instagram like":"Instagram Follow","Remove facebook follow":"Facebook Follow","Remove telegram join":"Telegram Join"};return normal[given]||given;}
@@ -42,7 +42,7 @@ function socialButtonLabel(task){
   if(host.includes("facebook")||host==="fb.watch")return "Open Facebook";
   if(host.includes("t.me")||host.includes("telegram"))return "Join Telegram";
   if(host.includes("whatsapp"))return "Open WhatsApp Channel";
-  if(host.includes("tiktok"))return "Open TikTok";
+  
   if(host.includes("discord"))return "Join Discord";
   if(host==="x.com"||host.includes("twitter"))return "Open X / Twitter";
   return "Open Social Link";
