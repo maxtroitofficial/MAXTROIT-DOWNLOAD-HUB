@@ -46,7 +46,7 @@ $("#undo").onclick=()=>{if(!history.length)return;future.push(JSON.stringify(edi
 let startupEnabled=false,startupConfig={enabled:false,animation:"fade",textAnimation:"fade",speed:.8,duration:1800,displayDuration:8,delay:0,logoSize:210,glowEnabled:true,glowColor:"#70bfff",glowIntensity:65,glowSize:35,shineEnabled:true,shineColor:"#ffffff",shineSpeed:1300,shineBrightness:75,shineWidth:22,background:"#16091f",backgroundMode:"gradient",textColor:"#ffffff",font:"montserrat",fontWeight:"700",fontSize:22,letterSpacing:1,textAlign:"center",textEffect:"shadow",label:"MAXTROIT OFFICIAL",easing:"ease-out",logo:"",glowEnabled:true,glowColor:"#70bfff",glowIntensity:65,glowSize:35,shineEnabled:true,shineColor:"#ffffff",shineSpeed:1300,shineBrightness:75,shineWidth:22,logoX:50,logoY:43,labelX:50,labelY:72};
 function setFlashEditorMode(open){const panel=$("#flash-editor-panel"),frame=$("#site-preview"),tab=$("#flash-editor-tab"),title=$("#preview-mode-title");panel.hidden=!open;frame.hidden=!!open;tab.setAttribute("aria-pressed",String(!!open));title.textContent=open?"Flash Screen Preview":"Website Preview";if(open){renderFlashPreview();replayFlashPreview();requestAnimationFrame(()=>window.scrollTo({top:0,behavior:"instant"}))}}
 $("#flash-editor-tab").addEventListener("click",()=>setFlashEditorMode($("#flash-editor-panel").hidden));
-/* Website Design Studio: built-in themes + sandboxed custom HTML import. */
+/* Website Templates: built-in templates + sandboxed custom HTML import. */
 let customDesignSource="",customDesignFileName="";
 function setDesignStudioMode(open){
  const panel=$("#design-studio"),preview=document.querySelector(".preview-area"),music=$("#music-admin"),dock=document.querySelector(".tool-dock");
@@ -61,15 +61,15 @@ async function loadDesignStudioState(){
  try{const snap=await hubCloud.db.collection("siteConfig").doc("public").get(),data=snap.data()||{},active=data.templateId||"midnight";
  document.querySelectorAll("[data-template]").forEach(b=>b.classList.toggle("active",b.dataset.template===active));
  const custom=Array.isArray(data.uploadedTemplates)?data.uploadedTemplates.find(t=>t.id===data.activeUploadedTemplateId&&t.kind==="html"):null;
- if(custom)$("#design-name").value=custom.name||"My custom design";
- out.textContent=custom?"Active custom design: "+(custom.name||"Untitled"):"Current design: "+active+". Choose another design below.";
- }catch(e){out.textContent="Design settings load nahi hui: "+e.message}
+ if(custom)$("#design-name").value=custom.name||"My custom template";
+ out.textContent=custom?"Active custom template: "+(custom.name||"Untitled"):"Current design: "+active+". Choose another design below.";
+ }catch(e){out.textContent="Template settings load nahi hui: "+e.message}
 }
 async function applyPresetDesign(id){
  const allowed=["midnight","clean","neon","editorial","ocean","sunset","minimal"];if(!allowed.includes(id))return;
- const out=$("#design-studio-status"),buttons=[...document.querySelectorAll("[data-template]")];buttons.forEach(b=>b.disabled=true);out.textContent="Design apply ho raha hai…";
- try{const ref=hubCloud.db.collection("siteConfig").doc("public");await ref.set({templateId:id,activeUploadedTemplateId:null},{merge:true});const verify=await ref.get();if(verify.data()?.templateId!==id)throw Error("Design save verify nahi hua");
- buttons.forEach(b=>b.classList.toggle("active",b.dataset.template===id));out.textContent=id+" design save aur apply ho gaya. Public website update ho rahi hai.";frame.contentWindow?.location?.reload();
+ const out=$("#design-studio-status"),buttons=[...document.querySelectorAll("[data-template]")];buttons.forEach(b=>b.disabled=true);out.textContent="Template apply ho raha hai…";
+ try{const ref=hubCloud.db.collection("siteConfig").doc("public");await ref.set({templateId:id,activeUploadedTemplateId:null},{merge:true});const verify=await ref.get();if(verify.data()?.templateId!==id)throw Error("Template save verify nahi hua");
+ buttons.forEach(b=>b.classList.toggle("active",b.dataset.template===id));out.textContent=id+" template save aur apply ho gaya. Public website update ho rahi hai.";frame.contentWindow?.location?.reload();
  }catch(e){out.textContent="Apply failed: "+e.message}finally{buttons.forEach(b=>b.disabled=false)}
 }
 $("#design-studio-tab").addEventListener("click",()=>setDesignStudioMode($("#design-studio").hidden));
@@ -84,17 +84,17 @@ $("#design-html-file").addEventListener("change",async e=>{
  const out=$("#design-studio-status");out.textContent="File ready: "+file.name+" ("+Math.ceil(file.size/1024)+" KB). Preview kar sakte ho.";
  }catch(err){customDesignSource="";$("#design-preview-custom").disabled=true;$("#design-apply-custom").disabled=true;$("#design-studio-status").textContent="File read nahi hui: "+err.message}
 });
-$("#design-preview-custom").addEventListener("click",()=>{if(!customDesignSource)return;const preview=$("#design-custom-preview");preview.hidden=false;preview.srcdoc=customDesignSource;$("#design-studio-status").textContent="Custom design preview ready. Check karke Save & Apply karo."});
+$("#design-preview-custom").addEventListener("click",()=>{if(!customDesignSource)return;const preview=$("#design-custom-preview");preview.hidden=false;preview.srcdoc=customDesignSource;$("#design-studio-status").textContent="Custom template preview ready. Check karke Save & Apply karo."});
 $("#design-apply-custom").addEventListener("click",async()=>{
  if(!customDesignSource||!authOk(hubCloud.auth.currentUser)){ $("#design-studio-status").textContent="Admin login required ya HTML file missing hai.";return}
- const button=$("#design-apply-custom"),out=$("#design-studio-status");button.disabled=true;out.textContent="Custom design save ho rahi hai…";
- try{const ref=hubCloud.db.collection("siteConfig").doc("public"),snap=await ref.get(),data=snap.data()||{},id="custom-"+Date.now(),name=String($("#design-name").value||customDesignFileName||"My custom design").trim().slice(0,60);
+ const button=$("#design-apply-custom"),out=$("#design-studio-status");button.disabled=true;out.textContent="Custom template save ho rahi hai…";
+ try{const ref=hubCloud.db.collection("siteConfig").doc("public"),snap=await ref.get(),data=snap.data()||{},id="custom-"+Date.now(),name=String($("#design-name").value||customDesignFileName||"My custom template").trim().slice(0,60);
  const templates=Array.isArray(data.uploadedTemplates)?data.uploadedTemplates.filter(t=>t&&t.id!==id):[];templates.push({id,name,kind:"html",html:customDesignSource,updatedAt:Date.now()});if(templates.length>3)templates.shift();
  await ref.set({templateId:"uploaded",uploadedTemplates:templates,activeUploadedTemplateId:id},{merge:true});
  const check=await ref.get(),saved=check.data()||{},picked=(saved.uploadedTemplates||[]).find(t=>t.id===id&&t.kind==="html");
- if(saved.templateId!=="uploaded"||saved.activeUploadedTemplateId!==id||picked?.html!==customDesignSource)throw Error("Custom design save verify nahi hua");
- out.textContent="Custom design save aur apply ho gayi. Public website update ho rahi hai.";frame.contentWindow?.location?.reload();
- }catch(e){out.textContent="Custom design save failed: "+e.message}finally{button.disabled=false}
+ if(saved.templateId!=="uploaded"||saved.activeUploadedTemplateId!==id||picked?.html!==customDesignSource)throw Error("Custom template save verify nahi hua");
+ out.textContent="Custom template save aur apply ho gayi. Public website update ho rahi hai.";frame.contentWindow?.location?.reload();
+ }catch(e){out.textContent="Custom template save failed: "+e.message}finally{button.disabled=false}
 });
 
 function readFlashEditor(){return {...startupConfig,animation:$("#fs-animation").value,textAnimation:$("#fs-text-animation").value,speed:Number($("#fs-speed").value),logoX:Number(startupConfig.logoX??50),logoY:Number(startupConfig.logoY??43),labelX:Number(startupConfig.labelX??50),labelY:Number(startupConfig.labelY??72),duration:Math.max(500,Math.min(12000,Number($("#fs-duration").value)||2200)),displayDuration:Math.max(3,Math.min(30,Number($("#fs-display-duration").value)||8)),delay:Math.max(0,Math.min(5000,Number($("#fs-delay").value)||0)),logoSize:Number($("#fs-size").value),glowEnabled:$("#fs-glow-enabled").value==="true",glowColor:$("#fs-glow-color").value,glowIntensity:Number($("#fs-glow-intensity").value),glowSize:Number($("#fs-glow-size").value),shineEnabled:$("#fs-shine-enabled").value==="true",shineColor:$("#fs-shine-color").value,shineSpeed:Number($("#fs-shine-speed").value),shineBrightness:Number($("#fs-shine-brightness").value),shineWidth:Number($("#fs-shine-width").value),background:$("#fs-background").value,backgroundMode:$("#fs-background-mode").value,textColor:$("#fs-text-color").value,font:$("#fs-font").value,fontWeight:$("#fs-font-weight").value,fontSize:Number($("#fs-font-size").value),letterSpacing:Number($("#fs-letter-spacing").value),textAlign:$("#fs-text-align").value,textEffect:$("#fs-text-effect").value,label:$("#fs-label").value.trim()||"MAXTROIT OFFICIAL",easing:$("#fs-easing").value}}
