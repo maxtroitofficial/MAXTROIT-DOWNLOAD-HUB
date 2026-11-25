@@ -24,7 +24,8 @@ function drawCustom(){
 }
 let previewCompleted=new Set();
 function drawPreview(){
- const list=tasks(),box=preview.querySelector(".ulp-buttons"),get=preview.querySelector(".ulp-get");
+ const list=tasks(),box=preview.querySelector(".ulp-buttons"),get=preview.querySelector(".ulp-get"),heading=preview.querySelector(".ulp-heading");
+ if(heading)heading.textContent="Complete Steps to Unlock";
  previewCompleted=new Set();
  box.innerHTML=list.map((t,i)=>'<button class="ulp-social other" type="button" data-preview-step="'+i+'"><span class="ulp-icon">'+actionIcon(t.title)+'</span><span>'+esc(t.title)+'</span><span class="ulp-arrow">›</span></button>').join("");
  const update=()=>{
@@ -34,6 +35,7 @@ function drawPreview(){
   let validDestination=false;
   try{const u=new URL(dest.value.trim());validDestination=u.protocol==="https:"}catch(e){}
   get.disabled=!total||done!==total||!validDestination;
+  if(heading)heading.textContent=total&&done===total?"Your Link is Ready":"Complete Steps to Unlock";
  };
  box.querySelectorAll("[data-preview-step]").forEach(button=>button.addEventListener("click",()=>{
   const i=Number(button.dataset.previewStep);
