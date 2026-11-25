@@ -113,7 +113,7 @@ async function showViewDetailsGate(finalUrl,item={}){
   updateProgress();
  };
  let started=0,interval=null;
- const beginSteps=()=>{timer.hidden=true;action.hidden=true;if(tasks.length)showSteps();else if(destinationUrl){message.textContent="";link.hidden=false;link.href=destinationUrl;link.textContent="Get Your Link ↗"}else{heading.textContent="Download Link Not Set";message.textContent="The admin has not set a final download URL yet.";link.hidden=true;link.removeAttribute("href")}};
+ const beginSteps=()=>{timer.hidden=true;action.hidden=true;if(tasks.length)showSteps();else if(destinationUrl){heading.textContent="Your Link is Ready";message.textContent="";link.hidden=false;link.href=destinationUrl;link.textContent="Get Your Link ↗"}else{heading.textContent="Download Link Not Set";message.textContent="The admin has not set a final download URL yet.";link.hidden=true;link.removeAttribute("href")}};
  const timer1Enabled=config.enabled!==false,timer2Enabled=config.timer2Enabled===true;
  const getSeconds=value=>Math.min(600,Math.max(1,Math.round(Number(value)*60)||60));
  let nextStage=null;
