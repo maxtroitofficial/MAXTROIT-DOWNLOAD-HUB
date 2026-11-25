@@ -1,76 +1,59 @@
 (()=>{
 const $=s=>document.querySelector(s),cloud=window.hubCloud||{},uid=window.ADMIN_UID;
-const enabled=$("#unlock-enabled"),timer=$("#unlock-timer"),title=$("#unlock-step-title"),url=$("#unlock-step-url"),preset=$("#unlock-step-preset"),list=$("#unlock-step-list"),status=$("#unlock-status"),add=$("#unlock-step-add"),save=$("#unlock-save"),preview=$("#unlock-live-preview");
-if(!enabled||!timer||!title||!url||!preset||!list||!status||!add||!save||!preview)return;
-let tasks=[];
+const grid=$("#ulg-action-grid"),fields=$("#ulg-url-fields"),custom=$("#ulg-custom-rows"),dest=$("#ulg-destination"),generate=$("#ulg-generate"),status=$("#ulg-status"),result=$("#ulg-result"),preview=$("#unlock-live-preview");
+if(!grid||!fields||!custom||!dest||!generate||!status||!result||!preview)return;
+const names=["Subscribe & Turn on Bell","Add Youtube Channel","Youtube Like","Instagram Followers","Remove instagram like","Remove facebook follow","Remove telegram join","YouTube Video Like & Comment","WhatsApp Channel Join","TikTok Follow","TikTok Like Video","Join Discord","Like Facebook Post","Follow on Twitter"];
+const defaults=["https://www.youtube.com/","https://www.youtube.com/","https://www.youtube.com/","https://www.instagram.com/","https://www.instagram.com/","https://www.facebook.com/","https://t.me/","https://www.youtube.com/","https://whatsapp.com/channel/","https://www.tiktok.com/","https://www.tiktok.com/","https://discord.com/","https://www.facebook.com/","https://x.com/"];
+const selected=new Map();let customRows=[];
 const authorised=()=>!!cloud.auth?.currentUser&&!!uid&&cloud.auth.currentUser.uid===uid;
 const say=t=>status.textContent=t;
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-function platform(t){
- const s=(String(t.title||"")+" "+String(t.url||"")).toLowerCase();
- if(/youtube|youtu\.be/.test(s))return ["▶","yt"];
- if(/instagram/.test(s))return ["◎","ig"];
- if(/facebook|fb\.watch/.test(s))return ["f","fb"];
- if(/telegram|t\.me/.test(s))return ["➤","tg"];
- if(/whatsapp/.test(s))return ["◉","tg"];
- if(/tiktok/.test(s))return ["♪","other"];
- if(/discord/.test(s))return ["◉","other"];
- if(/twitter|x\.com/.test(s))return ["𝕏","other"];
- return ["↗","other"];
+function tasks(){return [...selected.entries()].map(([i,url])=>({title:names[i],url})).concat(customRows.map(x=>({title:x.title,url:x.url})).filter(x=>x.title&&x.url))}
+function drawFields(){
+ fields.innerHTML=[...selected.entries()].map(([i,url])=>'<div class="ulg-url-row"><b>'+esc(names[i])+'</b><label><input type="url" data-url="'+i+'" value="'+esc(url)+'" placeholder="Paste HTTPS URL"></label><button type="button" class="ulg-remove" data-remove="'+i+'">−</button></div>').join("")||"<p>Select actions above to add their URL fields.</p>";
+ fields.querySelectorAll("[data-url]").forEach(el=>el.oninput=()=>{selected.set(Number(el.dataset.url),el.value);drawPreview()});
+ fields.querySelectorAll("[data-remove]").forEach(el=>el.onclick=()=>{selected.delete(Number(el.dataset.remove));const b=grid.querySelector('[data-action="'+el.dataset.remove+'"]');b?.setAttribute("aria-pressed","false");drawFields();drawPreview()});
 }
-function buttonName(t){
- const name=String(t.title||"").trim();
- if(name&&!/^https?:\/\//i.test(name))return name;
- const [icon,kind]=platform(t);
- return ({yt:"YouTube",ig:"Instagram",fb:"Facebook",tg:"Telegram",other:"Social Link"})[kind];
+function drawCustom(){
+ custom.innerHTML=customRows.map((x,i)=>'<div class="ulg-custom-row"><label>Link Name<input data-name="'+i+'" value="'+esc(x.title)+'" placeholder="Link Name"></label><label>Link URL<input data-custom-url="'+i+'" type="url" value="'+esc(x.url)+'" placeholder="Link URL"></label><button class="ulg-remove" type="button" data-custom-remove="'+i+'">✕</button></div>').join("");
+ custom.querySelectorAll("[data-name]").forEach(e=>e.oninput=()=>{customRows[Number(e.dataset.name)].title=e.value;drawPreview()});
+ custom.querySelectorAll("[data-custom-url]").forEach(e=>e.oninput=()=>{customRows[Number(e.dataset.customUrl)].url=e.value;drawPreview()});
+ custom.querySelectorAll("[data-custom-remove]").forEach(e=>e.onclick=()=>{customRows.splice(Number(e.dataset.customRemove),1);drawCustom();drawPreview()});
 }
-function renderPreview(){
- const active=tasks.filter(t=>t.enabled!==false&&String(t.url||"").trim());
- const box=preview.querySelector(".ulp-buttons");
- box.innerHTML=active.map(t=>{const [icon,kind]=platform(t);return '<button class="ulp-social '+kind+'" type="button"><span class="ulp-icon">'+icon+'</span><span>'+esc(buttonName(t))+'</span><span class="ulp-arrow">›</span></button>'}).join("");
- preview.querySelector(".ulp-count").textContent="Steps Completed 0/"+active.length;
+function drawPreview(){
+ const list=tasks(),box=preview.querySelector(".ulp-buttons");
+ box.innerHTML=list.map((t,i)=>'<button class="ulp-social other" type="button"><span class="ulp-icon">↗</span><span>'+esc(t.title)+'</span><span class="ulp-arrow">›</span></button>').join("");
+ preview.querySelector(".ulp-count").textContent="Steps Completed 0/"+list.length;
  preview.querySelector(".ulp-track span").style.width="0%";
- preview.querySelector(".ulp-get").disabled=active.length>0;
+ preview.querySelector(".ulp-get").disabled=list.length>0;
 }
-function render(){
- list.innerHTML=tasks.map((t,i)=>'<div class="unlock-step-row" data-index="'+i+'"><input type="text" data-title value="'+esc(t.title)+'" maxlength="100" aria-label="Button name"><input data-url type="url" value="'+esc(t.url)+'" aria-label="Social media URL" placeholder="https://..."><label><input data-enabled type="checkbox" '+(t.enabled===false?'':'checked')+'> Enabled</label><button data-remove type="button">Remove</button></div>').join("")||"<p>No social links added yet.</p>";
- list.querySelectorAll(".unlock-step-row").forEach(row=>{
-  const i=Number(row.dataset.index);
-  row.querySelector("[data-title]").oninput=e=>{tasks[i].title=e.target.value;renderPreview()};
-  row.querySelector("[data-url]").oninput=e=>{tasks[i].url=e.target.value;renderPreview()};
-  row.querySelector("[data-enabled]").onchange=e=>{tasks[i].enabled=e.target.checked;renderPreview()};
-  row.querySelector("[data-remove]").onclick=()=>{tasks.splice(i,1);render();};
- });
- renderPreview();
-}
-preset.addEventListener("change",()=>{if(preset.value&&preset.value!=="Custom Link")title.value=preset.value;else if(preset.value==="Custom Link")title.value="";title.focus()});
-enabled.addEventListener("change",renderPreview);
-async function load(){
- try{
-  const snap=await cloud.db.collection("siteConfig").doc("public").get(),cfg=snap.data()?.viewDetailsGate||{};
-  enabled.checked=cfg.enabled!==false;timer.value=Number.isFinite(Number(cfg.timerMinutes))?cfg.timerMinutes:1;
-  tasks=Array.isArray(cfg.tasks)?cfg.tasks.map(t=>({title:String(t.title||""),url:String(t.url||""),enabled:t.enabled!==false})):[];render();say("Saved social links load ho gaye.");
- }catch(e){say("Load failed: "+e.message)}
-}
-add.onclick=()=>{
- const name=title.value.trim(),raw=url.value.trim();
- try{const parsed=new URL(raw);if(!name||parsed.protocol!=="https:")throw Error();tasks.push({title:name,url:parsed.href,enabled:true});title.value="";url.value="";preset.value="";render();say("Social link add ho gaya. Save Unlock Settings dabayein.");}
- catch(e){say("Button name aur valid HTTPS URL bharein.")}
-};
-save.onclick=async()=>{
+grid.querySelectorAll("[data-action]").forEach(b=>b.onclick=()=>{
+ const key=b.dataset.action;
+ if(key==="custom"){customRows.push({title:"",url:""});drawCustom();return}
+ const i=Number(key);
+ if(selected.has(i))selected.delete(i);else selected.set(i,defaults[i]);
+ b.setAttribute("aria-pressed",String(selected.has(i)));drawFields();drawPreview();
+});
+generate.onclick=async()=>{
  if(!authorised())return say("Admin login required.");
- const minutes=Math.max(0,Math.min(10,Math.round(Number(timer.value)||0)));
- const clean=tasks.map(t=>({title:String(t.title||"").trim().slice(0,100),url:String(t.url||"").trim(),enabled:t.enabled!==false}));
- if(clean.some(t=>!t.title||!/^https:\/\//i.test(t.url)))return say("Har social link ke liye button name aur HTTPS URL zaroori hai.");
- save.disabled=true;say("Unlock settings save ho rahi hain…");
+ const destination=dest.value.trim();let parsed;
+ try{parsed=new URL(destination);if(parsed.protocol!=="https:")throw Error()}catch(e){return say("Valid HTTPS Destination URL enter karein.")}
+ const list=tasks();
+ if(list.some(t=>!t.title.trim()||!/^https:\/\//i.test(t.url)))return say("Har selected action ke liye valid HTTPS URL bharein.");
+ if(!list.length)return say("Kam se kam ek social action select karein.");
+ generate.disabled=true;result.hidden=true;say("Unique download link generate ho raha hai…");
  try{
-  const ref=cloud.db.collection("siteConfig").doc("public"),value={enabled:enabled.checked,timerMinutes:minutes,tasks:clean};
-  await ref.set({viewDetailsGate:value},{merge:true});
-  const check=await ref.get(),saved=check.data()?.viewDetailsGate;
-  if(!saved||saved.enabled!==value.enabled||Number(saved.timerMinutes)!==minutes||JSON.stringify(saved.tasks)!==JSON.stringify(clean))throw Error("Save verify nahi hua.");
-  say("Social links save aur verify ho gaye.");
- }catch(e){say("Save failed: "+e.message)}finally{save.disabled=false}
+  const id="dl-"+Date.now()+"-"+Math.random().toString(36).slice(2,9);
+  const data={title:"Generated Download Link",description:"Complete the social steps to unlock this destination.",category:"Generated Links",url:parsed.href,thumbnail:"",previewVideo:"",youtubeUrl:"",isPublished:true,created:Date.now(),updated:Date.now(),viewDetailsGate:{enabled:false,timerMinutes:0,tasks:list.map(t=>({title:t.title.trim(),url:new URL(t.url).href,enabled:true}))}};
+  await cloud.db.collection("downloads").doc(id).set(data);
+  const check=await cloud.db.collection("downloads").doc(id).get();
+  if(!check.exists||check.data()?.viewDetailsGate?.tasks?.length!==list.length)throw Error("Generated record verification failed.");
+  const link=location.origin+"/download.html?id="+encodeURIComponent(id);
+  result.hidden=false;result.className="ulg-result-link";result.innerHTML='<b>Generated link ready</b><p><a href="'+esc(link)+'" target="_blank" rel="noopener">'+esc(link)+'</a></p><button type="button" id="ulg-copy">Copy Link</button>';
+  $("#ulg-copy").onclick=async()=>{try{await navigator.clipboard.writeText(link);say("Link copied.")}catch(e){say("Copy unavailable; link ko select karke copy karein.")}};
+  say("Link generate aur database mein verify ho gaya.");
+ }catch(e){say("Generate failed: "+e.message)}finally{generate.disabled=false}
 };
-renderPreview();
-if(cloud.ready&&cloud.auth)cloud.auth.onAuthStateChanged(u=>{if(u&&authorised())load();else say("Admin login required.")});
+drawFields();drawCustom();drawPreview();
+if(cloud.auth)cloud.auth.onAuthStateChanged(u=>say(u&&authorised()?"Ready — actions select karke link generate karein.":"Admin login required."));
 })();
