@@ -57,6 +57,18 @@ grid.querySelectorAll("[data-action]").forEach(b=>b.onclick=()=>{
  if(selected.has(i))selected.delete(i);else selected.set(i,defaults[i]);
  b.setAttribute("aria-pressed",String(selected.has(i)));drawFields();drawPreview();
 });
+
+const savedList=document.createElement("div");savedList.id="ulg-saved-list";savedList.className="ulg-saved-list";savedList.innerHTML="<h4>Saved Links</h4><p>Loading saved links…</p>";result.hidden=false;result.replaceWith(savedList);
+async function renderSaved(){
+ try{
+  const snap=await cloud.db.collection("siteConfig").doc("unlockLinkSettings").get();
+  const data=snap.exists?snap.data():null,rows=Array.isArray(data?.tasks)?data.tasks:[];
+  savedList.innerHTML="<h4>Saved Links</h4>"+(rows.map((t,i)=>'<div class="ulg-saved-row"><span><b>'+esc(t.title)+'</b><small>'+esc(t.url)+'</small></span><button type="button" data-edit-saved="'+i+'">Edit</button><button type="button" data-remove-saved="'+i+'">Remove</button></div>').join("")||"<p>No saved social links.</p>")+(data?.destinationUrl?'<p class="ulg-saved-destination"><b>Destination:</b> '+esc(data.destinationUrl)+' <button type="button" id="ulg-edit-destination">Edit</button></p>':"");
+  savedList.querySelectorAll("[data-edit-saved]").forEach(b=>b.onclick=()=>{const t=rows[Number(b.dataset.editSaved)];selected.clear();customRows=[];grid.querySelectorAll("[data-action]").forEach(x=>x.setAttribute("aria-pressed","false"));const ix=names.indexOf(t.title);if(ix>=0){selected.set(ix,t.url);grid.querySelector('[data-action="'+ix+'"]')?.setAttribute("aria-pressed","true")}else customRows.push({title:t.title,url:t.url});drawFields();drawCustom();dest.value=data.destinationUrl||"";drawPreview();say("Link edit karein, phir Save Settings dabayein.");});
+  savedList.querySelectorAll("[data-remove-saved]").forEach(b=>b.onclick=async()=>{if(!authorised()||!confirm("Is saved action link ko remove karein?"))return;try{const next=rows.filter((_,i)=>i!==Number(b.dataset.removeSaved));await cloud.db.collection("siteConfig").doc("unlockLinkSettings").set({...data,tasks:next,updated:Date.now()});await renderSaved();say("Saved link removed.")}catch(e){say("Remove failed: "+e.message)}});
+  savedList.querySelector("#ulg-edit-destination")?.addEventListener("click",()=>{dest.value=data.destinationUrl||"";dest.focus();say("Destination URL edit karein, phir Save Settings dabayein.")});
+ }catch(e){savedList.innerHTML="<h4>Saved Links</h4><p>Could not load saved links: "+esc(e.message)+"</p>"}
+}
 generate.textContent="Save Settings";
 generate.onclick=async()=>{
  if(!authorised())return say("Admin login required.");
@@ -71,9 +83,9 @@ generate.onclick=async()=>{
   await cloud.db.collection("siteConfig").doc("unlockLinkSettings").set(settings);
   const check=await cloud.db.collection("siteConfig").doc("unlockLinkSettings").get();
   if(!check.exists||check.data()?.destinationUrl!==parsed.href||check.data()?.tasks?.length!==list.length)throw Error("Settings verification failed.");
-  say("Settings Firebase mein save aur verify ho gayi. Koi naya download record ya ID create nahi hui.");
+  say("Settings Firebase mein save aur verify ho gayi. Koi naya download record ya ID create nahi hui.");await renderSaved();
  }catch(e){say("Save failed: "+e.message)}finally{generate.disabled=false}
 };
-drawFields();drawCustom();drawPreview();
+drawFields();drawCustom();drawPreview();if(cloud.auth)cloud.auth.onAuthStateChanged(u=>{if(u&&authorised())renderSaved()});
 if(cloud.auth)cloud.auth.onAuthStateChanged(u=>say(u&&authorised()?"Ready — settings configure karke save karein.":"Admin login required."));
 })();
