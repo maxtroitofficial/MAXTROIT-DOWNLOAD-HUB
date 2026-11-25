@@ -507,3 +507,46 @@ body.downloads-workspace #admin-app>.preview-area>.preview-heading,body.download
 
 /* Official brand marks in the per-link generator */
 .ulg-action .ulg-action-icon{display:inline-flex;align-items:center;gap:5px;min-width:34px;color:#334155;font-size:17px;line-height:1}.ulg-action .ulg-action-icon i{display:inline-block;font-size:17px;color:inherit}.ulg-action .ulg-action-icon b{font-size:14px;color:#16a34a;font-weight:900}.ulg-action[aria-pressed=true] .ulg-action-icon{color:#15803d}
+
+
+/* Edit Links dialog: keep every social URL field centered and fully visible. */
+.download-links-dialog{
+  width:min(920px,calc(100vw - 28px))!important;
+  max-width:920px!important;
+  margin:auto!important;
+  padding:clamp(14px,3vw,24px)!important;
+  box-sizing:border-box!important;
+  overflow-x:hidden!important;
+}
+.download-links-dialog::backdrop{background:rgba(8,12,24,.68)}
+.download-links-dialog #download-links-form{width:100%;min-width:0;margin:0 auto}
+.download-links-dialog #links-task-list{width:100%;min-width:0}
+.download-links-dialog .download-link-task{
+  width:100%!important;
+  min-width:0!important;
+  grid-template-columns:minmax(145px,.85fr) minmax(155px,.95fr) minmax(0,1.7fr) 38px!important;
+  align-items:center!important;
+}
+.download-links-dialog .download-link-task>div,
+.download-links-dialog .download-link-task select,
+.download-links-dialog .download-link-task input{width:100%;min-width:0;max-width:100%;box-sizing:border-box}
+.download-links-dialog .download-link-task input.links-task-url{
+  display:block;
+  text-align:left;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.download-links-dialog #links-destination{width:100%;max-width:100%;box-sizing:border-box}
+@media(max-width:620px){
+  .download-links-dialog{width:calc(100vw - 16px)!important;max-height:92dvh!important;padding:14px!important}
+  .download-links-dialog .download-link-task{
+    grid-template-columns:minmax(0,1fr) 38px!important;
+    gap:9px!important;
+    padding:11px!important;
+  }
+  .download-links-dialog .download-link-task>div{grid-column:1;grid-row:1}
+  .download-links-dialog .download-link-task .links-task-title{grid-column:1;grid-row:2}
+  .download-links-dialog .download-link-task .links-task-url{grid-column:1;grid-row:3;min-height:44px}
+  .download-links-dialog .download-link-task .links-remove-task{grid-column:2;grid-row:1;min-height:40px}
+  .download-links-dialog #links-minutes,.download-links-dialog #links-seconds{font-size:16px}
+}
