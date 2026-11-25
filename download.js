@@ -78,7 +78,6 @@ async function showViewDetailsGate(finalUrl,item={}){
  document.head.appendChild(style);
  const shield=document.createElement("div");shield.className="vdu-shield";shield.textContent="✓";shield.setAttribute("aria-hidden","true");
  const heading=document.createElement("h2");heading.textContent="Complete Steps to Unlock";
- const intro=document.createElement("p");intro.textContent="Complete the steps below to unlock your download link.";
  const timer=document.createElement("div");timer.className="vdg-timer";timer.setAttribute("aria-live","polite");
  const message=document.createElement("p");message.setAttribute("role","status");
  const action=document.createElement("button");action.type="button";action.className="vdg-main-button";action.hidden=true;
@@ -86,8 +85,7 @@ async function showViewDetailsGate(finalUrl,item={}){
  const count=document.createElement("p");count.className="vdu-count";count.textContent="Steps Completed 0/0";count.hidden=true;
  const progress=document.createElement("div");progress.className="vdu-progress";progress.hidden=true;
  const progressFill=document.createElement("span");progress.append(progressFill);
- const note=document.createElement("p");note.className="vdg-note";note.textContent="Social actions are confirmed by your own click. This website cannot automatically verify follows, subscriptions, likes, or comments.";
- host.append(shield,heading,intro,timer,message,action,tasksHost,count,progress,note);link.parentNode.insertBefore(host,link);
+ host.append(shield,heading,timer,message,action,tasksHost,count,progress);link.parentNode.insertBefore(host,link);
  let config={enabled:true,timerMinutes:1,tasks:[]};
  try{if(window.hubCloud?.ready){const snap=await hubCloud.db.collection("siteConfig").doc("public").get();const saved=snap.exists?snap.data()?.viewDetailsGate:null;if(saved&&typeof saved==="object")config={...config,...saved}}}catch(e){console.warn("View Details unlock settings unavailable:",e)}
  // Link Management System actions are the site-wide default. Per-download gate settings remain higher priority.
