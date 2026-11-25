@@ -95,6 +95,25 @@ async function showViewDetailsGate(finalUrl,item={}){
  if(item.viewDetailsGate&&typeof item.viewDetailsGate==="object")config={...config,...item.viewDetailsGate};
  const tasks=Array.isArray(config.tasks)?config.tasks.filter(t=>t&&t.enabled!==false&&typeof t.title==="string"&&/^https:\/\//i.test(String(t.url||""))):[];
  const destinationUrl=(()=>{try{const raw=String(config.destinationUrl||"").trim();if(!raw)return "";const u=new URL(raw);return u.protocol==="https:"?u.href:""}catch(e){return ""}})();
+ const showSteps=()=>{
+  timer.hidden=true;action.hidden=true;message.textContent="Tap each social button to complete its step.";tasksHost.hidden=false;tasksHost.replaceChildren();count.hidden=false;progress.hidden=false;
+  const completed=new Set();
+  tasks.forEach((task,index)=>{
+   const button=document.createElement("a");button.className="vdu-step";button.href=task.url;button.target="_blank";button.rel="noopener noreferrer";
+   const label=socialButtonLabel(task);const icon=document.createElement("span");icon.className="vdu-icon";icon.innerHTML=actionIcon(task);const text=document.createElement("span");text.textContent=label;button.append(icon,text);
+   button.addEventListener("click",()=>{completed.add(index);button.classList.add("is-done");button.setAttribute("aria-label",label+" completed");updateProgress()});
+   tasksHost.append(button);
+  });
+  function updateProgress(){
+   const done=completed.size,total=tasks.length;count.textContent="Steps Completed "+done+"/"+total;progressFill.style.width=(total?done/total*100:100)+"%";
+   if(done===total){
+    heading.textContent=destinationUrl?"Your Link is Ready":"Download Link Not Set";
+    if(destinationUrl){message.textContent="All steps completed. Your download is unlocked.";link.hidden=false;link.href=destinationUrl;link.textContent="Get Your Link ↗";link.scrollIntoView({behavior:"smooth",block:"nearest"})}
+    else{message.textContent="All steps completed, but the admin has not set a final download URL. Please contact the site admin.";link.hidden=true;link.removeAttribute("href")}
+   }
+  }
+  updateProgress();
+ };
  let started=0,interval=null;
  const beginSteps=()=>{timer.hidden=true;action.hidden=true;if(tasks.length)showSteps();else if(destinationUrl){message.textContent="Your download is ready.";link.hidden=false;link.href=destinationUrl;link.textContent="Get Your Link ↗"}else{heading.textContent="Download Link Not Set";message.textContent="The admin has not set a final download URL yet.";link.hidden=true;link.removeAttribute("href")}};
  const timer1Enabled=config.enabled!==false,timer2Enabled=config.timer2Enabled===true;
