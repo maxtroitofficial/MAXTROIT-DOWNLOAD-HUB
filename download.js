@@ -96,7 +96,7 @@ async function showViewDetailsGate(finalUrl,item={}){
  const tasks=Array.isArray(config.tasks)?config.tasks.filter(t=>t&&t.enabled!==false&&typeof t.title==="string"&&/^https:\/\//i.test(String(t.url||""))):[];
  const destinationUrl=(()=>{try{const raw=String(config.destinationUrl||"").trim();if(!raw)return "";const u=new URL(raw);return u.protocol==="https:"?u.href:""}catch(e){return ""}})();
  let started=0,interval=null;
- const beginSteps=()=>{if(tasks.length)showSteps();else if(destinationUrl){message.textContent="Your download is ready.";link.hidden=false;link.href=destinationUrl;link.textContent="Get Your Link ↗"}else{heading.textContent="Download Link Not Set";message.textContent="The admin has not set a final download URL yet.";link.hidden=true;link.removeAttribute("href")}};
+ const beginSteps=()=>{timer.hidden=true;action.hidden=true;if(tasks.length)showSteps();else if(destinationUrl){message.textContent="Your download is ready.";link.hidden=false;link.href=destinationUrl;link.textContent="Get Your Link ↗"}else{heading.textContent="Download Link Not Set";message.textContent="The admin has not set a final download URL yet.";link.hidden=true;link.removeAttribute("href")}};
  const timer1Enabled=config.enabled!==false,timer2Enabled=config.timer2Enabled===true;
  const getSeconds=value=>Math.min(600,Math.max(1,Math.round(Number(value)*60)||60));
  let nextStage=null;
