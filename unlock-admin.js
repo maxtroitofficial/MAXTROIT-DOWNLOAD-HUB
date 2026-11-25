@@ -55,6 +55,7 @@ grid.querySelectorAll("[data-action]").forEach(b=>b.onclick=()=>{
  if(selected.has(i))selected.delete(i);else selected.set(i,defaults[i]);
  b.setAttribute("aria-pressed",String(selected.has(i)));drawFields();drawPreview();
 });
+generate.textContent="Save Settings";
 generate.onclick=async()=>{
  if(!authorised())return say("Admin login required.");
  const destination=dest.value.trim();let parsed;
@@ -62,19 +63,15 @@ generate.onclick=async()=>{
  const list=tasks();
  if(list.some(t=>!t.title.trim()||!/^https:\/\//i.test(t.url)))return say("Har selected action ke liye valid HTTPS URL bharein.");
  if(!list.length)return say("Kam se kam ek social action select karein.");
- generate.disabled=true;result.hidden=true;say("Unique download link generate ho raha hai…");
+ generate.disabled=true;result.hidden=true;say("Settings Firebase mein save ho rahi hain…");
  try{
-  const id="dl-"+Date.now()+"-"+Math.random().toString(36).slice(2,9);
-  const data={title:"Generated Download Link",description:"Complete the social steps to unlock this destination.",category:"Generated Links",url:parsed.href,thumbnail:"",previewVideo:"",youtubeUrl:"",isPublished:true,created:Date.now(),updated:Date.now(),viewDetailsGate:{enabled:false,timerMinutes:0,tasks:list.map(t=>({title:t.title.trim(),url:new URL(t.url).href,enabled:true}))}};
-  await cloud.db.collection("downloads").doc(id).set(data);
-  const check=await cloud.db.collection("downloads").doc(id).get();
-  if(!check.exists||check.data()?.viewDetailsGate?.tasks?.length!==list.length)throw Error("Generated record verification failed.");
-  const link=location.origin+"/download.html?id="+encodeURIComponent(id);
-  result.hidden=false;result.className="ulg-result-link";result.innerHTML='<b>Generated link ready</b><p><a href="'+esc(link)+'" target="_blank" rel="noopener">'+esc(link)+'</a></p><button type="button" id="ulg-copy">Copy Link</button>';
-  $("#ulg-copy").onclick=async()=>{try{await navigator.clipboard.writeText(link);say("Link copied.")}catch(e){say("Copy unavailable; link ko select karke copy karein.")}};
-  say("Link generate aur database mein verify ho gaya.");
- }catch(e){say("Generate failed: "+e.message)}finally{generate.disabled=false}
+  const settings={enabled:true,tasks:list.map(t=>({title:t.title.trim(),url:new URL(t.url).href,enabled:true})),destinationUrl:parsed.href,updated:Date.now()};
+  await cloud.db.collection("siteConfig").doc("unlockLinkSettings").set(settings);
+  const check=await cloud.db.collection("siteConfig").doc("unlockLinkSettings").get();
+  if(!check.exists||check.data()?.destinationUrl!==parsed.href||check.data()?.tasks?.length!==list.length)throw Error("Settings verification failed.");
+  say("Settings Firebase mein save aur verify ho gayi. Koi naya download record ya ID create nahi hui.");
+ }catch(e){say("Save failed: "+e.message)}finally{generate.disabled=false}
 };
 drawFields();drawCustom();drawPreview();
-if(cloud.auth)cloud.auth.onAuthStateChanged(u=>say(u&&authorised()?"Ready — actions select karke link generate karein.":"Admin login required."));
+if(cloud.auth)cloud.auth.onAuthStateChanged(u=>say(u&&authorised()?"Ready — settings configure karke save karein.":"Admin login required."));
 })();
