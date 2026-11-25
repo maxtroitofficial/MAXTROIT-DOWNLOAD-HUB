@@ -62,7 +62,7 @@ function previewEmbedUrl(raw){try{const u=new URL(raw);if(u.protocol!=="https:")
   link.href=parsed.href;
   link.hidden=true;
   document.title=(item.title||"Download")+" · MAXTROIT OFFICIAL";
-  await showViewDetailsGate(parsed.href);
+  await showViewDetailsGate(parsed.href,item);
  }catch(e){
   console.error("Download details:",e);
   title.textContent="Download unavailable";
@@ -71,7 +71,7 @@ function previewEmbedUrl(raw){try{const u=new URL(raw);if(u.protocol!=="https:")
  }
 })();
 
-async function showViewDetailsGate(finalUrl){
+async function showViewDetailsGate(finalUrl,item={}){
  const host=document.createElement("section");host.id="view-details-unlock";host.className="view-details-unlock";
  const style=document.createElement("style");
  style.textContent='.view-details-unlock{margin:28px 0 18px;padding:22px;border:1px solid rgba(177,115,255,.32);border-radius:20px;background:linear-gradient(145deg,rgba(40,24,75,.72),rgba(13,18,38,.94));box-shadow:0 16px 45px rgba(0,0,0,.22);text-align:center}.vdu-shield{width:54px;height:54px;margin:0 auto 12px;display:grid;place-items:center;border-radius:18px;background:rgba(34,197,94,.14);color:#4ade80;font-size:28px}.view-details-unlock h2{margin:0 0 8px;font-size:1.35rem}.view-details-unlock p{margin:8px 0;color:var(--muted,#aab2ca);line-height:1.6}.vdg-timer{font-size:clamp(2rem,8vw,3rem);font-weight:800;letter-spacing:.04em;margin:16px 0;color:var(--text,#fff)}.vdu-actions{display:grid;grid-template-columns:1fr;gap:11px;margin:20px 0}.vdu-step{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:58px;padding:12px 15px;border:1px solid rgba(255,255,255,.13);border-radius:13px;background:rgba(255,255,255,.045);color:#fff;text-decoration:none;text-align:left;font-weight:750}.vdu-icon{display:inline-grid;place-items:center;min-width:25px;width:25px;font-size:20px}.vdu-step:after{content:"↗";font-size:18px;color:#c4b5fd}.vdu-step.is-done{border-color:rgba(34,197,94,.65);background:rgba(34,197,94,.1)}.vdu-step.is-done:after{content:"✓";color:#4ade80;font-size:21px}.vdu-progress{height:9px;margin:10px 0 6px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden}.vdu-progress span{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,#22c55e,#86efac);transition:width .2s}.vdu-count{font-size:.9rem;font-weight:750;color:#fff!important}.vdg-main-button{display:block;width:100%;min-height:58px;margin-top:14px;padding:16px 22px;border:0;border-radius:14px;background:linear-gradient(100deg,#16a34a,#22c55e);color:#fff;font-size:1.08rem;font-weight:800;text-align:center;cursor:pointer;text-decoration:none}.vdg-main-button:disabled{opacity:.45;cursor:not-allowed}.vdg-note{font-size:.82rem!important}@media(min-width:560px){.vdu-actions{grid-template-columns:1fr 1fr}.vdu-step{min-height:66px}}';
