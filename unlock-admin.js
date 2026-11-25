@@ -8,7 +8,8 @@ const selected=new Map();let customRows=[];
 const authorised=()=>!!cloud.auth?.currentUser&&!!uid&&cloud.auth.currentUser.uid===uid;
 const say=t=>status.textContent=t;
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-function actionIcon(title){const s=String(title).toLowerCase();if(s.includes("youtube")||s.includes("subscribe"))return "▶️";if(s.includes("instagram"))return "📸";if(s.includes("facebook"))return "f";if(s.includes("telegram"))return "✈️";if(s.includes("whatsapp"))return "💬";if(s.includes("tiktok"))return "♪";if(s.includes("discord"))return "🎮";if(s.includes("twitter"))return "𝕏";return "🔗"}
+function actionIcon(title){const s=String(title).toLowerCase();const brand=s.includes("youtube")||s.includes("subscribe")?"youtube":s.includes("instagram")?"instagram":s.includes("facebook")?"facebook":s.includes("telegram")?"telegram":s.includes("whatsapp")?"whatsapp":s.includes("tiktok")?"tiktok":s.includes("discord")?"discord":"x-twitter";return '<i class="fa-brands fa-'+brand+'" aria-hidden="true"></i>'}
+
 function tasks(){return [...selected.entries()].map(([i,url])=>({title:names[i],url})).concat(customRows.map(x=>({title:x.title,url:x.url})).filter(x=>x.title&&x.url))}
 function drawFields(){
  fields.innerHTML=[...selected.entries()].map(([i,url])=>'<div class="ulg-url-row"><b>'+esc(names[i])+'</b><label><input type="url" data-url="'+i+'" value="'+esc(url)+'" placeholder="Paste HTTPS URL"></label><button type="button" class="ulg-remove" data-remove="'+i+'">−</button></div>').join("")||"<p>Select actions above to add their URL fields.</p>";
