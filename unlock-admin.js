@@ -22,14 +22,32 @@ function drawCustom(){
  custom.querySelectorAll("[data-custom-url]").forEach(e=>e.oninput=()=>{customRows[Number(e.dataset.customUrl)].url=e.value;drawPreview()});
  custom.querySelectorAll("[data-custom-remove]").forEach(e=>e.onclick=()=>{customRows.splice(Number(e.dataset.customRemove),1);drawCustom();drawPreview()});
 }
+let previewCompleted=new Set();
 function drawPreview(){
- const list=tasks(),box=preview.querySelector(".ulp-buttons");
- box.innerHTML=list.map((t,i)=>'<button class="ulp-social other" type="button"><span class="ulp-icon">'+actionIcon(t.title)+'</span><span>'+esc(t.title)+'</span><span class="ulp-arrow">›</span></button>').join("");
- preview.querySelector(".ulp-count").textContent="Steps Completed 0/"+list.length;
- preview.querySelector(".ulp-track span").style.width="0%";
- preview.querySelector(".ulp-get").disabled=list.length>0;
+ const list=tasks(),box=preview.querySelector(".ulp-buttons"),get=preview.querySelector(".ulp-get");
+ previewCompleted=new Set();
+ box.innerHTML=list.map((t,i)=>'<button class="ulp-social other" type="button" data-preview-step="'+i+'"><span class="ulp-icon">'+actionIcon(t.title)+'</span><span>'+esc(t.title)+'</span><span class="ulp-arrow">›</span></button>').join("");
+ const update=()=>{
+  const done=previewCompleted.size,total=list.length;
+  preview.querySelector(".ulp-count").textContent="Steps Completed "+done+"/"+total;
+  preview.querySelector(".ulp-track span").style.width=(total?done/total*100:0)+"%";
+  let validDestination=false;
+  try{const u=new URL(dest.value.trim());validDestination=u.protocol==="https:"}catch(e){}
+  get.disabled=!total||done!==total||!validDestination;
+ };
+ box.querySelectorAll("[data-preview-step]").forEach(button=>button.addEventListener("click",()=>{
+  const i=Number(button.dataset.previewStep);
+  previewCompleted.add(i);button.classList.add("is-done");button.disabled=true;
+  update();
+ }));
+ get.disabled=true;
+ get.onclick=()=>{
+  if(get.disabled)return;
+  try{const u=new URL(dest.value.trim());if(u.protocol!=="https:")throw Error();window.open(u.href,"_blank","noopener,noreferrer")}catch(e){say("Valid HTTPS Destination URL enter karein.")}
+ };
+ update();
 }
-grid.querySelectorAll("[data-action]").forEach(b=>b.onclick=()=>{
+dest.addEventListener("input",drawPreview);\ngrid.querySelectorAll("[data-action]").forEach(b=>b.onclick=()=>{
  const key=b.dataset.action;
  if(key==="custom"){customRows.push({title:"",url:""});drawCustom();return}
  const i=Number(key);
