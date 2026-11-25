@@ -75,6 +75,33 @@ async function applyPresetDesign(id){
 $("#design-studio-tab").addEventListener("click",()=>setDesignStudioMode($("#design-studio").hidden));
 $("#design-studio-close").addEventListener("click",()=>setDesignStudioMode(false));
 document.querySelectorAll("[data-template]").forEach(b=>b.addEventListener("click",()=>applyPresetDesign(b.dataset.template)));
+$("#design-download-ai-prompt").addEventListener("click",()=>{
+ const prompt=`You are an expert front-end website designer and developer. Create a complete, polished, responsive HTML template for MAXTROIT DOWNLOAD HUB.
+
+GOAL
+Build a distinctive visual design based on this brief (the user will replace this line with their own design idea):
+[WRITE YOUR DESIGN IDEA HERE — e.g. clean futuristic dark UI, blue glassmorphism, gaming neon, editorial, minimal, etc.]
+
+OUTPUT RULES
+1. Return ONE complete standalone HTML document, including <!doctype html>, <html>, <head>, and <body>.
+2. Put all CSS inside a <style> tag in the HTML. Do not require separate CSS or JS files.
+3. Keep the page mobile-first and responsive for phones, tablets, and desktops.
+4. Use semantic HTML, accessible contrast, readable typography, keyboard-friendly controls, and polished hover/focus states.
+5. Do not use frameworks, build tools, external fonts, external scripts, or external assets. Use CSS shapes/gradients and inline SVG where needed.
+6. Do not add fake download items, fake links, fake user counts, or invented functionality. Use clearly marked placeholders only where necessary.
+7. Keep all content areas suitable for a download hub: brand/header, hero/search area, category navigation, download cards/list, details/actions, and footer.
+8. Preserve the website's existing data-driven content expectations: the real MAXTROIT site will supply its own download items and categories. Do not hard-code sample downloads as if they were real.
+9. Do not add admin login, database credentials, API keys, Firebase configuration, or private data.
+10. Avoid changing the meaning of the brand. Brand name: MAXTROIT OFFICIAL. Tagline: "Your digital world. One download hub."
+11. Make the visual design coherent and complete, not just a static hero mockup. Include responsive states and realistic empty/loading states if appropriate.
+12. Return only the raw HTML code in one code block, with no explanation before or after it.
+
+IMPORTANT INTEGRATION NOTE
+This HTML will be uploaded into an existing MAXTROIT website builder as a custom design. Focus on the visual template and front-end structure. Do not claim that a standalone mockup is already connected to Firebase or the real downloads database. If integration hooks are needed, clearly comment the relevant sections in the HTML rather than inventing backend behavior.
+`;
+ const blob=new Blob([prompt],{type:"text/plain;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="MAXTROIT-AI-Template-Prompt.txt";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+ $("#design-studio-status").textContent="AI prompt download ho gaya. Is TXT ko kisi bhi AI ko bhejo, apna design idea add karo, aur generated HTML yahan upload karo.";
+});
 $("#design-html-file").addEventListener("change",async e=>{
  const file=e.target.files?.[0];if(!file)return;
  if(!/\.html?$/i.test(file.name)){e.target.value="";$("#design-studio-status").textContent="Sirf .html ya .htm file upload karo.";return}
