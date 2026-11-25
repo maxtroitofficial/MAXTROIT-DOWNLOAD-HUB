@@ -96,25 +96,12 @@ async function showViewDetailsGate(finalUrl,item={}){
  const tasks=Array.isArray(config.tasks)?config.tasks.filter(t=>t&&t.enabled!==false&&typeof t.title==="string"&&/^https:\/\//i.test(String(t.url||""))):[];
  const destinationUrl=(()=>{try{const raw=String(config.destinationUrl||"").trim();if(!raw)return "";const u=new URL(raw);return u.protocol==="https:"?u.href:""}catch(e){return ""}})();
  let started=0,interval=null;
- const showSteps=()=>{
-  timer.hidden=true;action.hidden=true;message.textContent="Tap each social button to complete its step.";tasksHost.hidden=false;tasksHost.replaceChildren();count.hidden=false;progress.hidden=false;
-  const completed=new Set();
-  tasks.forEach((task,index)=>{
-   const button=document.createElement("a");button.className="vdu-step";button.href=task.url;button.target="_blank";button.rel="noopener noreferrer";const label=socialButtonLabel(task);const icon=document.createElement("span");icon.className="vdu-icon";icon.innerHTML=actionIcon(task);const text=document.createElement("span");text.textContent=label;button.append(icon,text);
-   button.addEventListener("click",()=>{completed.add(index);button.classList.add("is-done");button.setAttribute("aria-label",task.title+" completed");updateProgress()});tasksHost.append(button);
-  });
-  function updateProgress(){const done=completed.size,total=tasks.length;count.textContent="Steps Completed "+done+"/"+total;progressFill.style.width=(total?done/total*100:100)+"%";if(done===total){heading.textContent=destinationUrl?"Your Link is Ready":"Download Link Not Set";if(destinationUrl){message.textContent="All steps completed. Your download is unlocked.";link.hidden=false;link.href=destinationUrl;link.textContent="Get Your Link ↗";link.scrollIntoView({behavior:"smooth",block:"nearest"})}else{message.textContent="All steps completed, but the admin has not set a final download URL. Please contact the site admin.";link.hidden=true;link.removeAttribute("href")}}}
-  updateProgress();
-  if(!tasks.length){if(destinationUrl){message.textContent="Your download is ready.";link.hidden=false;link.href=destinationUrl;link.textContent="Get Your Link ↗"}else{heading.textContent="Download Link Not Set";message.textContent="The admin has not set a final download URL yet.";link.hidden=true;link.removeAttribute("href")}}
- };
  const beginSteps=()=>{if(tasks.length)showSteps();else if(destinationUrl){message.textContent="Your download is ready.";link.hidden=false;link.href=destinationUrl;link.textContent="Get Your Link ↗"}else{heading.textContent="Download Link Not Set";message.textContent="The admin has not set a final download URL yet.";link.hidden=true;link.removeAttribute("href")}};
- if(config.enabled===false){timer.hidden=true;beginSteps()}
- else{
-  const seconds=Math.min(600,Math.max(1,Math.round(Number(config.timerMinutes)*60)||60));const key="maxtroit-view-details-start:"+encodeURIComponent(id||"");
-  try{started=Number(sessionStorage.getItem(key))||0;if(!started||started>Date.now()||Date.now()-started>seconds*1000+3600000){started=Date.now();sessionStorage.setItem(key,String(started))}}catch(e){started=Date.now()}
-  action.textContent="Continue";action.hidden=true;message.textContent="Please wait for the timer to finish.";
-  const update=()=>{const remaining=Math.max(0,seconds-Math.floor((Date.now()-started)/1000));timer.textContent=Math.floor(remaining/60).toString().padStart(2,"0")+":"+String(remaining%60).padStart(2,"0");if(remaining<=0){clearInterval(interval);timer.textContent="00:00";message.textContent="Timer complete. Tap Continue.";action.hidden=false}};
-  update();interval=setInterval(update,250);
- }
- action.addEventListener("click",()=>{action.hidden=true;beginSteps()});
+ const timer1Enabled=config.enabled!==false,timer2Enabled=config.timer2Enabled===true;
+ const getSeconds=value=>Math.min(600,Math.max(1,Math.round(Number(value)*60)||60));
+ let nextStage=null;
+ const runTimer=(seconds,stage)=>{timer.hidden=false;tasksHost.hidden=true;action.hidden=true;message.textContent=stage===1?"Please wait for the first timer to finish.":"First timer complete. Please wait for the second timer.";const key="maxtroit-view-details-"+stage+":"+encodeURIComponent(id||"");let startTime=0;try{startTime=Number(sessionStorage.getItem(key))||0;if(!startTime||startTime>Date.now()||Date.now()-startTime>seconds*1000+3600000){startTime=Date.now();sessionStorage.setItem(key,String(startTime))}}catch(e){startTime=Date.now()}if(interval)clearInterval(interval);const update=()=>{const remaining=Math.max(0,seconds-Math.floor((Date.now()-startTime)/1000));timer.textContent=Math.floor(remaining/60).toString().padStart(2,"0")+":"+String(remaining%60).padStart(2,"0");if(remaining<=0){clearInterval(interval);interval=null;timer.textContent="00:00";message.textContent=stage===1?"First timer complete. Tap Continue to start the second timer.":"Second timer complete. Tap Continue to proceed.";action.textContent=stage===1?"Continue":"Continue to Download";action.hidden=false;if(stage===1)nextStage=()=>{if(timer2Enabled)runTimer(getSeconds(config.timer2Minutes),2);else beginSteps()};else nextStage=()=>beginSteps()}};update();if(timer.textContent!=="00:00")interval=setInterval(update,250)};
+ if(timer1Enabled)runTimer(getSeconds(config.timerMinutes),1);else if(timer2Enabled)runTimer(getSeconds(config.timer2Minutes),2);else beginSteps();
+
+ action.addEventListener("click",()=>{action.hidden=true;const run=nextStage;nextStage=null;if(run)run();else beginSteps()});
 }
