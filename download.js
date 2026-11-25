@@ -32,7 +32,8 @@ async function showDownloadPreview(item){const host=document.querySelector("#dow
   if(!item||!item.url) throw new Error("This download is unavailable.");
   const parsed=new URL(item.url);
   if(!["http:","https:"].includes(parsed.protocol)) throw new Error("Invalid download link.");
-  title.textContent=item.title||"Download";\n  await showDownloadPreview(item);
+  title.textContent=item.title||"Download";
+  await showDownloadPreview(item);
   description.textContent=item.description||"";
   link.href=parsed.href;
   link.hidden=true;
