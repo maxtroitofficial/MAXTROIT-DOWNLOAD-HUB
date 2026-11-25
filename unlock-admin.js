@@ -2,12 +2,13 @@
 const $=s=>document.querySelector(s),cloud=window.hubCloud||{},uid=window.ADMIN_UID;
 const grid=$("#ulg-action-grid"),fields=$("#ulg-url-fields"),custom=$("#ulg-custom-rows"),dest=$("#ulg-destination"),generate=$("#ulg-generate"),status=$("#ulg-status"),result=$("#ulg-result"),preview=$("#unlock-live-preview");
 if(!grid||!fields||!custom||!dest||!generate||!status||!result||!preview)return;
-const names=["Subscribe & Turn on Bell","Add Youtube Channel","Youtube Like","Instagram Followers","Remove instagram like","Remove facebook follow","Remove telegram join","YouTube Video Like & Comment","WhatsApp Channel Join","TikTok Follow","TikTok Like Video","Join Discord","Like Facebook Post","Follow on Twitter"];
+const names=["Subscribe & Turn on Bell","Add Youtube Channel","Youtube Like","Instagram Followers","Instagram Follow","Facebook Follow","Telegram Join","YouTube Video Like & Comment","WhatsApp Channel Join","TikTok Follow","TikTok Like Video","Join Discord","Like Facebook Post","Follow on Twitter"];
 const defaults=["https://www.youtube.com/","https://www.youtube.com/","https://www.youtube.com/","https://www.instagram.com/","https://www.instagram.com/","https://www.facebook.com/","https://t.me/","https://www.youtube.com/","https://whatsapp.com/channel/","https://www.tiktok.com/","https://www.tiktok.com/","https://discord.com/","https://www.facebook.com/","https://x.com/"];
 const selected=new Map();let customRows=[];
 const authorised=()=>!!cloud.auth?.currentUser&&!!uid&&cloud.auth.currentUser.uid===uid;
 const say=t=>status.textContent=t;
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function actionIcon(title){const s=String(title).toLowerCase();if(s.includes("youtube")||s.includes("subscribe"))return "▶️";if(s.includes("instagram"))return "📸";if(s.includes("facebook"))return "f";if(s.includes("telegram"))return "✈️";if(s.includes("whatsapp"))return "💬";if(s.includes("tiktok"))return "♪";if(s.includes("discord"))return "🎮";if(s.includes("twitter"))return "𝕏";return "🔗"}
 function tasks(){return [...selected.entries()].map(([i,url])=>({title:names[i],url})).concat(customRows.map(x=>({title:x.title,url:x.url})).filter(x=>x.title&&x.url))}
 function drawFields(){
  fields.innerHTML=[...selected.entries()].map(([i,url])=>'<div class="ulg-url-row"><b>'+esc(names[i])+'</b><label><input type="url" data-url="'+i+'" value="'+esc(url)+'" placeholder="Paste HTTPS URL"></label><button type="button" class="ulg-remove" data-remove="'+i+'">−</button></div>').join("")||"<p>Select actions above to add their URL fields.</p>";
@@ -22,7 +23,7 @@ function drawCustom(){
 }
 function drawPreview(){
  const list=tasks(),box=preview.querySelector(".ulp-buttons");
- box.innerHTML=list.map((t,i)=>'<button class="ulp-social other" type="button"><span class="ulp-icon">↗</span><span>'+esc(t.title)+'</span><span class="ulp-arrow">›</span></button>').join("");
+ box.innerHTML=list.map((t,i)=>'<button class="ulp-social other" type="button"><span class="ulp-icon">'+actionIcon(t.title)+'</span><span>'+esc(t.title)+'</span><span class="ulp-arrow">›</span></button>').join("");
  preview.querySelector(".ulp-count").textContent="Steps Completed 0/"+list.length;
  preview.querySelector(".ulp-track span").style.width="0%";
  preview.querySelector(".ulp-get").disabled=list.length>0;
