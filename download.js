@@ -105,7 +105,7 @@ async function showViewDetailsGate(finalUrl,item={}){
   function updateProgress(){
    const done=completed.size,total=tasks.length;count.textContent="Steps Completed "+done+"/"+total;progressFill.style.width=(total?done/total*100:100)+"%";
    if(done===total){
-    heading.textContent=destinationUrl?"Complete Steps to Unlock":"Download Link Not Set";
+    heading.textContent=destinationUrl?"Your Link is Ready":"Download Link Not Set";
     if(destinationUrl){message.textContent="All steps completed. Your download is unlocked.";link.hidden=false;link.href=destinationUrl;link.textContent="Get Your Link ↗";link.scrollIntoView({behavior:"smooth",block:"nearest"})}
     else{message.textContent="All steps completed, but the admin has not set a final download URL. Please contact the site admin.";link.hidden=true;link.removeAttribute("href")}
    }
