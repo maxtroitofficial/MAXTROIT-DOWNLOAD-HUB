@@ -494,3 +494,24 @@ body.downloads-workspace #admin-app>.preview-area,body.downloads-workspace #admi
  .social-user-preview .footer-social-links a{animation:none;transition:none;will-change:auto}
  .social-user-preview .footer-social-links a:hover,.social-user-preview .footer-social-links a:focus-visible,.social-user-preview .footer-social-links a:active{transform:none;box-shadow:none}
 }
+
+/* Social Media Manager animation picker and live preview. */
+@keyframes maxSocialFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes maxSocialPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
+@keyframes maxSocialBounce{0%,100%{transform:translateY(0)}35%{transform:translateY(-8px)}65%{transform:translateY(-2px)}}
+@keyframes maxSocialSpin{0%,100%{transform:rotate(0)}50%{transform:rotate(180deg)}}
+@keyframes maxSocialGlow{0%,100%{box-shadow:0 0 0 transparent}50%{box-shadow:0 0 18px #ff986b99}}
+@keyframes maxSocialWobble{0%,100%{transform:rotate(0)}25%{transform:rotate(-7deg)}75%{transform:rotate(7deg)}}
+.social-animation-setting{margin:14px 0;padding:14px;border:1px solid #34435e;border-radius:12px;background:#151d2e;color:#eaf2ff}
+.social-animation-setting label{display:grid;gap:7px;max-width:360px;font-size:12px;font-weight:700}
+.social-animation-setting select{min-height:40px;padding:9px;border:1px solid #52627f;border-radius:8px;background:#0b1323;color:#fff}
+.social-animation-setting p{margin:8px 0 0;color:#aebbd0;font-size:11px}
+.social-user-preview [data-animation="float"] a{animation:maxSocialFloat 2.8s ease-in-out infinite}
+.social-user-preview [data-animation="pulse"] a{animation:maxSocialPulse 2s ease-in-out infinite}
+.social-user-preview [data-animation="bounce"] a{animation:maxSocialBounce 1.5s ease-in-out infinite}
+.social-user-preview [data-animation="spin"] a{animation:maxSocialSpin 2.8s ease-in-out infinite}
+.social-user-preview [data-animation="glow"] a{animation:maxSocialGlow 2s ease-in-out infinite}
+.social-user-preview [data-animation="wobble"] a{animation:maxSocialWobble 2s ease-in-out infinite}
+.social-user-preview [data-animation] a:nth-child(2n){animation-delay:-.45s}
+.social-user-preview [data-animation] a:nth-child(3n){animation-delay:-.9s}
+@media(prefers-reduced-motion:reduce){.social-user-preview [data-animation] a{animation:none!important}}
