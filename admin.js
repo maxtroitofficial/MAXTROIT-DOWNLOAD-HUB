@@ -78,10 +78,10 @@ document.querySelectorAll("[data-template]").forEach(b=>b.addEventListener("clic
 $("#design-html-file").addEventListener("change",async e=>{
  const file=e.target.files?.[0];if(!file)return;
  if(!/\.html?$/i.test(file.name)){e.target.value="";$("#design-studio-status").textContent="Sirf .html ya .htm file upload karo.";return}
- if(file.size>350000){e.target.value="";$("#design-studio-status").textContent="HTML file 350 KB se chhoti rakho, kyunki design Firebase mein save hoga.";return}
+ if(file.size>180000){e.target.value="";$("#design-studio-status").textContent="HTML file 180 KB se chhoti rakho, kyunki design Firebase mein save hoga.";return}
  try{customDesignSource=await file.text();if(!/<html[\s>]/i.test(customDesignSource)||!/<body[\s>]/i.test(customDesignSource))throw Error("Valid complete HTML document upload karo.");
  customDesignFileName=file.name;$("#design-name").value=file.name.replace(/\.html?$/i,"").slice(0,60);$("#design-preview-custom").disabled=false;$("#design-apply-custom").disabled=false;
- out=$("#design-studio-status");out.textContent="File ready: "+file.name+" ("+Math.ceil(file.size/1024)+" KB). Preview kar sakte ho.";
+ const out=$("#design-studio-status");out.textContent="File ready: "+file.name+" ("+Math.ceil(file.size/1024)+" KB). Preview kar sakte ho.";
  }catch(err){customDesignSource="";$("#design-preview-custom").disabled=true;$("#design-apply-custom").disabled=true;$("#design-studio-status").textContent="File read nahi hui: "+err.message}
 });
 $("#design-preview-custom").addEventListener("click",()=>{if(!customDesignSource)return;const preview=$("#design-custom-preview");preview.hidden=false;preview.srcdoc=customDesignSource;$("#design-studio-status").textContent="Custom design preview ready. Check karke Save & Apply karo."});
@@ -89,7 +89,7 @@ $("#design-apply-custom").addEventListener("click",async()=>{
  if(!customDesignSource||!authOk(hubCloud.auth.currentUser)){ $("#design-studio-status").textContent="Admin login required ya HTML file missing hai.";return}
  const button=$("#design-apply-custom"),out=$("#design-studio-status");button.disabled=true;out.textContent="Custom design save ho rahi hai…";
  try{const ref=hubCloud.db.collection("siteConfig").doc("public"),snap=await ref.get(),data=snap.data()||{},id="custom-"+Date.now(),name=String($("#design-name").value||customDesignFileName||"My custom design").trim().slice(0,60);
- const templates=Array.isArray(data.uploadedTemplates)?data.uploadedTemplates.filter(t=>t&&t.id!==id):[];templates.push({id,name,kind:"html",html:customDesignSource,updatedAt:Date.now()});if(templates.length>5)templates.shift();
+ const templates=Array.isArray(data.uploadedTemplates)?data.uploadedTemplates.filter(t=>t&&t.id!==id):[];templates.push({id,name,kind:"html",html:customDesignSource,updatedAt:Date.now()});if(templates.length>3)templates.shift();
  await ref.set({templateId:"uploaded",uploadedTemplates:templates,activeUploadedTemplateId:id},{merge:true});
  const check=await ref.get(),saved=check.data()||{},picked=(saved.uploadedTemplates||[]).find(t=>t.id===id&&t.kind==="html");
  if(saved.templateId!=="uploaded"||saved.activeUploadedTemplateId!==id||picked?.html!==customDesignSource)throw Error("Custom design save verify nahi hua");
