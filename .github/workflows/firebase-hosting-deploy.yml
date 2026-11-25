@@ -21,7 +21,7 @@ jobs:
 
       - name: Validate JavaScript
         run: |
-          for file in admin.js app.js download.js firebase.js firebase-config.js; do
+          for file in admin.js app.js download.js firebase.js firebase-config.js unlock-admin.js; do
             node --check "$file"
           done
           node tests/invariants.mjs
@@ -38,5 +38,5 @@ jobs:
       - name: Install Firebase CLI
         run: npm install -g firebase-tools
 
-      - name: Deploy to Firebase Hosting
-        run: firebase deploy --only hosting --project maxtroit-download-hub --non-interactive
+      - name: Deploy Hosting and Firestore rules
+        run: firebase deploy --only hosting,firestore:rules --project maxtroit-download-hub --non-interactive
