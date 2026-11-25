@@ -24,14 +24,14 @@ async function findItem(){
  const d=await hubCloud.db.collection("downloads").doc(id).get();
  return d.exists?{id:d.id,...d.data()}:null;
 }
-(async()=>{
+async function showDownloadPreview(item){const host=document.querySelector("#download-preview");if(!host)return;let node=null;if(item.previewVideo&&/^https:\/\//i.test(item.previewVideo)){node=document.createElement("video");node.src=item.previewVideo;node.controls=true;node.playsInline=true;node.preload="metadata";if(item.thumbnail)node.poster=item.thumbnail}else if(item.youtubeUrl){let vid="";try{const u=new URL(item.youtubeUrl);if(u.hostname==="youtu.be")vid=u.pathname.split("/").filter(Boolean)[0]||"";else if(u.pathname==="/watch")vid=u.searchParams.get("v")||"";else{const m=u.pathname.match(/^\/(embed|shorts|live)\/([^/?]+)/);vid=m?m[2]:""}}catch(e){}if(vid){node=document.createElement("iframe");node.src="https://www.youtube-nocookie.com/embed/"+encodeURIComponent(vid);node.title="YouTube preview";node.allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture";node.allowFullscreen=true}}if(node){host.replaceChildren(node);host.hidden=false}else host.hidden=true}\n(async()=>{
  await applyBrandLogo();
  try{
   const item=await findItem();
   if(!item||!item.url) throw new Error("This download is unavailable.");
   const parsed=new URL(item.url);
   if(!["http:","https:"].includes(parsed.protocol)) throw new Error("Invalid download link.");
-  title.textContent=item.title||"Download";
+  title.textContent=item.title||"Download";\n  await showDownloadPreview(item);
   description.textContent=item.description||"";
   link.href=parsed.href;
   link.hidden=true;
