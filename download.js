@@ -83,6 +83,8 @@ async function showViewDetailsGate(finalUrl){
  host.append(shield,heading,intro,timer,message,action,tasksHost,count,progress,note);link.parentNode.insertBefore(host,link);
  let config={enabled:true,timerMinutes:1,tasks:[]};
  try{if(window.hubCloud?.ready){const snap=await hubCloud.db.collection("siteConfig").doc("public").get();const saved=snap.exists?snap.data()?.viewDetailsGate:null;if(saved&&typeof saved==="object")config={...config,...saved}}}catch(e){console.warn("View Details unlock settings unavailable:",e)}
+ // Link Management System actions are the site-wide default. Per-download gate settings remain higher priority.
+ try{if(window.hubCloud?.ready){const snap=await hubCloud.db.collection("siteConfig").doc("unlockLinkSettings").get();const saved=snap.exists?snap.data():null;if(saved&&Array.isArray(saved.tasks)&&saved.tasks.length){config={...config,enabled:saved.enabled!==false,tasks:saved.tasks}}}}catch(e){console.warn("Link Management System settings unavailable:",e)}
  if(item.viewDetailsGate&&typeof item.viewDetailsGate==="object")config={...config,...item.viewDetailsGate};
  const tasks=Array.isArray(config.tasks)?config.tasks.filter(t=>t&&t.enabled!==false&&typeof t.title==="string"&&/^https:\/\//i.test(String(t.url||""))):[];
  let started=0,interval=null;
