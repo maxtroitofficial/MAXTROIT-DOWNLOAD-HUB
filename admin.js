@@ -58,13 +58,41 @@ function setDesignStudioMode(open){
 }
 async function loadDesignStudioState(){
  const out=$("#design-studio-status");
- try{const snap=await hubCloud.db.collection("siteConfig").doc("public").get(),data=snap.data()||{},active=data.templateId||"midnight";
- document.querySelectorAll("[data-template]").forEach(b=>b.classList.toggle("active",b.dataset.template===active));
- const custom=Array.isArray(data.uploadedTemplates)?data.uploadedTemplates.find(t=>t.id===data.activeUploadedTemplateId&&t.kind==="html"):null;
- if(custom)$("#design-name").value=custom.name||"My custom template";
- out.textContent=custom?"Active custom template: "+(custom.name||"Untitled"):"Current design: "+active+". Choose another design below.";
+ try{
+  const snap=await hubCloud.db.collection("siteConfig").doc("public").get(),data=snap.data()||{},active=data.templateId||"midnight";
+  document.querySelectorAll("[data-template]").forEach(b=>b.classList.toggle("active",b.dataset.template===active));
+  const templates=Array.isArray(data.uploadedTemplates)?data.uploadedTemplates.filter(t=>t&&t.kind==="html"&&t.id):[];
+  const custom=templates.find(t=>t.id===data.activeUploadedTemplateId);
+  if(custom)$("#design-name").value=custom.name||"My custom template";
+  const list=$("#design-saved-template-list");
+  if(list)list.innerHTML=templates.length?templates.map(t=>'<div class="design-saved-template-row"><span><b>'+String(t.name||"Untitled template").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))+'</b>'+(t.id===data.activeUploadedTemplateId?' <small>Active</small>':'')+'</span><span><button type="button" data-apply-uploaded-template="'+String(t.id).replace(/[^a-zA-Z0-9_-]/g,"")+'">Apply</button> <button type="button" data-remove-uploaded-template="'+String(t.id).replace(/[^a-zA-Z0-9_-]/g,"")+'">Remove</button></span></div>').join(""):"<p>No custom templates added yet.</p>";
+  out.textContent=custom?"Active custom template: "+(custom.name||"Untitled"):"Current design: "+active+". Choose another design below.";
  }catch(e){out.textContent="Template settings load nahi hui: "+e.message}
 }
+document.addEventListener("click",async e=>{
+ const remove=e.target.closest("[data-remove-uploaded-template]"),apply=e.target.closest("[data-apply-uploaded-template]");
+ if(!remove&&!apply)return;
+ const id=(remove||apply).getAttribute(remove?"data-remove-uploaded-template":"data-apply-uploaded-template");
+ if(!id||!authOk(hubCloud.auth.currentUser)){ $("#design-studio-status").textContent="Admin login required.";return}
+ const out=$("#design-studio-status");(remove||apply).disabled=true;
+ try{
+  const ref=hubCloud.db.collection("siteConfig").doc("public"),snap=await ref.get(),data=snap.data()||{},templates=Array.isArray(data.uploadedTemplates)?data.uploadedTemplates:[];
+  if(!templates.some(t=>t&&t.id===id&&t.kind==="html"))throw Error("Template nahi mila.");
+  if(remove){
+   const remaining=templates.filter(t=>!(t&&t.id===id));
+   const patch={uploadedTemplates:remaining};
+   if(data.activeUploadedTemplateId===id){patch.activeUploadedTemplateId=null;patch.templateId="midnight";}
+   await ref.set(patch,{merge:true});
+   out.textContent="Custom template remove ho gaya.";
+   if(data.activeUploadedTemplateId===id)frame.contentWindow?.location?.reload();
+  }else{
+   await ref.set({templateId:"uploaded",activeUploadedTemplateId:id},{merge:true});
+   out.textContent="Custom template apply ho gaya.";frame.contentWindow?.location?.reload();
+  }
+  await loadDesignStudioState();
+ }catch(err){out.textContent="Template action failed: "+err.message}
+ finally{(remove||apply).disabled=false}
+});
 async function applyPresetDesign(id){
  const allowed=["midnight","clean","neon","editorial","ocean","sunset","minimal","creator","market","arcade"];if(!allowed.includes(id))return;
  const out=$("#design-studio-status"),buttons=[...document.querySelectorAll("[data-template]")];buttons.forEach(b=>b.disabled=true);out.textContent="Template apply ho raha hai…";
@@ -133,7 +161,7 @@ $("#design-apply-custom").addEventListener("click",async()=>{
  if(!customDesignSource||!authOk(hubCloud.auth.currentUser)){ $("#design-studio-status").textContent="Admin login required ya HTML file missing hai.";return}
  const button=$("#design-apply-custom"),out=$("#design-studio-status");button.disabled=true;out.textContent="Custom template save ho rahi hai…";
  try{const ref=hubCloud.db.collection("siteConfig").doc("public"),snap=await ref.get(),data=snap.data()||{},id="custom-"+Date.now(),name=String($("#design-name").value||customDesignFileName||"My custom template").trim().slice(0,60);
- const templates=Array.isArray(data.uploadedTemplates)?data.uploadedTemplates.filter(t=>t&&t.id!==id):[];templates.push({id,name,kind:"html",html:customDesignSource,updatedAt:Date.now()});if(templates.length>3)templates.shift();
+ const templates=Array.isArray(data.uploadedTemplates)?data.uploadedTemplates.filter(t=>t&&t.id!==id):[];templates.push({id,name,kind:"html",html:customDesignSource,updatedAt:Date.now()});
  await ref.set({templateId:"uploaded",uploadedTemplates:templates,activeUploadedTemplateId:id},{merge:true});
  const check=await ref.get(),saved=check.data()||{},picked=(saved.uploadedTemplates||[]).find(t=>t.id===id&&t.kind==="html");
  if(saved.templateId!=="uploaded"||saved.activeUploadedTemplateId!==id||picked?.html!==customDesignSource)throw Error("Custom template save verify nahi hua");
