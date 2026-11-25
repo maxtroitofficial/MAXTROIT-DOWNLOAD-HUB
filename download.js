@@ -48,80 +48,45 @@ function previewEmbedUrl(raw){try{const u=new URL(raw);if(u.protocol!=="https:")
 })();
 
 async function showViewDetailsGate(finalUrl){
- const host=document.createElement("section");
- host.id="view-details-unlock";
- host.className="view-details-unlock";
+ const host=document.createElement("section");host.id="view-details-unlock";host.className="view-details-unlock";
  const style=document.createElement("style");
- style.textContent=`
- .view-details-unlock{margin:28px 0 18px;padding:22px;border:1px solid rgba(177,115,255,.32);border-radius:20px;background:linear-gradient(145deg,rgba(40,24,75,.72),rgba(13,18,38,.94));box-shadow:0 16px 45px rgba(0,0,0,.22)}
- .view-details-unlock h2{margin:0 0 8px;font-size:1.2rem}.view-details-unlock p{margin:8px 0;color:var(--muted,#aab2ca);line-height:1.6}
- .vdg-timer{font-size:clamp(2rem,8vw,3rem);font-weight:800;letter-spacing:.04em;margin:16px 0;color:var(--text,#fff)}
- .vdg-main-button{display:block;width:100%;min-height:58px;margin-top:14px;padding:16px 22px;border:0;border-radius:14px;background:linear-gradient(100deg,#a855f7,#ec4899);color:#fff;font-size:1.08rem;font-weight:800;text-align:center;cursor:pointer}
- .vdg-main-button:disabled{opacity:.55;cursor:not-allowed}.vdg-task{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:14px 0;border-top:1px solid rgba(255,255,255,.1)}
- .vdg-task strong{flex:1 1 140px}.vdg-task a{color:#f0abfc;text-decoration:underline}.vdg-task label{display:flex;align-items:center;gap:8px;font-size:.92rem}
- .vdg-task input{width:18px;height:18px;accent-color:#d946ef}.vdg-note{font-size:.82rem!important}
- `;
+ style.textContent='.view-details-unlock{margin:28px 0 18px;padding:22px;border:1px solid rgba(177,115,255,.32);border-radius:20px;background:linear-gradient(145deg,rgba(40,24,75,.72),rgba(13,18,38,.94));box-shadow:0 16px 45px rgba(0,0,0,.22);text-align:center}.vdu-shield{width:54px;height:54px;margin:0 auto 12px;display:grid;place-items:center;border-radius:18px;background:rgba(34,197,94,.14);color:#4ade80;font-size:28px}.view-details-unlock h2{margin:0 0 8px;font-size:1.35rem}.view-details-unlock p{margin:8px 0;color:var(--muted,#aab2ca);line-height:1.6}.vdg-timer{font-size:clamp(2rem,8vw,3rem);font-weight:800;letter-spacing:.04em;margin:16px 0;color:var(--text,#fff)}.vdu-actions{display:grid;grid-template-columns:1fr;gap:11px;margin:20px 0}.vdu-step{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:58px;padding:12px 15px;border:1px solid rgba(255,255,255,.13);border-radius:13px;background:rgba(255,255,255,.045);color:#fff;text-decoration:none;text-align:left;font-weight:750}.vdu-step:after{content:"↗";font-size:18px;color:#c4b5fd}.vdu-step.is-done{border-color:rgba(34,197,94,.65);background:rgba(34,197,94,.1)}.vdu-step.is-done:after{content:"✓";color:#4ade80;font-size:21px}.vdu-progress{height:9px;margin:10px 0 6px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden}.vdu-progress span{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,#22c55e,#86efac);transition:width .2s}.vdu-count{font-size:.9rem;font-weight:750;color:#fff!important}.vdg-main-button{display:block;width:100%;min-height:58px;margin-top:14px;padding:16px 22px;border:0;border-radius:14px;background:linear-gradient(100deg,#16a34a,#22c55e);color:#fff;font-size:1.08rem;font-weight:800;text-align:center;cursor:pointer;text-decoration:none}.vdg-main-button:disabled{opacity:.45;cursor:not-allowed}.vdg-note{font-size:.82rem!important}@media(min-width:560px){.vdu-actions{grid-template-columns:1fr 1fr}.vdu-step{min-height:66px}}';
  document.head.appendChild(style);
- const heading=document.createElement("h2");heading.textContent="Unlock download";
- const intro=document.createElement("p");intro.textContent="Complete the steps below to continue to your download.";
+ const shield=document.createElement("div");shield.className="vdu-shield";shield.textContent="✓";shield.setAttribute("aria-hidden","true");
+ const heading=document.createElement("h2");heading.textContent="Your Link is Ready";
+ const intro=document.createElement("p");intro.textContent="Complete the steps below to unlock your download link.";
  const timer=document.createElement("div");timer.className="vdg-timer";timer.setAttribute("aria-live","polite");
  const message=document.createElement("p");message.setAttribute("role","status");
  const action=document.createElement("button");action.type="button";action.className="vdg-main-button";action.hidden=true;
- const tasksHost=document.createElement("div");tasksHost.hidden=true;
- const note=document.createElement("p");note.className="vdg-note";note.textContent="Social tasks are confirmed by your own check. Opening a social link does not let this website verify a follow or subscription.";
- host.append(heading,intro,timer,message,action,tasksHost,note);
- link.parentNode.insertBefore(host,link);
+ const tasksHost=document.createElement("div");tasksHost.className="vdu-actions";tasksHost.hidden=true;
+ const count=document.createElement("p");count.className="vdu-count";count.textContent="Steps Completed 0/0";count.hidden=true;
+ const progress=document.createElement("div");progress.className="vdu-progress";progress.hidden=true;
+ const progressFill=document.createElement("span");progress.append(progressFill);
+ const note=document.createElement("p");note.className="vdg-note";note.textContent="Social actions are confirmed by your own click. This website cannot automatically verify follows, subscriptions, likes, or comments.";
+ host.append(shield,heading,intro,timer,message,action,tasksHost,count,progress,note);link.parentNode.insertBefore(host,link);
  let config={enabled:true,timerMinutes:1,tasks:[]};
- try{
-  if(window.hubCloud?.ready){
-   const snap=await hubCloud.db.collection("siteConfig").doc("public").get();
-   const saved=snap.exists?snap.data()?.viewDetailsGate:null;
-   if(saved&&typeof saved==="object")config={...config,...saved};
-  }
- }catch(e){console.warn("View Details unlock settings unavailable:",e)}
+ try{if(window.hubCloud?.ready){const snap=await hubCloud.db.collection("siteConfig").doc("public").get();const saved=snap.exists?snap.data()?.viewDetailsGate:null;if(saved&&typeof saved==="object")config={...config,...saved}}}catch(e){console.warn("View Details unlock settings unavailable:",e)}
  const tasks=Array.isArray(config.tasks)?config.tasks.filter(t=>t&&t.enabled!==false&&typeof t.title==="string"&&/^https:\/\//i.test(String(t.url||""))):[];
- const showTasks=()=>{
-  timer.hidden=true;message.textContent="Now complete the required social media steps.";
-  action.hidden=true;tasksHost.hidden=false;tasksHost.replaceChildren();
+ let started=0,interval=null;
+ const showSteps=()=>{
+  timer.hidden=true;action.hidden=true;message.textContent="Tap each social button to complete its step.";tasksHost.hidden=false;tasksHost.replaceChildren();count.hidden=false;progress.hidden=false;
+  const completed=new Set();
   tasks.forEach((task,index)=>{
-   const row=document.createElement("div");row.className="vdg-task";
-   const name=document.createElement("strong");name.textContent="Step "+(index+1)+": "+task.title;
-   const open=document.createElement("a");open.href=task.url;open.target="_blank";open.rel="noopener noreferrer";open.textContent="Open link ↗";
-   const label=document.createElement("label"),check=document.createElement("input");check.type="checkbox";check.setAttribute("aria-label","Confirm "+task.title);
-   const text=document.createElement("span");text.textContent="I've completed this step";
-   label.append(check,text);row.append(name,open,label);tasksHost.append(row);
-   check.addEventListener("change",updateCompletion);
+   const button=document.createElement("a");button.className="vdu-step";button.href=task.url;button.target="_blank";button.rel="noopener noreferrer";button.textContent=task.title;
+   button.addEventListener("click",()=>{completed.add(index);button.classList.add("is-done");button.setAttribute("aria-label",task.title+" completed");updateProgress()});tasksHost.append(button);
   });
-  updateCompletion();
+  function updateProgress(){const done=completed.size,total=tasks.length;count.textContent="Steps Completed "+done+"/"+total;progressFill.style.width=(total?done/total*100:100)+"%";if(done===total){message.textContent="All steps completed. Your download is unlocked.";link.hidden=false;link.href=finalUrl;link.textContent="Get Your Link ↗";link.scrollIntoView({behavior:"smooth",block:"nearest"})}}
+  updateProgress();
+  if(!tasks.length){message.textContent="No social steps are configured.";link.hidden=false;link.href=finalUrl;link.textContent="Get Your Link ↗"}
  };
- function updateCompletion(){
-  const checks=[...tasksHost.querySelectorAll('input[type="checkbox"]')];
-  const done=checks.filter(c=>c.checked).length;
-  message.textContent=checks.length?done+" of "+checks.length+" tasks completed.": "No social tasks are required.";
-  link.hidden=done!==checks.length;
-  if(done===checks.length)link.scrollIntoView({behavior:"smooth",block:"nearest"});
- }
- if(config.enabled===false||Number(config.timerMinutes)<=0){
-  timer.hidden=true;message.textContent="Ready when you are.";
-  action.textContent="View Details";action.hidden=false;
- }else{
-  const seconds=Math.min(600,Math.max(1,Math.round(Number(config.timerMinutes)*60)||60));
-  const key="maxtroit-view-details-start:"+encodeURIComponent(id||"");
-  let started=0;
+ const beginSteps=()=>{if(tasks.length)showSteps();else{message.textContent="Your download is ready.";link.hidden=false;link.href=finalUrl;link.textContent="Get Your Link ↗"}};
+ if(config.enabled===false){timer.hidden=true;beginSteps()}
+ else{
+  const seconds=Math.min(600,Math.max(1,Math.round(Number(config.timerMinutes)*60)||60));const key="maxtroit-view-details-start:"+encodeURIComponent(id||"");
   try{started=Number(sessionStorage.getItem(key))||0;if(!started||started>Date.now()||Date.now()-started>seconds*1000+3600000){started=Date.now();sessionStorage.setItem(key,String(started))}}catch(e){started=Date.now()}
-  action.hidden=true;message.textContent="Please wait for the timer to finish.";
-  let interval=null;
-  const update=()=>{
-   const remaining=Math.max(0,seconds-Math.floor((Date.now()-started)/1000));
-   timer.textContent=Math.floor(remaining/60).toString().padStart(2,"0")+":"+String(remaining%60).padStart(2,"0");
-   if(remaining<=0){clearInterval(interval);timer.textContent="00:00";message.textContent="Timer complete. Tap below to continue.";try{sessionStorage.setItem("maxtroit-view-details-ready:"+id,String(Date.now()))}catch(e){}action.textContent="Continue";action.hidden=false}
-  };
+  action.textContent="Continue";action.hidden=true;message.textContent="Please wait for the timer to finish.";
+  const update=()=>{const remaining=Math.max(0,seconds-Math.floor((Date.now()-started)/1000));timer.textContent=Math.floor(remaining/60).toString().padStart(2,"0")+":"+String(remaining%60).padStart(2,"0");if(remaining<=0){clearInterval(interval);timer.textContent="00:00";message.textContent="Timer complete. Tap Continue.";action.hidden=false}};
   update();interval=setInterval(update,250);
  }
- action.addEventListener("click",()=>{
-  action.hidden=true;
-  try{sessionStorage.setItem("maxtroit-view-details-ready:"+id,String(Date.now()))}catch(e){}
-  location.href="social-steps.html?id="+encodeURIComponent(id||"");
- });
- if(!tasks.length){note.hidden=true}
+ action.addEventListener("click",()=>{action.hidden=true;beginSteps()});
 }
