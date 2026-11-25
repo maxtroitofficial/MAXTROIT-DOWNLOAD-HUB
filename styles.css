@@ -1204,3 +1204,14 @@ html[data-cached-brand-logo="true"] #hero-art-logo{
 /* Keep the original logo reveal animation; constrain the shine with the logo alpha mask. */
 .site-startup-mark img{position:relative;z-index:2;object-fit:contain;animation:startupLogoAssemble 1.45s cubic-bezier(.16,.8,.25,1) .12s forwards!important}
 .site-startup-mark .startup-logo-shine{z-index:3!important;pointer-events:none!important}
+
+/* Remove the colored/box-like flash light effects from the public startup screen. */
+.site-startup-mark:before,
+.site-startup-mark:after,
+.startup-puzzle-grid:after,
+.startup-logo-shine{display:none!important;content:none!important;animation:none!important;opacity:0!important}
+.site-startup-mark img,
+.startup-puzzle-grid,
+.startup-puzzle-piece{filter:none!important;box-shadow:none!important}
+.startup-puzzle-grid{animation:none!important}
+.startup-puzzle-piece{animation-name:startupPuzzleJoin,startupPuzzleSeamFade}
