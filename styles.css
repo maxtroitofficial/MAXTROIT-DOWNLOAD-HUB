@@ -1289,22 +1289,22 @@ body[data-template="arcade"] footer{background:#090f18;border-top:1px solid #263
 .download-preview video,.download-preview iframe{display:block;width:100%;max-height:520px;aspect-ratio:16/9;border:0;object-fit:contain;background:#080d18}
 
 
-/* Social icon motion: subtle float, responsive hover feedback, and reduced-motion support. */
-@keyframes maxSocialFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-.footer-social-links a{
- animation:maxSocialFloat 3.8s ease-in-out infinite;
- transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease,background .22s ease;
- will-change:transform;
-}
-.footer-social-links a:nth-child(2n){animation-delay:-1.9s}
-.footer-social-links a:nth-child(3n){animation-delay:-.95s}
-.footer-social-links a:hover,.footer-social-links a:focus-visible{
- animation-play-state:paused;
- transform:translateY(-5px) scale(1.08);
- box-shadow:0 7px 22px #0005,0 0 14px #e66b9b35;
-}
+/* Social icon animation choices are controlled by Social Media Manager. */
+@keyframes maxSocialFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes maxSocialPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
+@keyframes maxSocialBounce{0%,100%{transform:translateY(0)}35%{transform:translateY(-8px)}65%{transform:translateY(-2px)}}
+@keyframes maxSocialSpin{0%,100%{transform:rotate(0)}50%{transform:rotate(180deg)}}
+@keyframes maxSocialGlow{0%,100%{box-shadow:0 0 0 transparent}50%{box-shadow:0 0 18px #ff986b99}}
+@keyframes maxSocialWobble{0%,100%{transform:rotate(0)}25%{transform:rotate(-7deg)}75%{transform:rotate(7deg)}}
+.footer-social-links a{transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease,background .22s ease}
+html[data-social-animation="float"] .footer-social-links a{animation:maxSocialFloat 2.8s ease-in-out infinite}
+html[data-social-animation="pulse"] .footer-social-links a{animation:maxSocialPulse 2s ease-in-out infinite}
+html[data-social-animation="bounce"] .footer-social-links a{animation:maxSocialBounce 1.5s ease-in-out infinite}
+html[data-social-animation="spin"] .footer-social-links a{animation:maxSocialSpin 2.8s ease-in-out infinite}
+html[data-social-animation="glow"] .footer-social-links a{animation:maxSocialGlow 2s ease-in-out infinite}
+html[data-social-animation="wobble"] .footer-social-links a{animation:maxSocialWobble 2s ease-in-out infinite}
+html[data-social-animation] .footer-social-links a:nth-child(2n){animation-delay:-.45s}
+html[data-social-animation] .footer-social-links a:nth-child(3n){animation-delay:-.9s}
+.footer-social-links a:hover,.footer-social-links a:focus-visible{animation-play-state:paused;transform:translateY(-4px) scale(1.08);box-shadow:0 7px 22px #0005,0 0 14px #e66b9b55}
 .footer-social-links a:active{transform:translateY(-1px) scale(.96)}
-@media(prefers-reduced-motion:reduce){
- .footer-social-links a{animation:none;transition:none;will-change:auto}
- .footer-social-links a:hover,.footer-social-links a:focus-visible,.footer-social-links a:active{transform:none;box-shadow:none}
-}
+@media(prefers-reduced-motion:reduce){html[data-social-animation] .footer-social-links a{animation:none!important;transition:none!important}html[data-social-animation] .footer-social-links a:hover,html[data-social-animation] .footer-social-links a:focus-visible,html[data-social-animation] .footer-social-links a:active{transform:none;box-shadow:none}}
