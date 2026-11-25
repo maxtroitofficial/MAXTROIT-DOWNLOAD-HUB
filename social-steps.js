@@ -14,7 +14,7 @@ try{
  const item=downloadSnap.data(),parsed=new URL(String(item.url||""));
  if(parsed.protocol!=="https:")throw Error("Download link is invalid.");
  const gate=configSnap.data()?.viewDetailsGate||{};
- const tasks=Array.isArray(gate.tasks)?gate.tasks.filter(t=>t&&t.enabled!==false&&String(t.title||"").trim()&&/^https:\/\//i.test(String(t.url||""))):[];
+ const tasks=gate.enabled===false?[]:(Array.isArray(gate.tasks)?gate.tasks.filter(t=>t&&t.enabled!==false&&String(t.title||"").trim()&&/^https:\/\//i.test(String(t.url||""))):[]);
  if(!tasks.length){
   status.textContent="No social steps are required. Your download is ready.";
   unlock.href=parsed.href;unlock.hidden=false;return;
