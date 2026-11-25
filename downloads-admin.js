@@ -32,7 +32,7 @@ function editLinks(key){
  dlg.querySelector("#links-cancel").onclick=()=>dlg.close();
  dlg.querySelector("#download-links-form").onsubmit=async e=>{e.preventDefault();if(!authorised())return;const err=dlg.querySelector("#links-error");const tasks=[...taskList.querySelectorAll(".download-link-task")].map(row=>({platform:row.querySelector(".links-task-platform").value,title:row.querySelector(".links-task-title").value.trim(),url:row.querySelector(".links-task-url").value.trim(),enabled:true})).filter(t=>t.title||t.url);for(const t of tasks){if(!t.title||!/^https:\/\//i.test(t.url)){err.textContent="Har step ka button label aur valid HTTPS URL bharein.";return}}
  const destination=dlg.querySelector("#links-destination").value.trim();if(destination&&!/^https:\/\//i.test(destination)){err.textContent="Destination URL HTTPS hona chahiye.";return}
- const minutes=Math.max(0,Math.min(10,Number(dlg.querySelector("#links-minutes").value)||0)),seconds=Math.max(0,Math.min(59,Number(dlg.querySelector("#links-seconds").value)||0)),timerMinutes=(minutes*60+seconds)/60;
+ const minutes=Math.max(0,Math.min(10,Number(dlg.querySelector("#links-minutes").value)||0)),seconds=Math.max(0,Math.min(59,Number(dlg.querySelector("#links-seconds").value)||0)),timerMinutes=Math.min(600,minutes*60+seconds)/60;
  const save=dlg.querySelector('[type="submit"]');save.disabled=true;err.textContent="Saving…";
  try{await cloud.db.collection("downloads").doc(key).update({viewDetailsGate:{enabled:true,timerMinutes,tasks,destinationUrl:destination},updated:Date.now()});await load();say("Links, icons aur timer saved for "+(item.title||"this download")+".");dlg.close();}catch(error){err.textContent="Save failed: "+error.message}finally{save.disabled=false}
  };
