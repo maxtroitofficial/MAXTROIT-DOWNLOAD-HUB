@@ -23,7 +23,13 @@ async function findItem(){
  if(!window.hubCloud?.ready) throw new Error("Cloud database is not connected.");
  if(id==="__unlock_link_settings__"){const snap=await hubCloud.db.collection("siteConfig").doc("unlockLinkSettings").get();const settings=snap.exists?snap.data():null;const url=String(settings?.destinationUrl||"");if(settings?.enabled===false||!/^https:\/\//i.test(url))return null;return {id,title:"Your Download",description:"Complete the steps below to access your download link.",category:"Other",url,isPublished:true,_virtualUnlockSettings:true};}
  const d=await hubCloud.db.collection("downloads").doc(id).get();
- return d.exists?{id:d.id,...d.data()}:null;
+ if(d.exists){const item={id:d.id,...d.data()};if(item.url)return item;}
+ // A stale/removed download ID should still open the admin-configured unlock page when one is saved.
+ const settingsSnap=await hubCloud.db.collection("siteConfig").doc("unlockLinkSettings").get();
+ const settings=settingsSnap.exists?settingsSnap.data():null;
+ const fallbackUrl=String(settings?.destinationUrl||"");
+ if(settings?.enabled!==false&&/^https:\/\//i.test(fallbackUrl))return {id,title:"Your Download",description:"Complete the steps below to access your download link.",category:"Other",url:fallbackUrl,isPublished:true,_virtualUnlockSettings:true};
+ return null;
 }
 function actionIcon(title){const s=String(title).toLowerCase();const brand=s.includes("youtube")||s.includes("subscribe")?"youtube":s.includes("instagram")?"instagram":s.includes("facebook")?"facebook":s.includes("telegram")?"telegram":s.includes("whatsapp")?"whatsapp":s.includes("tiktok")?"tiktok":s.includes("discord")?"discord":"x-twitter";return '<i class="fa-brands fa-'+brand+'" aria-hidden="true"></i>'}
 function socialButtonLabel(task){
