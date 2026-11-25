@@ -496,3 +496,6 @@ body.downloads-workspace #admin-app>.preview-area,body.downloads-workspace #admi
 .social-user-preview .footer-social-links[data-animation] a:nth-child(2n){animation-delay:-.45s}
 .social-user-preview .footer-social-links[data-animation] a:nth-child(3n){animation-delay:-.9s}
 @media(prefers-reduced-motion:reduce){.social-user-preview .footer-social-links[data-animation] a{animation:none!important}}
+
+.unlock-admin{margin:18px 0;padding:18px;border:1px solid #cbd2df;border-radius:12px;background:#fff;display:grid;gap:12px}
+.unlock-admin h3,.unlock-admin p{margin:0}.unlock-admin>label,.unlock-add-row label{display:grid;gap:6px;font-size:13px;font-weight:650}.unlock-admin>label:first-of-type{display:flex;align-items:center;gap:8px}.unlock-admin input[type=checkbox]{width:auto}.unlock-admin input[type=number],.unlock-admin input[type=url],.unlock-admin input[type=text]{width:100%}.unlock-add-row{display:grid;grid-template-columns:1fr 1.4fr auto;gap:10px;align-items:end}.unlock-step-row{display:grid;grid-template-columns:1fr 1.5fr auto auto;gap:8px;align-items:center;padding:10px 0;border-top:1px solid #e3e7ef}.unlock-step-row label{display:flex;gap:6px;align-items:center;font-size:12px}.unlock-step-row input[type=checkbox]{width:auto}@media(max-width:650px){.unlock-add-row,.unlock-step-row{grid-template-columns:1fr}.unlock-step-row label{min-height:30px}}
