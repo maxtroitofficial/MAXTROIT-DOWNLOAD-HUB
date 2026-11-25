@@ -10,7 +10,9 @@ service cloud.firestore {
       allow create, update, delete: if isAdmin();
     }
     match /siteConfig/{configId} {
-      allow read: if configId == "public";
+      // Public download pages must read the shared unlock actions.
+      allow read: if configId == "public" || configId == "unlockLinkSettings";
+      // Only the configured admin account may change site settings.
       allow create, update, delete: if isAdmin();
     }
     match /{document=**} {
