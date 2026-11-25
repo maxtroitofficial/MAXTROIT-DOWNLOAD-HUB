@@ -1,22 +1,50 @@
 (()=>{
 const $=s=>document.querySelector(s),cloud=window.hubCloud||{},uid=window.ADMIN_UID;
-const enabled=$("#unlock-enabled"),timer=$("#unlock-timer"),title=$("#unlock-step-title"),url=$("#unlock-step-url"),preset=$("#unlock-step-preset"),list=$("#unlock-step-list"),status=$("#unlock-status"),add=$("#unlock-step-add"),save=$("#unlock-save");
-if(!enabled||!timer||!title||!url||!preset||!list||!status||!add||!save)return;
+const enabled=$("#unlock-enabled"),timer=$("#unlock-timer"),title=$("#unlock-step-title"),url=$("#unlock-step-url"),preset=$("#unlock-step-preset"),list=$("#unlock-step-list"),status=$("#unlock-status"),add=$("#unlock-step-add"),save=$("#unlock-save"),preview=$("#unlock-live-preview");
+if(!enabled||!timer||!title||!url||!preset||!list||!status||!add||!save||!preview)return;
 let tasks=[];
 const authorised=()=>!!cloud.auth?.currentUser&&!!uid&&cloud.auth.currentUser.uid===uid;
 const say=t=>status.textContent=t;
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-preset.addEventListener("change",()=>{if(preset.value&&preset.value!=="Custom Link")title.value=preset.value;else if(preset.value==="Custom Link")title.value="";title.focus()});
+function platform(t){
+ const s=(String(t.title||"")+" "+String(t.url||"")).toLowerCase();
+ if(/youtube|youtu\.be/.test(s))return ["▶","yt"];
+ if(/instagram/.test(s))return ["◎","ig"];
+ if(/facebook|fb\.watch/.test(s))return ["f","fb"];
+ if(/telegram|t\.me/.test(s))return ["➤","tg"];
+ if(/whatsapp/.test(s))return ["◉","tg"];
+ if(/tiktok/.test(s))return ["♪","other"];
+ if(/discord/.test(s))return ["◉","other"];
+ if(/twitter|x\.com/.test(s))return ["𝕏","other"];
+ return ["↗","other"];
+}
+function buttonName(t){
+ const name=String(t.title||"").trim();
+ if(name&&!/^https?:\/\//i.test(name))return name;
+ const [icon,kind]=platform(t);
+ return ({yt:"YouTube",ig:"Instagram",fb:"Facebook",tg:"Telegram",other:"Social Link"})[kind];
+}
+function renderPreview(){
+ const active=tasks.filter(t=>t.enabled!==false&&String(t.url||"").trim());
+ const box=preview.querySelector(".ulp-buttons");
+ box.innerHTML=active.map(t=>{const [icon,kind]=platform(t);return '<button class="ulp-social '+kind+'" type="button"><span class="ulp-icon">'+icon+'</span><span>'+esc(buttonName(t))+'</span><span class="ulp-arrow">›</span></button>'}).join("");
+ preview.querySelector(".ulp-count").textContent="Steps Completed 0/"+active.length;
+ preview.querySelector(".ulp-track span").style.width="0%";
+ preview.querySelector(".ulp-get").disabled=active.length>0;
+}
 function render(){
  list.innerHTML=tasks.map((t,i)=>'<div class="unlock-step-row" data-index="'+i+'"><input type="text" data-title value="'+esc(t.title)+'" maxlength="100" aria-label="Button name"><input data-url type="url" value="'+esc(t.url)+'" aria-label="Social media URL" placeholder="https://..."><label><input data-enabled type="checkbox" '+(t.enabled===false?'':'checked')+'> Enabled</label><button data-remove type="button">Remove</button></div>').join("")||"<p>No social links added yet.</p>";
  list.querySelectorAll(".unlock-step-row").forEach(row=>{
   const i=Number(row.dataset.index);
-  row.querySelector("[data-title]").oninput=e=>tasks[i].title=e.target.value;
-  row.querySelector("[data-url]").oninput=e=>tasks[i].url=e.target.value;
-  row.querySelector("[data-enabled]").onchange=e=>tasks[i].enabled=e.target.checked;
-  row.querySelector("[data-remove]").onclick=()=>{tasks.splice(i,1);render()};
+  row.querySelector("[data-title]").oninput=e=>{tasks[i].title=e.target.value;renderPreview()};
+  row.querySelector("[data-url]").oninput=e=>{tasks[i].url=e.target.value;renderPreview()};
+  row.querySelector("[data-enabled]").onchange=e=>{tasks[i].enabled=e.target.checked;renderPreview()};
+  row.querySelector("[data-remove]").onclick=()=>{tasks.splice(i,1);render();};
  });
+ renderPreview();
 }
+preset.addEventListener("change",()=>{if(preset.value&&preset.value!=="Custom Link")title.value=preset.value;else if(preset.value==="Custom Link")title.value="";title.focus()});
+enabled.addEventListener("change",renderPreview);
 async function load(){
  try{
   const snap=await cloud.db.collection("siteConfig").doc("public").get(),cfg=snap.data()?.viewDetailsGate||{};
@@ -40,8 +68,9 @@ save.onclick=async()=>{
   await ref.set({viewDetailsGate:value},{merge:true});
   const check=await ref.get(),saved=check.data()?.viewDetailsGate;
   if(!saved||saved.enabled!==value.enabled||Number(saved.timerMinutes)!==minutes||JSON.stringify(saved.tasks)!==JSON.stringify(clean))throw Error("Save verify nahi hua.");
-  say("Social links save aur verify ho gaye. Public Download Details page par apply honge.");
+  say("Social links save aur verify ho gaye.");
  }catch(e){say("Save failed: "+e.message)}finally{save.disabled=false}
 };
+renderPreview();
 if(cloud.ready&&cloud.auth)cloud.auth.onAuthStateChanged(u=>{if(u&&authorised())load();else say("Admin login required.")});
 })();
