@@ -24,6 +24,22 @@ async function findItem(){
  const d=await hubCloud.db.collection("downloads").doc(id).get();
  return d.exists?{id:d.id,...d.data()}:null;
 }
+function socialButtonLabel(task){
+ const raw=String(task?.url||"").trim(),given=String(task?.title||"").trim();
+ if(given&&!/^https?:\/\//i.test(given))return given;
+ try{
+  const host=new URL(raw).hostname.toLowerCase().replace(/^www\./,"");
+  if(host.includes("youtube")||host==="youtu.be")return "Open YouTube";
+  if(host.includes("instagram"))return "Open Instagram";
+  if(host.includes("facebook")||host==="fb.watch")return "Open Facebook";
+  if(host.includes("t.me")||host.includes("telegram"))return "Join Telegram";
+  if(host.includes("whatsapp"))return "Open WhatsApp Channel";
+  if(host.includes("tiktok"))return "Open TikTok";
+  if(host.includes("discord"))return "Join Discord";
+  if(host==="x.com"||host.includes("twitter"))return "Open X / Twitter";
+  return "Open Social Link";
+ }catch(e){return "Open Social Link"}
+}
 function previewEmbedUrl(raw){try{const u=new URL(raw);if(u.protocol!=="https:")return "";const host=u.hostname.toLowerCase().replace(/^www\./,"");let id=(()=>{if(u.hostname==="youtu.be")return u.pathname.split("/").filter(Boolean)[0]||"";if(["youtube.com","www.youtube.com","m.youtube.com","youtube-nocookie.com","www.youtube-nocookie.com"].includes(u.hostname)){if(u.pathname==="/watch")return u.searchParams.get("v")||"";const m=u.pathname.match(/^\/(embed|shorts|live)\/([^/?]+)/);return m?m[2]:""}return ""})();if(id)return "https://www.youtube-nocookie.com/embed/"+encodeURIComponent(id)+"?controls=1&mute=0&playsinline=1";if(host==="soundcloud.com"||host==="on.soundcloud.com"||host==="m.soundcloud.com"){return "https://w.soundcloud.com/player/?url="+encodeURIComponent(u.href)+"&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&visual=true"}if(host==="instagram.com"){const m=u.pathname.match(/^\/(p|reel|tv)\/([^/?#]+)/);if(m)return "https://www.instagram.com/"+m[1]+"/"+encodeURIComponent(m[2])+"/embed/"}if(host==="tiktok.com"||host==="m.tiktok.com"){const m=u.pathname.match(/\/@[^/]+\/(video|photo)\/(\d+)/);if(m&&m[1]==="video")return "https://www.tiktok.com/embed/v2/"+m[2]}if(host==="facebook.com"||host==="m.facebook.com"||host==="fb.watch"){if(/\/(watch|reel|videos)\b/.test(u.pathname)||host==="fb.watch")return "https://www.facebook.com/plugins/video.php?href="+encodeURIComponent(u.href)+"&show_text=false&width=560"}if(host==="vimeo.com"){const m=u.pathname.match(/\/(\d+)/);if(m)return "https://player.vimeo.com/video/"+m[1]}if(host==="dailymotion.com"||host==="dai.ly"){const m=host==="dai.ly"?u.pathname.match(/^\/([^/?]+)/):u.pathname.match(/\/video\/([^_/?]+)/);if(m)return "https://www.dailymotion.com/embed/video/"+m[1]}if(host==="streamable.com"){const m=u.pathname.match(/^\/([a-zA-Z0-9]+)/);if(m)return "https://streamable.com/e/"+m[1]}if(host==="drive.google.com"){const m=u.pathname.match(/\/file\/d\/([^/]+)/);if(m)return "https://drive.google.com/file/d/"+m[1]+"/preview"}if(host==="twitch.tv"){const c=u.pathname.match(/\/clip\/([^/?]+)/);if(c)return "https://clips.twitch.tv/embed?clip="+c[1]+"&parent=d-hub.web.app";const v=u.pathname.match(/^\/videos\/(\d+)/);if(v)return "https://player.twitch.tv/?video="+v[1]+"&parent=d-hub.web.app"}return u.href}catch(e){return ""}}async function showDownloadPreview(item){const host=document.querySelector("#download-preview");if(!host)return;let node=null;const raw=item.previewVideo||item.youtubeUrl||"";if(raw&&/^https:\/\//i.test(raw)){if(item.previewVideo&&/\.(mp4|webm|ogg|m4v)(\?|#|$)/i.test(raw)){node=document.createElement("video");node.src=raw;node.controls=true;node.playsInline=true;node.preload="metadata";if(item.thumbnail)node.poster=item.thumbnail}else{const src=previewEmbedUrl(raw);if(src){node=document.createElement("iframe");node.src=src;node.title="External video preview";node.allow="accelerometer; autoplay; encrypted-media; picture-in-picture; web-share";node.allowFullscreen=true;node.referrerPolicy="strict-origin-when-cross-origin"}}}if(node){host.replaceChildren(node);host.hidden=false}else host.hidden=true}
 (async()=>{
  await applyBrandLogo();
@@ -72,7 +88,7 @@ async function showViewDetailsGate(finalUrl){
   timer.hidden=true;action.hidden=true;message.textContent="Tap each social button to complete its step.";tasksHost.hidden=false;tasksHost.replaceChildren();count.hidden=false;progress.hidden=false;
   const completed=new Set();
   tasks.forEach((task,index)=>{
-   const button=document.createElement("a");button.className="vdu-step";button.href=task.url;button.target="_blank";button.rel="noopener noreferrer";button.textContent=task.title;
+   const button=document.createElement("a");button.className="vdu-step";button.href=task.url;button.target="_blank";button.rel="noopener noreferrer";button.textContent=socialButtonLabel(task);
    button.addEventListener("click",()=>{completed.add(index);button.classList.add("is-done");button.setAttribute("aria-label",task.title+" completed");updateProgress()});tasksHost.append(button);
   });
   function updateProgress(){const done=completed.size,total=tasks.length;count.textContent="Steps Completed "+done+"/"+total;progressFill.style.width=(total?done/total*100:100)+"%";if(done===total){message.textContent="All steps completed. Your download is unlocked.";link.hidden=false;link.href=finalUrl;link.textContent="Get Your Link ↗";link.scrollIntoView({behavior:"smooth",block:"nearest"})}}
