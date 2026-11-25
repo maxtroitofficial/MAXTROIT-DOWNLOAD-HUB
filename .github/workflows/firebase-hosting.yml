@@ -38,4 +38,4 @@ jobs:
           fi
 
       - name: Deploy website and Firestore rules to d-hub.web.app
-        run: firebase deploy --only hosting,firestore:rules,storage --project maxtroit-download-hub --non-interactive
+        run: firebase deploy --only hosting,firestore:rules --project maxtroit-download-hub --non-interactive
