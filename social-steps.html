@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#070b16"><meta name="description" content="Complete the required steps to unlock your download."><title>Complete Steps · MAXTROIT OFFICIAL</title><link rel="stylesheet" href="styles.css">
+<style>
+.steps-panel{width:min(760px,90%);margin:55px auto;padding:clamp(22px,5vw,38px);border:1px solid #34415d;border-radius:22px;background:linear-gradient(145deg,#121c30,#0b1222);box-shadow:0 20px 60px #0005}
+.steps-panel h1{font:700 clamp(27px,5vw,42px)/1.12 'Space Grotesk';margin:0 0 12px}.steps-intro,.steps-status{color:var(--muted);line-height:1.7}
+.step-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:17px 0;border-top:1px solid #ffffff18}.step-row strong{display:block;margin-bottom:7px}.step-row a{color:#a9dcff;text-decoration:underline}.step-confirm{display:flex;align-items:center;gap:8px;color:#d9e3f5;font-size:13px}.step-confirm input{width:19px;height:19px;accent-color:#a855f7}.step-unlock{width:100%;margin-top:20px;min-height:56px;font-size:15px}.step-row[hidden]{display:none}
+@media(max-width:560px){.step-row{grid-template-columns:1fr}.step-confirm{padding-top:4px}}
+</style></head><body>
+<header class="topbar"><a class="brand" href="index.html"><span class="brand-mark">M</span><span>MAXTROIT <b>OFFICIAL</b></span></a><a class="admin-link" href="index.html#collection">← Download Hub</a></header>
+<main class="steps-panel"><p class="eyebrow">MAXTROIT DOWNLOAD CENTER</p><h1>Complete the steps</h1><p class="steps-intro">Open each social media link, follow the instruction, then tick the confirmation box. Complete every step to unlock your download.</p><div id="steps-list"></div><p id="steps-status" class="steps-status" role="status">Loading steps…</p><a id="steps-unlock" class="button step-unlock" hidden target="_blank" rel="noopener noreferrer">Unlock Download ↗</a><p class="steps-status">Note: This page records your confirmation; it cannot independently verify follows or subscriptions on social platforms.</p></main>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><script src="firebase-config.js"></script><script src="firebase.js"></script><script src="social-steps.js?v=social-steps-page-1"></script>
+</body></html>
