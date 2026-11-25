@@ -114,14 +114,14 @@ async function showViewDetailsGate(finalUrl){
   const update=()=>{
    const remaining=Math.max(0,seconds-Math.floor((Date.now()-started)/1000));
    timer.textContent=Math.floor(remaining/60).toString().padStart(2,"0")+":"+String(remaining%60).padStart(2,"0");
-   if(remaining<=0){clearInterval(interval);timer.textContent="00:00";message.textContent="Timer complete. Tap below to continue.";action.textContent="View Details";action.hidden=false}
+   if(remaining<=0){clearInterval(interval);timer.textContent="00:00";message.textContent="Timer complete. Tap below to continue.";try{sessionStorage.setItem("maxtroit-view-details-ready:"+id,String(Date.now()))}catch(e){}action.textContent="Continue";action.hidden=false}
   };
   update();interval=setInterval(update,250);
  }
  action.addEventListener("click",()=>{
   action.hidden=true;
-  if(tasks.length)showTasks();
-  else{timer.hidden=true;message.textContent="All steps complete.";link.hidden=false}
+  try{sessionStorage.setItem("maxtroit-view-details-ready:"+id,String(Date.now()))}catch(e){}
+  location.href="social-steps.html?id="+encodeURIComponent(id||"");
  });
  if(!tasks.length){note.hidden=true}
 }
