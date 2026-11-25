@@ -66,34 +66,30 @@ async function loadDesignStudioState(){
   const custom=templates.find(t=>t.id===data.activeUploadedTemplateId);
   if(custom)$("#design-name").value=custom.name||"My custom template";
   const list=$("#design-saved-template-list");
-  if(list)list.innerHTML=templates.length?templates.map(t=>'<div class="design-saved-template-row"><span><b>'+String(t.name||"Untitled template").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))+'</b>'+(t.id===data.activeUploadedTemplateId?' <small>Active</small>':'')+'</span><span><button type="button" data-apply-uploaded-template="'+String(t.id).replace(/[^a-zA-Z0-9_-]/g,"")+'">Apply</button> <button type="button" data-remove-uploaded-template="'+String(t.id).replace(/[^a-zA-Z0-9_-]/g,"")+'">Remove</button></span></div>').join(""):"<p>No custom templates added yet.</p>";
+  if(list)list.innerHTML=templates.length?templates.map(t=>'<div class="design-saved-template-row"><span><b>'+String(t.name||"Untitled template").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))+'</b>'+(t.id===data.activeUploadedTemplateId?' <small>Active</small>':'')+'</span><button type="button" data-remove-uploaded-template="'+String(t.id).replace(/[^a-zA-Z0-9_-]/g,"")+'">Remove</button></div>').join(""):"<p>No custom templates added yet.</p>";
   out.textContent=custom?"Active custom template: "+(custom.name||"Untitled"):"Current design: "+active+". Choose another design below.";
  }catch(e){out.textContent="Template settings load nahi hui: "+e.message}
 }
 document.addEventListener("click",async e=>{
- const remove=e.target.closest("[data-remove-uploaded-template]"),apply=e.target.closest("[data-apply-uploaded-template]");
- if(!remove&&!apply)return;
- const id=(remove||apply).getAttribute(remove?"data-remove-uploaded-template":"data-apply-uploaded-template");
+ const remove=e.target.closest("[data-remove-uploaded-template]");
+ if(!remove)return;
+ const id=remove.getAttribute("data-remove-uploaded-template");
  if(!id||!authOk(hubCloud.auth.currentUser)){ $("#design-studio-status").textContent="Admin login required.";return}
- const out=$("#design-studio-status");(remove||apply).disabled=true;
+ const out=$("#design-studio-status");remove.disabled=true;
  try{
   const ref=hubCloud.db.collection("siteConfig").doc("public"),snap=await ref.get(),data=snap.data()||{},templates=Array.isArray(data.uploadedTemplates)?data.uploadedTemplates:[];
   if(!templates.some(t=>t&&t.id===id&&t.kind==="html"))throw Error("Template nahi mila.");
-  if(remove){
-   const remaining=templates.filter(t=>!(t&&t.id===id));
-   const patch={uploadedTemplates:remaining};
-   if(data.activeUploadedTemplateId===id){patch.activeUploadedTemplateId=null;patch.templateId="midnight";}
-   await ref.set(patch,{merge:true});
-   out.textContent="Custom template remove ho gaya.";
-   if(data.activeUploadedTemplateId===id)frame.contentWindow?.location?.reload();
-  }else{
-   await ref.set({templateId:"uploaded",activeUploadedTemplateId:id},{merge:true});
-   out.textContent="Custom template apply ho gaya.";frame.contentWindow?.location?.reload();
-  }
+  const remaining=templates.filter(t=>!(t&&t.id===id));
+  const patch={uploadedTemplates:remaining};
+  if(data.activeUploadedTemplateId===id){patch.activeUploadedTemplateId=null;patch.templateId="midnight";}
+  await ref.set(patch,{merge:true});
+  out.textContent="Custom template remove ho gaya.";
+  if(data.activeUploadedTemplateId===id)frame.contentWindow?.location?.reload();
   await loadDesignStudioState();
- }catch(err){out.textContent="Template action failed: "+err.message}
- finally{(remove||apply).disabled=false}
+ }catch(err){out.textContent="Template remove failed: "+err.message}
+ finally{remove.disabled=false}
 });
+
 async function applyPresetDesign(id){
  const allowed=["midnight","clean","neon","editorial","ocean","sunset","minimal","creator","market","arcade"];if(!allowed.includes(id))return;
  const out=$("#design-studio-status"),buttons=[...document.querySelectorAll("[data-template]")];buttons.forEach(b=>b.disabled=true);out.textContent="Template apply ho raha hai…";
