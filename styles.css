@@ -1308,3 +1308,35 @@ html[data-social-animation] .footer-social-links a:nth-child(3n){animation-delay
 .footer-social-links a:hover,.footer-social-links a:focus-visible{animation-play-state:paused;transform:translateY(-4px) scale(1.08);box-shadow:0 7px 22px #0005,0 0 14px #e66b9b55}
 .footer-social-links a:active{transform:translateY(-1px) scale(.96)}
 @media(prefers-reduced-motion:reduce){html[data-social-animation] .footer-social-links a{animation:none!important;transition:none!important}html[data-social-animation] .footer-social-links a:hover,html[data-social-animation] .footer-social-links a:focus-visible,html[data-social-animation] .footer-social-links a:active{transform:none;box-shadow:none}}
+
+
+/* Clear, prominent download-card action */
+.card-link{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  min-height:52px;
+  box-sizing:border-box;
+  padding:13px 17px;
+  margin-top:18px;
+  border:1px solid currentColor;
+  border-radius:13px;
+  background:linear-gradient(110deg,rgba(155,92,246,.20),rgba(217,70,239,.12));
+  text-decoration:none;
+  font-size:15px;
+  font-weight:800;
+  letter-spacing:.15px;
+  line-height:1.25;
+  transition:transform .18s ease,box-shadow .18s ease,filter .18s ease;
+}
+.card-link span{font-size:20px;line-height:1;flex:0 0 auto}
+.card-link:hover{
+  transform:translateY(-2px);
+  filter:brightness(1.12);
+  box-shadow:0 8px 22px rgba(125,75,220,.22);
+}
+.card-link:focus-visible{outline:3px solid currentColor;outline-offset:3px}
+@media(max-width:520px){
+  .card-link{min-height:50px;padding:13px 15px;font-size:14px}
+}
