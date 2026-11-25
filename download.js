@@ -21,6 +21,7 @@ async function applyBrandLogo(){
 async function findItem(){
  if(!id) return null;
  if(!window.hubCloud?.ready) throw new Error("Cloud database is not connected.");
+ if(id==="__unlock_link_settings__"){const snap=await hubCloud.db.collection("siteConfig").doc("unlockLinkSettings").get();const settings=snap.exists?snap.data():null;const url=String(settings?.destinationUrl||"");if(settings?.enabled===false||!/^https:\/\//i.test(url))return null;return {id,title:"Your Download",description:"Complete the steps below to access your download link.",category:"Other",url,isPublished:true,_virtualUnlockSettings:true};}
  const d=await hubCloud.db.collection("downloads").doc(id).get();
  return d.exists?{id:d.id,...d.data()}:null;
 }
