@@ -66,7 +66,7 @@ async function loadDesignStudioState(){
  }catch(e){out.textContent="Template settings load nahi hui: "+e.message}
 }
 async function applyPresetDesign(id){
- const allowed=["midnight","clean","neon","editorial","ocean","sunset","minimal"];if(!allowed.includes(id))return;
+ const allowed=["midnight","clean","neon","editorial","ocean","sunset","minimal","creator","market","arcade"];if(!allowed.includes(id))return;
  const out=$("#design-studio-status"),buttons=[...document.querySelectorAll("[data-template]")];buttons.forEach(b=>b.disabled=true);out.textContent="Template apply ho raha hai…";
  try{const ref=hubCloud.db.collection("siteConfig").doc("public");await ref.set({templateId:id,activeUploadedTemplateId:null},{merge:true});const verify=await ref.get();if(verify.data()?.templateId!==id)throw Error("Template save verify nahi hua");
  buttons.forEach(b=>b.classList.toggle("active",b.dataset.template===id));out.textContent=id+" template save aur apply ho gaya. Public website update ho rahi hai.";frame.contentWindow?.location?.reload();
