@@ -9,7 +9,7 @@ const presets=[
  ["features","Features",{title:"What we offer",text:"Describe your key features."}],["pricing","Pricing",{title:"Simple pricing",text:"Explain your plans and value."}],
  ["faq","FAQ",{title:"Frequently asked questions",text:"Add an answer to a common question."}],["gallery","Gallery",{title:"Image gallery"}],
  ["download","Download card",{title:"Download",text:"Add details about your download."}],["video","Video",{src:""}],
- ["section","Section",{title:"New section"}],["container","Container",{}],["spacer","Spacer",{}],["divider","Divider",{}],["footer","Footer",{text:"© MAXTROIT OFFICIAL"}],["announcement","Announcement bar",{text:"✨ New update — explore what is new"}],["stats","Stats",{title:"Our impact",text:"100+ downloads · 24/7 access"}],["testimonial","Testimonial",{title:"What people say",text:"Add a customer quote or review."}],["cta","Call to action",{title:"Ready to get started?",text:"Give visitors one clear next step."}],["logos","Logo strip",{title:"Trusted by creators"}],["newsletter","Newsletter",{title:"Stay in the loop",text:"Invite visitors to subscribe for updates."}]
+ ["section","Section",{title:"New section"}],["container","Container",{}],["spacer","Spacer",{}],["divider","Divider",{}],["footer","Footer",{text:"© MAXTROIT OFFICIAL"}],["announcement","Announcement bar",{text:"✨ New update — explore what is new"}],["stats","Stats",{title:"Our impact",text:"100+ downloads · 24/7 access"}],["testimonial","Testimonial",{title:"What people say",text:"Add a customer quote or review."}],["cta","Call to action",{title:"Ready to get started?",text:"Give visitors one clear next step."}],["logos","Logo strip",{title:"Trusted by creators"}],["newsletter","Newsletter",{title:"Stay in the loop",text:"Invite visitors to subscribe for updates."}],\n ["rect","Rectangle",{shape:"rectangle"}],["circle","Circle",{shape:"circle"}],["pill","Pill",{shape:"pill"}],["line","Line",{shape:"line"}],["arrow","Arrow",{shape:"arrow"}],["triangle","Triangle",{shape:"triangle"}]
 ];
 let tree=[],pages=[{id:"home",name:"Home",tree}],pageIndex=0,selected=null,device="desktop",dirty=false,history=new C().History(tree);
 function current(){return pages[pageIndex];}
@@ -77,7 +77,7 @@ function inspector(){
   if(active==="Content"){
    if(n.type==="image"){control(body,"Image URL","src",n.props.src||"","url");control(body,"Alt text","alt",n.props.alt||"");}
    else if(n.type==="button"){control(body,"Button label","text",n.props.text||"");control(body,"Destination URL","href",n.props.href||"","#");}
-   else{area(body,"Text content","text",n.props.text||"");if("title" in n.props)control(body,"Section title","title",n.props.title||"");}
+   else if(["rect","circle","pill","line","triangle"].includes(n.type)){const note=document.createElement("p");note.className="mb-tool-note";note.textContent="Shape selected. Size, fill, border and position are edited in Layout and Style.";body.append(note);}\n   else if(n.type==="arrow"){control(body,"Arrow symbol","text",n.props.text||"➜");}\n   else{area(body,"Text content","text",n.props.text||"");if("title" in n.props)control(body,"Section title","title",n.props.title||"");}
    const note=document.createElement("p");note.className="mb-tool-note";note.textContent="Changes are applied to the selected element. Preview interactions remain disabled.";body.append(note);
   }
   if(active==="Layout"){
@@ -116,7 +116,17 @@ function inspector(){
  const del=document.createElement("button");del.type="button";del.textContent="Delete element";del.className="mb-danger";del.onclick=()=>{current().tree=C().removeNode(current().tree,n.id);selected=null;saveHistory();};panel.append(del);
 }
 function renderCanvasOnly(){R().renderTree(current().tree,$("#mb-canvas"),device,selected);bindCanvasSelection();}
-function add(type){const preset=presets.find(x=>x[0]===type);if(!preset)return;const n=C().makeNode(type,preset[2],type==="hero"?{padding:"48px 20px",background:"#17152d",color:"#fff"}:{padding:"24px",background:"#121d33",color:"#f5f7ff"});current().tree=C().insertNode(current().tree,n);selected=n.id;saveHistory();}
+function add(type){const preset=presets.find(x=>x[0]===type);if(!preset)return;
+ const shapeStyles={
+  rect:{width:"180px",height:"110px",background:"#8b5cf6",borderRadius:"8px",padding:"0"},
+  circle:{width:"120px",height:"120px",background:"#ec4899",borderRadius:"50%",padding:"0"},
+  pill:{width:"190px",height:"64px",background:"#06b6d4",borderRadius:"999px",padding:"0"},
+  line:{width:"220px",height:"3px",background:"#334155",padding:"0",borderRadius:"0"},
+  arrow:{width:"180px",height:"64px",background:"transparent",color:"#7c3aed",fontSize:"54px",lineHeight:"1",padding:"0"},
+  triangle:{width:"0",height:"0",background:"transparent",borderLeft:"65px solid transparent",borderRight:"65px solid transparent",borderBottom:"110px solid #f59e0b",padding:"0"}
+ };
+ const styles=shapeStyles[type]|| (type==="hero"?{padding:"48px 20px",background:"#17152d",color:"#fff"}:{padding:"24px",background:"#121d33",color:"#f5f7ff"});
+ const n=C().makeNode(type,preset[2],styles);current().tree=C().insertNode(current().tree,n);selected=n.id;saveHistory();}
 let timer;function scheduleSave(){clearTimeout(timer);timer=setTimeout(saveDraft,1500);}
 async function saveDraft(){const payload=JSON.stringify(current().tree);if(new Blob([payload]).size>850000){$("#mb-status").textContent="Page too large. Split this page into smaller sections.";return false;}if(!window.hubCloud?.ready||!hubCloud.auth?.currentUser){$("#mb-status").textContent="Offline — changes remain in this editor";return false;}try{$("#mb-status").textContent="Saving…";const ref=hubCloud.db.collection("sites").doc("maxtroit").collection("pages").doc(current().id);await ref.set({name:current().name,draftTree:current().tree,updatedAt:firebase.firestore.FieldValue.serverTimestamp(),updatedBy:hubCloud.auth.currentUser.uid},{merge:true});dirty=false;$("#mb-status").textContent="Saved";return true;}catch(e){$("#mb-status").textContent="Save error: "+e.message;return false;}}
 async function publish(){if(!await saveDraft()){$("#mb-status").textContent="Publish cancelled: draft could not be saved.";return;}if(!window.hubCloud?.ready)return;try{const db=hubCloud.db,ref=db.collection("sites").doc("maxtroit").collection("pages").doc(current().id),snap=await ref.get(),data=snap.data()||{},batch=db.batch(),version=db.collection("sites").doc("maxtroit").collection("versions").doc();const publicRef=db.collection("sites").doc("maxtroit").collection("publicPages").doc(current().id);batch.set(publicRef,{name:current().name,publishedTree:current().tree,publishedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});batch.set(version,{pageId:current().id,snapshot:current().tree,createdAt:firebase.firestore.FieldValue.serverTimestamp(),createdBy:hubCloud.auth.currentUser.uid});await batch.commit();$("#mb-status").textContent="Published · version saved";}catch(e){$("#mb-status").textContent="Publish failed: "+e.message;}}
