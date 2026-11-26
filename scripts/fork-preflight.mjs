@@ -43,7 +43,7 @@ const cliProject = firebaserc.projects && firebaserc.projects.default;
 if (!projectId || !adminUid || !firestoreUid || !storageUid || !hostingSite || !cliProject) {
   fail("A Firebase project, admin UID, Hosting site, or CLI project value is missing.");
 }
-if (projectId === "maxtroit-download-hub" || cliProject === "maxtroit-download-hub") {
+if (projectId === "YOUR_FIREBASE_PROJECT_ID" || cliProject === "YOUR_FIREBASE_PROJECT_ID" || adminUid === "YOUR_FIREBASE_ADMIN_UID" || firestoreUid === "YOUR_FIREBASE_ADMIN_UID" || storageUid === "YOUR_FIREBASE_ADMIN_UID" || hostingSite === "YOUR_FIREBASE_HOSTING_SITE_ID") {\n  fail("Replace all Firebase setup placeholders before deployment.");\n}\nif (projectId === "maxtroit-download-hub" || cliProject === "maxtroit-download-hub") {
   fail("Configuration still points to the original MAXTROIT Firebase project.");
 }
 if (hostingSite === "d-hub") fail("Hosting still targets the original d-hub site.");
