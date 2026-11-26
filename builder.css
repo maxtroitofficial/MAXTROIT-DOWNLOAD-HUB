@@ -38,3 +38,48 @@
 #advanced-builder .mb-canvas .mb-triangle{border-style:solid;border-top:0}
 #advanced-builder .mb-canvas .mb-circle{aspect-ratio:1/1}
 @media(max-width:767px){#advanced-builder .mb-shape-tools{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+
+/* Responsive tool visibility: desktop panels stay independently scrollable;
+   on phones the add/shapes palette appears before the canvas. */
+#advanced-builder .mb-workspace{align-items:start}
+#advanced-builder .mb-workspace>.mb-panel{
+  max-height:calc(100dvh - 190px);
+  overscroll-behavior:contain;
+  scrollbar-gutter:stable;
+}
+#advanced-builder .mb-panel h3{
+  position:sticky;
+  top:-12px;
+  z-index:1;
+  padding:9px 0 7px;
+  background:var(--mb-panel);
+}
+#advanced-builder .mb-inspector{min-height:260px}
+#advanced-builder .mb-inspector-tabs .mb-tab{white-space:nowrap}
+#advanced-builder .mb-shape-tools button{min-height:44px}
+#advanced-builder .mb-shape-tools button:focus-visible,
+#advanced-builder .mb-blocks button:focus-visible,
+#advanced-builder .mb-inspector-tabs button:focus-visible{
+  outline:2px solid #c4b5fd;
+  outline-offset:2px;
+}
+@media(max-width:1023px){
+  #advanced-builder .mb-workspace{grid-template-columns:minmax(175px, .32fr) minmax(0,1fr);align-items:start}
+  #advanced-builder .mb-workspace>.mb-panel:first-child{max-height:calc(100dvh - 175px)}
+  #advanced-builder .mb-workspace>.mb-inspector{grid-column:1/-1;max-height:none}
+}
+@media(max-width:767px){
+  #advanced-builder .mb-workspace{display:flex;flex-direction:column;gap:10px}
+  #advanced-builder .mb-workspace>.mb-panel:first-child{order:1;width:100%;max-height:none;overflow:visible}
+  #advanced-builder .mb-canvas-wrap{order:2;width:100%;min-height:48dvh}
+  #advanced-builder .mb-workspace>.mb-inspector{order:3;width:100%;max-height:none;min-height:0}
+  #advanced-builder .mb-blocks{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #advanced-builder .mb-shape-tools{grid-template-columns:repeat(3,minmax(0,1fr))}
+  #advanced-builder .mb-panel h3{position:static;padding:0;background:transparent}
+  #advanced-builder .mb-inspector-tabs{position:sticky;top:58px}
+}
+@media(min-width:768px){
+  #advanced-builder .mb-workspace>.mb-panel{position:sticky;top:12px}
+  #advanced-builder .mb-workspace>.mb-inspector{position:sticky;top:12px}
+}
