@@ -25,7 +25,7 @@
   const record=(type,extra={})=>{
     const now=Date.now();if(type==="heartbeat"&&now-lastHeartbeat<55000)return;
     if(type==="heartbeat")lastHeartbeat=now;
-    const data={type,visitorId,sessionId,page,createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+    const data={schemaVersion:2,type,visitorId,sessionId,page,createdAt:firebase.firestore.FieldValue.serverTimestamp()};
     if(extra.downloadId)data.downloadId=String(extra.downloadId).slice(0,100);
     hubCloud.db.collection("analyticsEvents").add(data).catch(e=>console.warn("MAXTROIT analytics event was not saved:",e));
   };
