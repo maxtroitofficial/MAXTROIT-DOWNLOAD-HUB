@@ -1,5 +1,5 @@
 {
   "projects": {
-    "default": "maxtroit-download-hub"
+    "default": "YOUR_FIREBASE_PROJECT_ID"
   }
 }

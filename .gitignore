@@ -3,3 +3,9 @@
 .env
 .env.*
 .DS_Store
+# Android/Gradle generated files
+android-admin/.gradle/
+android-admin/**/build/
+android-admin/local.properties
+*.jks
+*.keystore

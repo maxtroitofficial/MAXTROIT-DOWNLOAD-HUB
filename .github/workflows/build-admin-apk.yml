@@ -1,0 +1,65 @@
+name: Build universal Admin APK
+
+on:
+  pull_request:
+    paths:
+      - "android-admin/**"
+      - ".github/workflows/build-admin-apk.yml"
+  push:
+    branches:
+      - fork-setup-guide
+    paths:
+      - "android-admin/**"
+      - ".github/workflows/build-admin-apk.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: "platform-tools platforms;android-35 build-tools;35.0.0"
+      - name: Validate JavaScript and project JSON
+        run: |
+          node --check app.js
+          node --check admin.js
+          node --check firebase.js
+          node --check scripts/fork-preflight.mjs
+          node -e '["firebase.json","manifest.json","admin-manifest.json"].forEach(f => JSON.parse(require("fs").readFileSync(f,"utf8")))'
+      - name: Verify unconfigured template is safely blocked
+        run: |
+          if node scripts/fork-preflight.mjs; then
+            echo "Preflight unexpectedly accepted the unconfigured template."
+            exit 1
+          else
+            echo "Expected: placeholder template is blocked before deployment."
+          fi
+      - name: Build debug APK
+        working-directory: android-admin
+        run: gradle --no-daemon :app:assembleDebug
+      - name: Verify APK contains the bundled Admin Panel
+        run: |
+          unzip -l android-admin/app/build/outputs/apk/debug/app-debug.apk | grep -E 'assets/(admin.html|admin.js|admin.css|firebase-config.js|music-admin.js|builder-app.js)'
+      - name: Upload installable test APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: download-hub-admin-debug-apk
+          path: android-admin/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 30

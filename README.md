@@ -1,4 +1,4 @@
-# MAXTROIT DOWNLOAD HUB
+# Download Hub — Starter Template
 
 Mobile-first download website with separate public and admin panels, backed by Firebase Authentication and Cloud Firestore.
 
@@ -53,3 +53,11 @@ Open `admin.html`, sign in with the configured administrator account, then choos
 - Version snapshots: `sites/maxtroit/versions/{versionId}` (administrator-only).
 - Public snapshots: `sites/maxtroit/publicPages/{pageId}` (public read; administrator write).
 - The current public-site bridge renders the published `home` page above the existing downloads collection. Additional page routing, full offline conflict resolution, richer media library management and browser/device end-to-end testing remain future work.
+
+## Creating an independent fork
+
+A fork is not ready to deploy immediately: the checked-in Firebase configuration and Hosting target belong to the original project. Create your own Firebase project, admin account, Firestore/Storage setup, and Hosting site first. Follow [FORK-SETUP-GUIDE.md](FORK-SETUP-GUIDE.md), then run `node scripts/fork-preflight.mjs` before deployment. Never deploy this repository while it still targets the original `maxtroit-download-hub` project or `d-hub` Hosting site.
+
+## Android Admin app
+
+The universal Android WebView wrapper source is in `android-admin/`. It asks the installer for their own HTTPS `/admin.html` URL and only keeps navigation on that exact HTTPS host. It does not contain Firebase credentials. A GitHub Actions workflow builds an installable debug APK and uploads it as a 30-day artifact. A debug APK is for testing/sideloading; a Play Store or public release needs a separately signed release build and verification.

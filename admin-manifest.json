@@ -1,0 +1,19 @@
+{
+  "id": "/admin.html",
+  "name": "My Download Hub Admin",
+  "short_name": "Hub Admin",
+  "description": "Admin panel for your independent Download Hub.",
+  "start_url": "/admin.html?source=installed-app",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#10182b",
+  "theme_color": "#111827",
+  "icons": [
+    {
+      "src": "/pwa-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

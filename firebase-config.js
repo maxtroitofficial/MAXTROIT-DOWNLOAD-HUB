@@ -1,12 +1,12 @@
-// Firebase Web App configuration for MAXTROIT DOWNLOAD HUB.
-// These web identifiers are intended for frontend use. Firestore Rules protect data.
+// Add your own Firebase Web App configuration before deployment.
+// These browser identifiers are public configuration, not admin credentials.
 window.FIREBASE_CONFIG = {
-  apiKey: "AIzaSyD3Cpzu1tWUw7xqUKsC9COPwQDloNRKJKA",
-  authDomain: "maxtroit-download-hub.firebaseapp.com",
-  projectId: "maxtroit-download-hub",
-  storageBucket: "maxtroit-download-hub.firebasestorage.app",
-  messagingSenderId: "957047554501",
-  appId: "1:957047554501:web:4ff8204465ba338ec94bac",
-  measurementId: "G-S9CVTLL0ND"
+  apiKey: "YOUR_FIREBASE_WEB_API_KEY",
+  authDomain: "YOUR_FIREBASE_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_FIREBASE_PROJECT_ID",
+  storageBucket: "YOUR_FIREBASE_PROJECT_ID.firebasestorage.app",
+  messagingSenderId: "YOUR_FIREBASE_MESSAGING_SENDER_ID",
+  appId: "YOUR_FIREBASE_WEB_APP_ID"
 };
-window.ADMIN_UID = "5607ISIL0PMq6HLmzhTxyFa2elY2";
+// Replace with the UID of the admin account created in YOUR Firebase Authentication.
+window.ADMIN_UID = "YOUR_FIREBASE_ADMIN_UID";
