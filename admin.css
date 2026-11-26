@@ -1058,3 +1058,34 @@ body.flash-editor-workspace #admin-app>.preview-area>#flash-editor-panel #fs-sta
   aspect-ratio:9/16!important;max-height:none!important;
  }
 }
+
+
+/* Mobile Flash Screen: show the live preview before the long settings form. */
+@media(max-width:850px){
+ body.flash-editor-workspace #admin-app>.preview-area>#flash-editor-panel:not([hidden]){
+  display:flex!important;flex-direction:column!important;gap:12px!important;
+  height:auto!important;min-height:0!important;max-height:none!important;
+  overflow:visible!important;
+ }
+ body.flash-editor-workspace #admin-app>.preview-area>#flash-editor-panel .flash-editor-live{
+  order:1!important;display:flex!important;visibility:visible!important;opacity:1!important;
+  width:100%!important;min-height:0!important;height:auto!important;
+  max-height:none!important;overflow:visible!important;
+ }
+ body.flash-editor-workspace #admin-app>.preview-area>#flash-editor-panel .flash-live-heading{
+  display:flex!important;flex-wrap:wrap!important;gap:8px!important;
+ }
+ body.flash-editor-workspace #admin-app>.preview-area>#flash-editor-panel .fs-stage-wrap{
+  display:flex!important;flex-direction:column!important;align-items:center!important;
+  justify-content:flex-start!important;width:100%!important;min-height:0!important;
+ }
+ body.flash-editor-workspace #admin-app>.preview-area>#flash-editor-panel #fs-stage{
+  display:flex!important;visibility:visible!important;opacity:1!important;
+  width:min(76vw,300px)!important;height:auto!important;min-height:0!important;
+  aspect-ratio:9/16!important;max-height:none!important;margin:10px auto!important;
+ }
+ body.flash-editor-workspace #admin-app>.preview-area>#flash-editor-panel .flash-editor-controls{
+  order:2!important;width:100%!important;max-height:none!important;
+  min-height:0!important;height:auto!important;overflow:visible!important;
+ }
+}
