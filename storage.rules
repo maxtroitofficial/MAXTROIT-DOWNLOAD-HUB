@@ -3,7 +3,7 @@ service firebase.storage {
   match /b/{bucket}/o {
     function isAdmin() {
       return request.auth != null
-        && request.auth.uid == "5607ISIL0PMq6HLmzhTxyFa2elY2";
+        && request.auth.uid == "YOUR_FIREBASE_ADMIN_UID";
     }
     match /download-previews/{userId}/{fileName} {
       allow read: if true;
