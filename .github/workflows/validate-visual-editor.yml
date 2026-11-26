@@ -3,7 +3,7 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [main, feature/full-website-editor]
+    branches: [main, feature/full-website-editor, feature/complete-website-builder]
 permissions:
   contents: read
 jobs:
@@ -20,4 +20,6 @@ jobs:
             node --check "$file"
           done
       - name: Visual editor regression invariants
-        run: |\n          node tests/invariants.mjs\n          node tests/builder-core.test.mjs
+        run: |
+          node tests/invariants.mjs
+          node tests/builder-core.test.mjs
