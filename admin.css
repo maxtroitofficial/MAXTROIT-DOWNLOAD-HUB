@@ -1065,3 +1065,10 @@ body.flash-editor-workspace #flash-editor-panel .fs-stage-wrap{
   display:grid!important;grid-template-columns:minmax(0,1fr)!important;
  }
 }
+
+.security-admin{width:min(100%,980px);margin:18px auto 36px;padding:clamp(14px,3vw,28px);color:#f5f3ff}
+.security-head{margin-bottom:18px}.security-kicker{margin:0 0 5px;color:#b8a5f5;font-size:12px;font-weight:800;letter-spacing:.14em}.security-head h2{margin:0 0 6px;font-size:clamp(24px,4vw,34px)}.security-head p,.security-card>p{color:#aebbd0;line-height:1.55}
+.security-card{background:#171f33;border:1px solid #394966;border-radius:18px;padding:clamp(16px,3vw,24px);margin:14px 0;box-shadow:0 12px 30px #0002}
+.security-card h3{margin:0 0 8px;font-size:20px}.security-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px}.security-form label{display:grid;gap:7px;color:#e5e7eb;font-weight:600}.security-form input{width:100%;min-width:0;min-height:46px;padding:10px 12px;border:1px solid #526582;border-radius:10px;background:#0d1424;color:#fff;font:inherit}.security-form button{min-height:46px;align-self:end}.security-form #admin-password-status{grid-column:1/-1;margin:0;color:#c7d2fe;min-height:20px}
+.security-passkey-row{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:14px 0;border-top:1px solid #35415a}.security-toggle{display:flex;gap:9px;align-items:center;color:#b8c2d4;font-size:13px}.security-toggle input{width:20px;height:20px}.security-note{font-size:13px;color:#9ca3af}
+@media(max-width:600px){.security-form{grid-template-columns:minmax(0,1fr)}.security-form #admin-password-status{grid-column:1}.security-card{padding:15px}.security-passkey-row{align-items:flex-start;flex-direction:column}}
