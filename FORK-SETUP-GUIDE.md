@@ -6,7 +6,7 @@ This guide is for creating an independent copy of MAXTROIT DOWNLOAD HUB. It is i
 
 - Copying this repository does **not** automatically create a Firebase project or publish a website.
 - Each owner must use their own GitHub repository, Firebase project, Firebase web app, Authentication user, Firestore database, Storage bucket, and Hosting site.
-- Never connect a fork to the original `maxtroit-download-hub` Firebase project or the original `d-hub` Hosting site.
+- The fork template now starts with placeholder Firebase values and rules that deny writes until you set your own admin UID. Never connect a fork to the original `maxtroit-download-hub` Firebase project or the original `d-hub` Hosting site.
 - Do not paste passwords, service-account JSON, private keys, access tokens, or recovery codes into ChatGPT or GitHub.
 - The browser Firebase web config is not a password. Security must be enforced by Firestore and Storage Rules and Firebase Authentication.
 
@@ -40,7 +40,7 @@ You need:
 ## Step 3 — Connect your fork to your Firebase project
 
 1. In your own GitHub repository, open `firebase-config.js`.
-2. Replace the existing example/original Firebase web configuration with the values from your own Firebase Web App.
+2. Replace every `YOUR_FIREBASE_...` placeholder in the config with values from your own Firebase Web App.
 3. Set `window.ADMIN_UID` to the UID of the administrator account you created in your own Firebase Authentication users list.
 4. Do not use the original project's administrator UID.
 5. Save and commit the change in your own repository.
@@ -50,9 +50,9 @@ The Firebase web config is intended to be present in a browser app. It is not an
 ## Step 4 — Set up security rules
 
 1. Open your fork's `firestore.rules`.
-2. Replace the administrator UID in the `isAdmin()` function with the UID from your own Firebase Authentication user.
+2. Replace `YOUR_FIREBASE_ADMIN_UID` in the `isAdmin()` function with the UID from your own Firebase Authentication user.
 3. Open your fork's `storage.rules`.
-4. Replace the administrator UID in its `isAdmin()` function with the same UID.
+4. Replace `YOUR_FIREBASE_ADMIN_UID` in its `isAdmin()` function with the same UID.
 5. Review the rules before publishing. They must not contain the original project's administrator UID.
 6. In Firebase Console, publish the contents of your own `firestore.rules` under Firestore → Rules and your own `storage.rules` under Storage → Rules.
 
@@ -76,7 +76,7 @@ Check `.firebaserc` and confirm that it names your own project ID, not `maxtroit
 
 The repository's original `firebase.json` may contain the original Hosting site name. Do not deploy while it still targets `d-hub`.
 
-Create a Hosting site for your own project in Firebase Console (Hosting → Get started / Add another site), then update the `hosting.site` value in your own `firebase.json` to your new Hosting site ID.
+Create a Hosting site for your own project in Firebase Console (Hosting → Get started / Add another site), then replace `YOUR_FIREBASE_HOSTING_SITE_ID` in `firebase.json` with your new Hosting site ID.
 
 Verify all three values before deployment:
 - `.firebaserc` → your Firebase project ID
