@@ -994,3 +994,25 @@ body.flash-editor-workspace #flash-editor-panel #fs-stage{
  body.flash-editor-workspace #flash-editor-panel .flash-editor-controls{grid-column:1;grid-row:1}
  body.flash-editor-workspace #flash-editor-panel .flash-editor-live{grid-column:2;grid-row:1}
 }
+
+
+/* Restore the Flash Settings panel's own scroll area so every control remains reachable. */
+body.flash-editor-workspace #flash-editor-panel .flash-editor-controls{
+  display:flex!important;flex-direction:column!important;
+  height:auto!important;min-height:0!important;
+  max-height:calc(100dvh - 210px)!important;
+  overflow-x:hidden!important;overflow-y:auto!important;
+  overscroll-behavior-y:contain!important;
+  -webkit-overflow-scrolling:touch!important;
+  scrollbar-width:thin!important;
+  flex:0 1 auto!important;
+  padding-right:10px!important;
+}
+@media(max-width:850px){
+ body.flash-editor-workspace #flash-editor-panel .flash-editor-controls{
+  max-height:52dvh!important;min-height:180px!important;
+  overflow-y:auto!important;overflow-x:hidden!important;
+  flex:0 1 auto!important;
+  padding-bottom:22px!important;
+ }
+}
