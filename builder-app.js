@@ -9,7 +9,8 @@ const presets=[
  ["features","Features",{title:"What we offer",text:"Describe your key features."}],["pricing","Pricing",{title:"Simple pricing",text:"Explain your plans and value."}],
  ["faq","FAQ",{title:"Frequently asked questions",text:"Add an answer to a common question."}],["gallery","Gallery",{title:"Image gallery"}],
  ["download","Download card",{title:"Download",text:"Add details about your download."}],["video","Video",{src:""}],
- ["section","Section",{title:"New section"}],["container","Container",{}],["spacer","Spacer",{}],["divider","Divider",{}],["footer","Footer",{text:"© MAXTROIT OFFICIAL"}],["announcement","Announcement bar",{text:"✨ New update — explore what is new"}],["stats","Stats",{title:"Our impact",text:"100+ downloads · 24/7 access"}],["testimonial","Testimonial",{title:"What people say",text:"Add a customer quote or review."}],["cta","Call to action",{title:"Ready to get started?",text:"Give visitors one clear next step."}],["logos","Logo strip",{title:"Trusted by creators"}],["newsletter","Newsletter",{title:"Stay in the loop",text:"Invite visitors to subscribe for updates."}],\n ["rect","Rectangle",{shape:"rectangle"}],["circle","Circle",{shape:"circle"}],["pill","Pill",{shape:"pill"}],["line","Line",{shape:"line"}],["arrow","Arrow",{shape:"arrow"}],["triangle","Triangle",{shape:"triangle"}]
+ ["section","Section",{title:"New section"}],["container","Container",{}],["spacer","Spacer",{}],["divider","Divider",{}],["footer","Footer",{text:"© MAXTROIT OFFICIAL"}],["announcement","Announcement bar",{text:"✨ New update — explore what is new"}],["stats","Stats",{title:"Our impact",text:"100+ downloads · 24/7 access"}],["testimonial","Testimonial",{title:"What people say",text:"Add a customer quote or review."}],["cta","Call to action",{title:"Ready to get started?",text:"Give visitors one clear next step."}],["logos","Logo strip",{title:"Trusted by creators"}],["newsletter","Newsletter",{title:"Stay in the loop",text:"Invite visitors to subscribe for updates."}],
+ ["rect","Rectangle",{shape:"rectangle"}],["circle","Circle",{shape:"circle"}],["pill","Pill",{shape:"pill"}],["line","Line",{shape:"line"}],["arrow","Arrow",{shape:"arrow"}],["triangle","Triangle",{shape:"triangle"}]
 ];
 let tree=[],pages=[{id:"home",name:"Home",tree}],pageIndex=0,selected=null,device="desktop",dirty=false,history=new C().History(tree);
 function current(){return pages[pageIndex];}
@@ -77,7 +78,9 @@ function inspector(){
   if(active==="Content"){
    if(n.type==="image"){control(body,"Image URL","src",n.props.src||"","url");control(body,"Alt text","alt",n.props.alt||"");}
    else if(n.type==="button"){control(body,"Button label","text",n.props.text||"");control(body,"Destination URL","href",n.props.href||"","#");}
-   else if(["rect","circle","pill","line","triangle"].includes(n.type)){const note=document.createElement("p");note.className="mb-tool-note";note.textContent="Shape selected. Size, fill, border and position are edited in Layout and Style.";body.append(note);}\n   else if(n.type==="arrow"){control(body,"Arrow symbol","text",n.props.text||"➜");}\n   else{area(body,"Text content","text",n.props.text||"");if("title" in n.props)control(body,"Section title","title",n.props.title||"");}
+   else if(["rect","circle","pill","line","triangle"].includes(n.type)){const note=document.createElement("p");note.className="mb-tool-note";note.textContent="Shape selected. Size, fill, border and position are edited in Layout and Style.";body.append(note);}
+   else if(n.type==="arrow"){control(body,"Arrow symbol","text",n.props.text||"➜");}
+   else{area(body,"Text content","text",n.props.text||"");if("title" in n.props)control(body,"Section title","title",n.props.title||"");}
    const note=document.createElement("p");note.className="mb-tool-note";note.textContent="Changes are applied to the selected element. Preview interactions remain disabled.";body.append(note);
   }
   if(active==="Layout"){
