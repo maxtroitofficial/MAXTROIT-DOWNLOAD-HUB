@@ -934,3 +934,19 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
  #admin-app #flash-editor-panel .flash-editor-controls{max-height:62dvh!important;padding:10px!important}
  #admin-app #flash-editor-panel .flash-editor-live{padding:10px!important}
 }
+
+
+/* Flash editor final override: hidden website-builder sidebars must stay hidden despite legacy !important grid rules. */
+#admin-app .preview-area:has(#flash-editor-panel:not([hidden]))>.we-sidebar[hidden],
+#admin-app .preview-area:has(#flash-editor-panel:not([hidden]))>.we-left[hidden],
+#admin-app .preview-area:has(#flash-editor-panel:not([hidden]))>.we-right[hidden],
+#admin-app .preview-area:has(#flash-editor-panel:not([hidden]))>#site-preview[hidden]{display:none!important}
+#admin-app .preview-area:has(#flash-editor-panel:not([hidden])){display:flex!important;flex-direction:column!important;align-items:stretch!important;height:auto!important;min-height:0!important;overflow:visible!important}
+#admin-app .preview-area:has(#flash-editor-panel:not([hidden])) #flash-editor-panel:not([hidden]){display:flex!important;flex:1 1 auto!important;flex-direction:column!important;grid-column:auto!important;grid-row:auto!important;width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important}
+#admin-app .preview-area:has(#flash-editor-panel:not([hidden])) #flash-editor-panel .flash-editor-controls{display:grid!important;grid-template-columns:minmax(0,1fr)!important;order:1!important;width:100%!important;max-height:62dvh!important;overflow-y:auto!important;overflow-x:hidden!important;min-height:0!important}
+#admin-app .preview-area:has(#flash-editor-panel:not([hidden])) #flash-editor-panel .flash-editor-live{display:flex!important;flex-direction:column!important;order:2!important;width:100%!important;min-height:280px!important;max-height:none!important;overflow:visible!important}
+@media(min-width:851px){
+ #admin-app .preview-area:has(#flash-editor-panel:not([hidden])) #flash-editor-panel{display:grid!important;grid-template-columns:minmax(260px,340px) minmax(0,1fr)!important;align-items:stretch!important;height:calc(100dvh - 150px)!important;overflow:hidden!important}
+ #admin-app .preview-area:has(#flash-editor-panel:not([hidden])) #flash-editor-panel .flash-editor-controls{order:1!important;max-height:100%!important;overflow-y:auto!important}
+ #admin-app .preview-area:has(#flash-editor-panel:not([hidden])) #flash-editor-panel .flash-editor-live{order:2!important;min-height:0!important;overflow:hidden!important}
+}
