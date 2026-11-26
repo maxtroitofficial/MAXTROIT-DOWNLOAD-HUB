@@ -30,9 +30,24 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: "8.7"
+          gradle-version: "8.9"
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+      - name: Validate JavaScript and project JSON
+        run: |
+          node --check app.js
+          node --check admin.js
+          node --check firebase.js
+          node --check scripts/fork-preflight.mjs
+          node -e '["firebase.json","manifest.json","admin-manifest.json"].forEach(f => JSON.parse(require("fs").readFileSync(f,"utf8")))'
+      - name: Verify unconfigured template is safely blocked
+        run: |
+          if node scripts/fork-preflight.mjs; then
+            echo "Preflight unexpectedly accepted the unconfigured template."
+            exit 1
+          else
+            echo "Expected: placeholder template is blocked before deployment."
+          fi
       - name: Build debug APK
         working-directory: android-admin
         run: gradle --no-daemon :app:assembleDebug
