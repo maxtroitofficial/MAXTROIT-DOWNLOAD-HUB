@@ -9,12 +9,12 @@
 import fs from "node:fs";
 
 const fail = (message) => {
-  console.error(`[BLOCKED] ${message}`);
+  console.error(\`[BLOCKED] \${message}\`);
   process.exitCode = 1;
 };
 const read = (path) => {
   try { return fs.readFileSync(path, "utf8"); }
-  catch { fail(`Required file missing or unreadable: ${path}`); return ""; }
+  catch { fail(\`Required file missing or unreadable: \${path}\`); return ""; }
 };
 
 const config = read("firebase-config.js");
@@ -30,10 +30,10 @@ try { firebaserc = JSON.parse(firebasercText); }
 catch { fail(".firebaserc is missing or invalid JSON. Run firebase use --add for your own project."); }
 
 const match = (text, regex) => text.match(regex)?.[1] ?? "";
-const projectId = match(config, /projectId\\s*:\\s*["']([^"']+)["']/);
-const adminUid = match(config, /window\\.ADMIN_UID\\s*=\\s*["']([^"']+)["']/);
-const firestoreUid = match(firestore, /request\\.auth\\.uid\\s*==\\s*["']([^"']+)["']/);
-const storageUid = match(storage, /request\\.auth\\.uid\\s*==\\s*["']([^"']+)["']/);
+const projectId = match(config, /projectId\s*:\s*["']([^"']+)["']/);
+const adminUid = match(config, /window\.ADMIN_UID\s*=\s*["']([^"']+)["']/);
+const firestoreUid = match(firestore, /request\.auth\.uid\s*==\s*["']([^"']+)["']/);
+const storageUid = match(storage, /request\.auth\.uid\s*==\s*["']([^"']+)["']/);
 const hostingSite = firebaseJson.hosting?.site;
 const cliProject = firebaserc.projects?.default;
 
