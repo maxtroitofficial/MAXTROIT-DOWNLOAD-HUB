@@ -23,6 +23,7 @@
    const snap=await hubCloud.db.collection("analyticsEvents").where("createdAt",">=",cutoff).orderBy("createdAt","desc").limit(5000).get();
    const rows=snap.docs.map(d=>d.data()).filter(r=>r.schemaVersion===3),now=Date.now(),today=new Date();today.setHours(0,0,0,0);
    const visitors=new Map(),todayVisitors=new Set(),active=new Set(),pages={},downloads={},uniquePageLoads=new Set();let pageViews=0,downloadClicks=0;
+   const daily={};
    rows.forEach(r=>{
     const t=r.createdAt?.toMillis?r.createdAt.toMillis():0,vid=r.visitorId||"",countable=!!vid&&!vid.startsWith("ephemeral-");
     if(!countable)return;
@@ -30,6 +31,7 @@
     if(t&&t<v.firstSeen)v.firstSeen=t;if(t>v.lastSeen){v.lastSeen=t;v.lastPage=r.page||"—";v.deviceType=r.deviceType||v.deviceType;v.deviceOS=r.deviceOS||v.deviceOS;v.deviceBrowser=r.deviceBrowser||v.deviceBrowser;}
     if(r.type==="page_view"){const sid=r.sessionId||"unknown",pg=r.page||"Other",uniqueKey=vid+"|"+sid+"|"+pg;v.sessions.add(sid);if(!uniquePageLoads.has(uniqueKey)){uniquePageLoads.add(uniqueKey);pageViews++;v.pageViews++;pages[pg]=(pages[pg]||0)+1;}if(t>=today.getTime())todayVisitors.add(vid);}
     if(r.type==="heartbeat"){v.seconds+=Math.max(0,Number(r.activeSeconds)||0);if(t>=now-120000)active.add(vid);}
+    if(t){const dayKey=new Date(t).toISOString().slice(0,10);if(!daily[dayKey])daily[dayKey]={views:0,downloads:0};if(r.type==="page_view")daily[dayKey].views++;if(r.type==="download_click")daily[dayKey].downloads++;}
     if(r.type==="download_click"){downloadClicks++;const k=r.downloadId||"Unknown";downloads[k]=(downloads[k]||0)+1;}
    });
    document.getElementById("analytics-total-visitors").textContent=fmt(visitors.size);
@@ -37,12 +39,23 @@
    document.getElementById("analytics-active-users").textContent=fmt(active.size);
    document.getElementById("analytics-page-views").textContent=fmt(pageViews);
    document.getElementById("analytics-download-clicks").textContent=fmt(downloadClicks);
+   const returning=[...visitors.values()].filter(v=>v.sessions.size>1).length;
+   const newVisitors=visitors.size-returning;
+   document.getElementById("analytics-returning-visitors").textContent=fmt(returning);
+   document.getElementById("analytics-new-visitors").textContent=fmt(newVisitors);
+   document.getElementById("analytics-conversion").textContent=(pageViews?((downloadClicks/pageViews)*100).toFixed(1):"0.0")+"%";
+   const chart=document.getElementById("analytics-daily-chart"),days=[];
+   for(let n=6;n>=0;n--){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-n);const key=d.toISOString().slice(0,10);days.push({key,label:d.toLocaleDateString([],{weekday:"short"}),...(daily[key]||{views:0,downloads:0})});}
+   const maxBar=Math.max(1,...days.flatMap(d=>[d.views,d.downloads]));
+   if(chart)chart.innerHTML=days.map(d=>'<div class="analytics-day"><span>'+escapeHtml(d.label)+'</span><div class="analytics-bars"><i title="Page views: '+d.views+'" style="width:'+Math.round(d.views/maxBar*100)+'%"></i><b title="Download clicks: '+d.downloads+'" style="width:'+Math.round(d.downloads/maxBar*100)+'%"></b></div><small>'+fmt(d.views)+' views · '+fmt(d.downloads)+' clicks</small></div>').join("");
+
    document.getElementById("analytics-period").textContent="Last 30 days · unique visitor + session + page (repeat reloads in same session counted once) · active time is approximate";
    const render=obj=>Object.entries(obj).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([k,v])=>'<li><span>'+escapeHtml(k)+'</span><b>'+fmt(v)+'</b></li>').join("")||"<li>No data recorded yet</li>";
    document.getElementById("analytics-pages-list").innerHTML=render(pages);
    document.getElementById("analytics-downloads-list").innerHTML=render(downloads);
    const dateTime=t=>t?new Date(t).toLocaleString([],{year:"numeric",month:"short",day:"2-digit",hour:"2-digit",minute:"2-digit"}):"—";
    const list=[...visitors.values()].sort((a,b)=>b.lastSeen-a.lastSeen);
+   const chart=document.getElementById("analytics-daily-chart");if(chart)chart.innerHTML="<p>No data recorded yet</p>";
    const body=document.getElementById("analytics-visitors-list");
    body.innerHTML=list.length?list.map(v=>'<tr><td>'+escapeHtml(v.name)+'</td><td>'+escapeHtml(v.deviceType)+'</td><td>'+escapeHtml(v.deviceOS)+'</td><td>'+escapeHtml(v.deviceBrowser)+'</td><td>'+fmt(v.sessions.size)+'</td><td>'+fmt(v.pageViews)+'</td><td>'+duration(v.seconds)+'</td><td>'+dateTime(v.firstSeen)+'</td><td>'+dateTime(v.lastSeen)+'</td><td>'+escapeHtml(v.lastPage)+'</td><td>'+(v.lastSeen>=now-120000?"Active":"Away")+'</td></tr>').join(""):'<tr><td colspan="11">No visitors recorded yet</td></tr>';
    if(status)status.textContent=rows.length?"Visitor register updated. Time counts only while the page is visible and open; browser storage resets may create a new anonymous visitor.":"No v3 visitor events yet. Open the public website and keep it visible for at least 30 seconds.";
@@ -66,7 +79,7 @@
     await batch.commit();
     removed+=snap.size;
    }
-   ["analytics-total-visitors","analytics-today-visitors","analytics-active-users","analytics-page-views","analytics-download-clicks"].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent="0";});
+   ["analytics-total-visitors","analytics-today-visitors","analytics-active-users","analytics-page-views","analytics-download-clicks","analytics-returning-visitors","analytics-new-visitors","analytics-conversion"].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent="0";});
    ["analytics-pages-list","analytics-downloads-list"].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML="<li>No data recorded yet</li>";});
    const body=document.getElementById("analytics-visitors-list");
    if(body)body.innerHTML='<tr><td colspan="10">No visitors recorded yet</td></tr>';
