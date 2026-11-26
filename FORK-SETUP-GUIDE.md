@@ -95,7 +95,7 @@ They must all belong to your own project.
 node scripts/fork-preflight.mjs
 ```
 
-The check blocks known references to the original Firebase project, Hosting site, and admin UID, and catches mismatched project/admin values. It is a guardrail, not proof that you own the Firebase project or Hosting site. Confirm ownership in Firebase Console.
+The check blocks known original Firebase API key, project ID, Auth domain, Storage bucket, sender ID, app ID, Hosting site, and admin UID references, and catches mismatched project/admin values. It is a guardrail, not proof that you own the Firebase project or Hosting site. Confirm ownership in Firebase Console.
 4. Deploy only after confirming both the project and Hosting site are yours:
 
 ```bash
