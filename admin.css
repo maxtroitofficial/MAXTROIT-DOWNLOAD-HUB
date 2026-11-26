@@ -698,3 +698,24 @@ body.downloads-workspace #admin-app>.preview-area>.preview-heading,body.download
  #admin-app .preview-area:not(:has(#flash-editor-panel:not([hidden]))) .we-left{grid-template-columns:repeat(2,minmax(0,1fr));}
  #admin-app .preview-area:not(:has(#flash-editor-panel:not([hidden]))) .we-right{padding:9px;}
 }
+
+
+/* Website Editor: give the live canvas more room on laptop and compact desktop widths. */
+@media(min-width:561px){
+ #admin-app .preview-area{
+  grid-template-columns:minmax(168px,clamp(168px,19vw,236px)) minmax(360px,1fr) minmax(190px,clamp(190px,22vw,270px));
+  gap:10px;
+  padding-inline:12px;
+ }
+ #admin-app .we-sidebar{padding:12px}
+}
+@media(min-width:561px) and (max-width:1100px){
+ #admin-app .preview-area{
+  grid-template-columns:minmax(158px,18vw) minmax(360px,1fr) minmax(180px,20vw);
+  gap:8px;
+  padding-inline:9px;
+ }
+ #admin-app .we-sidebar{padding:10px}
+ #admin-app .we-nav{gap:7px;padding:8px 9px;font-size:12px}
+ #admin-app .we-action{padding:8px 9px;font-size:11px}
+}
