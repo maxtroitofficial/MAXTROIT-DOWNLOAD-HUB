@@ -1,0 +1,16 @@
+/* Public styles for published Website Builder pages. */
+.builder-published-content{display:block;width:100%;margin:0 auto 28px;min-width:0;color:var(--text,#eef3ff)}
+.builder-published-content[hidden]{display:none!important}
+.builder-published-content .mb-node{box-sizing:border-box;min-width:0;max-width:100%}
+.builder-published-content .mb-heading{line-height:1.15;margin:0 0 14px}
+.builder-published-content .mb-text{line-height:1.65;white-space:pre-wrap}
+.builder-published-content .mb-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;background:var(--accent,#7c5cff);color:#fff;border-radius:10px;text-decoration:none;font-weight:700}
+.builder-published-content .mb-image{display:block;max-width:100%;height:auto;object-fit:contain}
+.builder-published-content .mb-video{display:block;max-width:100%;width:100%;border-radius:12px}
+.builder-published-content .mb-divider{border:0;border-top:1px solid currentColor;opacity:.25;margin:20px 0}
+.builder-published-content .mb-spacer{pointer-events:none}
+.builder-published-content .mb-hero{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:12px;min-height:180px}
+.builder-published-content .mb-hero h1{font-size:clamp(2rem,5vw,4rem);line-height:1.05;margin:0}
+.builder-published-content .mb-section,.builder-published-content .mb-features,.builder-published-content .mb-pricing,.builder-published-content .mb-faq,.builder-published-content .mb-gallery,.builder-published-content .mb-download{width:100%;margin:0 0 18px}
+.builder-published-content .mb-node img{max-width:100%;height:auto}
+@media(max-width:700px){.builder-published-content{margin-bottom:18px}.builder-published-content .mb-node{max-width:100%;overflow-wrap:anywhere}}
