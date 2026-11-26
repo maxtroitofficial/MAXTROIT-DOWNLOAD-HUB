@@ -894,3 +894,37 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
  .analytics-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
  .music-admin,.social-admin,.downloads-admin,.design-studio,.analytics-admin{padding:10px!important}
 }
+
+
+/* Mobile: put the actual Flash preview stage immediately under its title. */
+@media(max-width:850px){
+ body.flash-editor-workspace #flash-editor-panel .flash-editor-live{
+  display:flex!important;flex-direction:column!important;gap:10px!important;
+  height:auto!important;min-height:0!important;max-height:none!important;
+  overflow:visible!important;
+ }
+ body.flash-editor-workspace #flash-editor-panel .flash-live-heading{
+  display:contents!important;
+ }
+ body.flash-editor-workspace #flash-editor-panel .flash-live-heading>div:first-child{
+  order:1!important;display:block!important;width:100%!important;
+ }
+ body.flash-editor-workspace #flash-editor-panel .fs-stage-wrap{
+  order:2!important;display:flex!important;flex-direction:column!important;
+  width:100%!important;min-height:0!important;height:auto!important;
+  overflow:visible!important;align-items:center!important;
+ }
+ body.flash-editor-workspace #flash-editor-panel .fs-grid-toggle{
+  order:2!important;width:100%!important;justify-content:flex-start!important;
+ }
+ body.flash-editor-workspace #flash-editor-panel #fs-stage{
+  order:1!important;display:block!important;visibility:visible!important;opacity:1!important;
+  position:relative!important;width:min(76vw,300px)!important;
+  height:auto!important;min-height:0!important;max-height:none!important;
+  aspect-ratio:9/16!important;flex:0 0 auto!important;margin:8px auto 12px!important;
+ }
+ body.flash-editor-workspace #flash-editor-panel .flash-public-switch{
+  order:3!important;display:flex!important;width:100%!important;
+  justify-content:space-between!important;align-items:center!important;
+ }
+}
