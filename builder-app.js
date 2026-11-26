@@ -13,7 +13,32 @@ const presets=[
 ];
 let tree=[],pages=[{id:"home",name:"Home",tree}],pageIndex=0,selected=null,device="desktop",dirty=false,history=new C().History(tree);
 function current(){return pages[pageIndex];}
-async function loadPage(){if(!window.hubCloud?.ready||!hubCloud.auth?.currentUser)return;try{const snap=await hubCloud.db.collection("sites").doc("maxtroit").collection("pages").doc(current().id).get();const data=snap.data();if(data?.draftTree&&Array.isArray(data.draftTree)){current().tree=data.draftTree;tree=current().tree;history=new C().History(tree);dirty=false;render();}}catch(e){$("#mb-status").textContent="Could not load draft: "+e.message;}}
+function importExistingSite(){
+ const frame=$("#site-preview"),doc=frame?.contentDocument;if(!doc?.body){$("#mb-status").textContent="Website preview is not ready yet. Reload it and try again.";return;}
+ let count=0;const skip=new Set(["SCRIPT","STYLE","META","LINK","NOSCRIPT","IFRAME","SVG","PATH"]);
+ const styleKeys=["color","backgroundColor","padding","margin","fontSize","fontWeight","textAlign","borderRadius","width","maxWidth","minHeight","display","gap","alignItems","justifyContent","boxShadow"];
+ function convert(el,depth=0){
+  if(!el||el.nodeType!==1||skip.has(el.tagName)||el.closest(".mx-editor-ui,.site-startup")||depth>12||count>=600)return null;
+  count++;const tag=el.tagName.toLowerCase(),children=[...el.children].map(ch=>convert(ch,depth+1)).filter(Boolean);
+  const directText=[...el.childNodes].filter(n=>n.nodeType===3).map(n=>n.textContent.trim()).filter(Boolean).join(" ");
+  const textValue=directText.slice(0,2500);let type="container",props={};
+  if(/^h[1-6]$/.test(tag)){type="heading";props.text=(el.textContent||"").trim().slice(0,2500);}
+  else if(tag==="img"){type="image";props={src:el.currentSrc||el.src||"",alt:el.alt||""};}
+  else if(tag==="a"||tag==="button"){type="button";props={text:(el.textContent||"").trim().slice(0,500)||"Button",href:tag==="a"?el.getAttribute("href")||"#":"#"};}
+  else if(tag==="video"){type="video";props={src:el.currentSrc||el.src||""};}
+  else if(tag==="hr"){type="divider";}
+  else if(tag==="footer"){type="footer";props.text=textValue;}
+  else if(tag==="section"||tag==="article"||tag==="header"){type="section";if(textValue)props.text=textValue;}
+  else if(!children.length){type="text";props.text=(el.textContent||"").trim().slice(0,2500);}
+  else if(textValue)props.text=textValue;
+  const styles={};try{const cs=doc.defaultView.getComputedStyle(el);for(const key of styleKeys){const val=cs[key];if(val&&val!=="none"&&val!=="normal"&&val!=="rgba(0, 0, 0, 0)")styles[key]=val;}}catch(_){}
+  const node=C().makeNode(type,props,styles);node.children=children;return node;
+ }
+ const source=doc.querySelector("main")||doc.body;const roots=[...source.children].map(el=>convert(el)).filter(Boolean);
+ if(!roots.length){$("#mb-status").textContent="No importable website elements were found.";return;}
+ current().tree=roots;tree=roots;selected=null;history=new C().History(roots);dirty=true;render();scheduleSave();$("#mb-status").textContent="Existing website imported. Review the layout before publishing.";
+}
+async function loadPage(){if(!window.hubCloud?.ready||!hubCloud.auth?.currentUser)return;try{const snap=await hubCloud.db.collection("sites").doc("maxtroit").collection("pages").doc(current().id).get();const data=snap.data();if(data?.draftTree&&Array.isArray(data.draftTree)){current().tree=data.draftTree;tree=current().tree;history=new C().History(tree);dirty=false;render();}else{$("#mb-status").textContent="No saved draft. Use Import current website to start from your existing site.";render();}}catch(e){$("#mb-status").textContent="Could not load draft: "+e.message;}}
 function saveHistory(){history.push(current().tree);tree=current().tree;dirty=true;render();scheduleSave();}
 function update(fn){current().tree=fn(current().tree);tree=current().tree;saveHistory();}
 function render(){const canvas=$("#mb-canvas"),node=C().findNode(current().tree,selected);R().renderTree(current().tree,canvas,device,selected);canvas.querySelectorAll("[data-node-id]").forEach(el=>el.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();selected=el.dataset.nodeId;render();inspector();}));$("#mb-layers").innerHTML="";C().walk(current().tree,(n,parent)=>{const row=document.createElement("div");row.className="mb-layer-row";const b=document.createElement("button");b.type="button";b.className="mb-layer"+(n.id===selected?" active":"");b.style.paddingLeft=(12+(parent?14:0))+"px";b.textContent=(n.props.title||n.props.text||n.type).slice(0,32);b.onclick=()=>{selected=n.id;render();};row.append(b);$("#mb-layers").append(row);});let pageSelect=$("#mb-page-select");if(pageSelect){pageSelect.innerHTML="";pages.forEach((p,i)=>{const o=document.createElement("option");o.value=String(i);o.textContent=p.name;pageSelect.append(o);});pageSelect.value=String(pageIndex);}$("#mb-page-name").textContent=current().name;$("#mb-status").textContent=dirty?"Unsaved changes":"Saved";$("#mb-undo").disabled=!history.canUndo;$("#mb-redo").disabled=!history.canRedo;inspector();}
@@ -31,7 +56,7 @@ async function publish(){if(!await saveDraft()){$("#mb-status").textContent="Pub
 root.addEventListener("click",e=>{const b=e.target.closest("[data-mb-add]");if(b)add(b.dataset.mbAdd);});
 $("#mb-undo").onclick=()=>{if(history.canUndo){current().tree=history.undo();tree=current().tree;dirty=true;render();scheduleSave();}};
 $("#mb-redo").onclick=()=>{if(history.canRedo){current().tree=history.redo();tree=current().tree;dirty=true;render();scheduleSave();}};
-$("#mb-save").onclick=saveDraft;$("#mb-publish").onclick=publish;
+$("#mb-save").onclick=saveDraft;$("#mb-publish").onclick=publish;$("#mb-import-site")?.addEventListener("click",importExistingSite);
 $("#mb-device").onchange=e=>{device=e.target.value;render();};
 $("#mb-add-page").onclick=()=>{const name=prompt("Page name");if(!name)return;pages.push({id:"page-"+Date.now(),name,tree:[]});pageIndex=pages.length-1;selected=null;history=new C().History(current().tree);render();};$("#mb-page-select")?.addEventListener("change",e=>{pageIndex=Number(e.target.value)||0;selected=null;tree=current().tree;history=new C().History(tree);loadPage();render();});
 $("#mb-delete").onclick=()=>{if(pages.length<2)return;pages.splice(pageIndex,1);pageIndex=0;selected=null;history=new C().History(current().tree);render();};
