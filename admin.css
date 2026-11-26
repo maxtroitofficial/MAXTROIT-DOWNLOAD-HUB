@@ -646,3 +646,6 @@ body.downloads-workspace #admin-app>.preview-area>.preview-heading,body.download
  #admin-app .we-inspector-section>b{grid-column:1/-1}
  #admin-app .we-selection-note{width:100%}
 }
+
+/* Respect native hidden state when switching between admin workspaces. */
+#admin-app[hidden],#admin-app .preview-area[hidden],#admin-app #site-preview[hidden],#admin-app .flash-editor-panel[hidden],#admin-app #design-studio[hidden],#admin-app #music-admin[hidden]{display:none!important}
