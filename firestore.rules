@@ -30,7 +30,19 @@ service cloud.firestore {
         allow create, update, delete: if isAdmin();
       }
     }
-    match /analyticsEvents/{eventId} {\n      // Public clients may append narrowly-scoped anonymous usage events; only admin can read them.\n      allow create: if request.resource.data.keys().hasOnly(["type", "visitorId", "sessionId", "page", "createdAt", "downloadId"])\n        && request.resource.data.type in ["page_view", "heartbeat", "download_click"]\n        && request.resource.data.visitorId is string && request.resource.data.visitorId.size() <= 100\n        && request.resource.data.sessionId is string && request.resource.data.sessionId.size() <= 100\n        && request.resource.data.page is string && request.resource.data.page.size() <= 80\n        && request.resource.data.createdAt == request.time\n        && (!("downloadId" in request.resource.data) || (request.resource.data.downloadId is string && request.resource.data.downloadId.size() <= 100));\n      allow read: if isAdmin();\n      allow update, delete: if false;\n    }\n    match /{document=**} {
+    match /analyticsEvents/{eventId} {
+      // Public clients may append narrowly-scoped anonymous usage events; only admin can read them.
+      allow create: if request.resource.data.keys().hasOnly(["type", "visitorId", "sessionId", "page", "createdAt", "downloadId"])
+        && request.resource.data.type in ["page_view", "heartbeat", "download_click"]
+        && request.resource.data.visitorId is string && request.resource.data.visitorId.size() <= 100
+        && request.resource.data.sessionId is string && request.resource.data.sessionId.size() <= 100
+        && request.resource.data.page is string && request.resource.data.page.size() <= 80
+        && request.resource.data.createdAt == request.time
+        && (!("downloadId" in request.resource.data) || (request.resource.data.downloadId is string && request.resource.data.downloadId.size() <= 100));
+      allow read: if isAdmin();
+      allow update, delete: if false;
+    }
+    match /{document=**} {
       allow read, write: if false;
     }
   }
