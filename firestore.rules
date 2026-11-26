@@ -32,13 +32,16 @@ service cloud.firestore {
     }
     match /analyticsEvents/{eventId} {
       // Anonymous visitor activity only. Admin can read; public clients can append validated events.
-      allow create: if request.resource.data.keys().hasOnly(["schemaVersion", "type", "visitorId", "visitorName", "sessionId", "page", "activeSeconds", "createdAt", "downloadId"])
+      allow create: if request.resource.data.keys().hasOnly(["schemaVersion", "type", "visitorId", "visitorName", "sessionId", "page", "deviceType", "deviceOS", "deviceBrowser", "activeSeconds", "createdAt", "downloadId"])
         && request.resource.data.schemaVersion == 3
         && request.resource.data.type in ["page_view", "heartbeat", "download_click"]
         && request.resource.data.visitorId is string && request.resource.data.visitorId.size() <= 100
         && request.resource.data.visitorName is string && request.resource.data.visitorName.size() <= 32
         && request.resource.data.sessionId is string && request.resource.data.sessionId.size() <= 100
         && request.resource.data.page is string && request.resource.data.page.size() <= 80
+        && request.resource.data.deviceType in ["Mobile", "Tablet", "Desktop", "TV"]
+        && request.resource.data.deviceOS is string && request.resource.data.deviceOS.size() <= 32
+        && request.resource.data.deviceBrowser is string && request.resource.data.deviceBrowser.size() <= 32
         && request.resource.data.activeSeconds is number && request.resource.data.activeSeconds >= 0 && request.resource.data.activeSeconds <= 90
         && request.resource.data.createdAt == request.time
         && (!("downloadId" in request.resource.data) || (request.resource.data.downloadId is string && request.resource.data.downloadId.size() <= 100));
