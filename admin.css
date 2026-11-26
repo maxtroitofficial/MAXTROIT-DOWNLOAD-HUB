@@ -894,3 +894,43 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
  .analytics-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
  .music-admin,.social-admin,.downloads-admin,.design-studio,.analytics-admin{padding:10px!important}
 }
+
+
+/* Flash Screen mobile repair: put settings first and restore an actual scroll area */
+@media(max-width:850px){
+ #admin-app .preview-area:has(#flash-editor-panel:not([hidden])){
+  display:block!important;height:auto!important;min-height:0!important;overflow:visible!important;
+ }
+ #admin-app #flash-editor-panel:not([hidden]){
+  display:flex!important;flex-direction:column!important;align-items:stretch!important;
+  width:100%;height:auto!important;min-height:0!important;max-height:none!important;
+  overflow:visible!important;gap:12px;padding:10px!important;
+ }
+ #admin-app #flash-editor-panel .flash-editor-controls{
+  display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+  order:1!important;width:100%;min-width:0;min-height:0;
+  height:auto!important;max-height:58dvh!important;overflow-y:auto!important;
+  overflow-x:hidden!important;-webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;align-content:start;padding:12px!important;
+  scrollbar-width:thin;scrollbar-color:#8b75ff #211a3a;
+ }
+ #admin-app #flash-editor-panel .flash-editor-controls>*{min-width:0}
+ #admin-app #flash-editor-panel .flash-editor-controls label{display:grid!important;grid-template-columns:minmax(0,1fr)!important}
+ #admin-app #flash-editor-panel .flash-editor-controls input,
+ #admin-app #flash-editor-panel .flash-editor-controls select{width:100%;min-height:42px}
+ #admin-app #flash-editor-panel .flash-editor-actions,
+ #admin-app #flash-editor-panel #fs-status{grid-column:1!important}
+ #admin-app #flash-editor-panel .flash-editor-live{
+  order:2!important;width:100%;min-width:0;min-height:0;height:auto!important;
+  max-height:none!important;overflow:visible!important;padding:12px!important;
+ }
+ #admin-app #flash-editor-panel .fs-stage-wrap{width:100%;min-width:0}
+ #admin-app #flash-editor-panel #fs-stage{
+  width:min(100%,280px)!important;height:auto!important;min-height:0!important;
+  max-height:none!important;aspect-ratio:9/16;flex:none!important;margin:12px auto;
+ }
+}
+@media(max-width:480px){
+ #admin-app #flash-editor-panel .flash-editor-controls{max-height:62dvh!important;padding:10px!important}
+ #admin-app #flash-editor-panel .flash-editor-live{padding:10px!important}
+}
