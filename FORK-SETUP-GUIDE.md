@@ -89,16 +89,23 @@ They must all belong to your own project.
 
 1. Run `firebase use` and verify it shows your own project.
 2. Check the project ID and Hosting site ID again.
-3. Run the repository preflight check first. It blocks known original-project IDs, the original Hosting site, the original admin UID, and mismatched project/admin values:\n\n```bash\nnode scripts/fork-preflight.mjs\n```\n\nThis check is a guardrail, not proof that you own the Firebase project or Hosting site. Confirm ownership in Firebase Console.\n\n4. Deploy only after confirming both are yours:
+3. Run the repository preflight check:
+
+```bash
+node scripts/fork-preflight.mjs
+```
+
+The check blocks known references to the original Firebase project, Hosting site, and admin UID, and catches mismatched project/admin values. It is a guardrail, not proof that you own the Firebase project or Hosting site. Confirm ownership in Firebase Console.
+4. Deploy only after confirming both the project and Hosting site are yours:
 
 ```bash
 firebase deploy
 ```
 
-4. Open your own Hosting URL.
-5. Sign in to your own Admin Panel using the Firebase Authentication account you created.
-6. Add a harmless test banner or test download, then verify it appears only on your own website.
-7. Check the original MAXTROIT website separately. It must remain unchanged.
+5. Open your own Hosting URL.
+6. Sign in to your own Admin Panel using the Firebase Authentication account you created.
+7. Add a harmless test banner or test download, then verify it appears only on your own website.
+8. Check the original MAXTROIT website separately. It must remain unchanged.
 
 If anything points to `maxtroit-download-hub` or `d-hub`, stop and correct it before deployment.
 
