@@ -744,3 +744,7 @@ body.analytics-workspace #admin-app>.preview-area,body.analytics-workspace #admi
 .analytics-clear-button{margin-left:10px;background:#b42318!important;color:#fff!important;border:1px solid #b42318!important;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
 .analytics-clear-button:disabled{opacity:.55;cursor:wait}
 @media(max-width:650px){.analytics-head{gap:10px;flex-wrap:wrap}.analytics-clear-button{margin:8px 0 0}}
+
+/* Advanced analytics daily traffic chart */
+.analytics-trend{margin:16px 0}.analytics-daily-chart{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;align-items:end}.analytics-day{min-width:0;display:grid;gap:7px;font-size:12px;color:#64748b}.analytics-day>span{font-weight:700}.analytics-bars{height:105px;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;gap:5px;padding:6px;background:#f1f5f9;border-radius:8px}.analytics-bars i,.analytics-bars b{display:block;height:13px;min-width:2px;border-radius:4px;background:#5267d8}.analytics-bars b{background:#16a085}.analytics-day small{font-size:10px;line-height:1.4;white-space:normal}
+@media(max-width:650px){.analytics-daily-chart{grid-template-columns:repeat(4,minmax(0,1fr))}.analytics-day small{font-size:9px}}
