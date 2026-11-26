@@ -1,6 +1,6 @@
 (function(){
   const cfg=window.FIREBASE_CONFIG||{};
-  const unsafeOriginal=cfg.projectId==="maxtroit-download-hub"||window.ADMIN_UID==="5607ISIL0PMq6HLmzhTxyFa2elY2";
+  const unsafeOriginal=cfg.projectId==="maxtroit-download-hub"||cfg.apiKey==="AIzaSyD3Cpzu1tWUw7xqUKsC9COPwQDloNRKJKA"||cfg.authDomain==="maxtroit-download-hub.firebaseapp.com"||String(cfg.storageBucket||"").startsWith("maxtroit-download-hub.")||cfg.messagingSenderId==="957047554501"||cfg.appId==="1:957047554501:web:4ff8204465ba338ec94bac"||window.ADMIN_UID==="5607ISIL0PMq6HLmzhTxyFa2elY2";
   const ready=!!(cfg.apiKey&&cfg.apiKey!=="PASTE_API_KEY"&&cfg.projectId&&cfg.projectId!=="YOUR_PROJECT_ID");
   window.hubCloud={ready:false,db:null,auth:null};
   if(window.MAXTROIT_FORK_SETUP_REQUIRED||unsafeOriginal){console.warn("MAXTROIT fork: Firebase initialization blocked until an independent project and admin UID are configured.");return;}
