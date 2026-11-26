@@ -9,7 +9,7 @@ const presets=[
  ["features","Features",{title:"What we offer",text:"Describe your key features."}],["pricing","Pricing",{title:"Simple pricing",text:"Explain your plans and value."}],
  ["faq","FAQ",{title:"Frequently asked questions",text:"Add an answer to a common question."}],["gallery","Gallery",{title:"Image gallery"}],
  ["download","Download card",{title:"Download",text:"Add details about your download."}],["video","Video",{src:""}],
- ["section","Section",{title:"New section"}],["container","Container",{}],["spacer","Spacer",{}],["divider","Divider",{}],["footer","Footer",{text:"© MAXTROIT OFFICIAL"}]
+ ["section","Section",{title:"New section"}],["container","Container",{}],["spacer","Spacer",{}],["divider","Divider",{}],["footer","Footer",{text:"© MAXTROIT OFFICIAL"}],["announcement","Announcement bar",{text:"✨ New update — explore what is new"}],["stats","Stats",{title:"Our impact",text:"100+ downloads · 24/7 access"}],["testimonial","Testimonial",{title:"What people say",text:"Add a customer quote or review."}],["cta","Call to action",{title:"Ready to get started?",text:"Give visitors one clear next step."}],["logos","Logo strip",{title:"Trusted by creators"}],["newsletter","Newsletter",{title:"Stay in the loop",text:"Invite visitors to subscribe for updates."}]
 ];
 let tree=[],pages=[{id:"home",name:"Home",tree}],pageIndex=0,selected=null,device="desktop",dirty=false,history=new C().History(tree);
 function current(){return pages[pageIndex];}
