@@ -25,7 +25,7 @@
   try{
    const cutoff=new Date(Date.now()-30*86400000);
    const snap=await hubCloud.db.collection("analyticsEvents").where("createdAt",">=",cutoff).orderBy("createdAt","desc").limit(5000).get();
-   const rows=snap.docs.map(d=>d.data()),now=Date.now(),today=new Date();today.setHours(0,0,0,0);
+   const rows=snap.docs.map(d=>d.data()).filter(r=>r.schemaVersion===2),now=Date.now(),today=new Date();today.setHours(0,0,0,0);
    const visitors=new Set(),todayVisitors=new Set(),active=new Set(),pages={},downloads={};let pageViews=0,downloadClicks=0;
    rows.forEach(r=>{const t=r.createdAt?.toMillis?r.createdAt.toMillis():0,vid=r.visitorId||"",countable=!!vid&&!vid.startsWith("ephemeral-");if(r.type==="page_view"){pageViews++;pages[r.page||"Other"]=(pages[r.page||"Other"]||0)+1;if(countable){visitors.add(vid);if(t>=today.getTime())todayVisitors.add(vid);}}if(r.type==="heartbeat"&&countable&&t>=now-300000)active.add(vid);if(r.type==="download_click"){downloadClicks++;const k=r.downloadId||"Unknown";downloads[k]=(downloads[k]||0)+1;}});
    document.getElementById("analytics-total-visitors").textContent=fmt(visitors.size);
@@ -33,11 +33,11 @@
    document.getElementById("analytics-active-users").textContent=fmt(active.size);
    document.getElementById("analytics-page-views").textContent=fmt(pageViews);
    document.getElementById("analytics-download-clicks").textContent=fmt(downloadClicks);
-   document.getElementById("analytics-period").textContent="Last 30 days · unique browsers with saved anonymous IDs";
+   document.getElementById("analytics-period").textContent="Since analytics v2 deployment · unique saved browser IDs";
    const render=obj=>Object.entries(obj).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([k,v])=>'<li><span>'+escapeHtml(k)+'</span><b>'+fmt(v)+'</b></li>').join("")||"<li>No data recorded yet</li>";
    document.getElementById("analytics-pages-list").innerHTML=render(pages);
    document.getElementById("analytics-downloads-list").innerHTML=render(downloads);
-   if(status)status.textContent=rows.length?"Analytics updated. Unique visitors count distinct saved browser IDs from page views; repeat opens on the same browser count once. Older inflated or temporary IDs are excluded where identifiable.":"No analytics recorded yet. Open the public website to start collecting anonymous usage counts.";
+   if(status)status.textContent=rows.length?"Analytics updated. Fresh analytics baseline: distinct saved browser IDs only; repeat opens on the same browser count once. Legacy events are excluded so old duplicate IDs do not inflate the new baseline.":"No analytics recorded yet. Open the public website to start collecting anonymous usage counts.";
   }catch(e){console.error("Analytics load failed:",e);if(status)status.textContent="Could not load analytics. Check Firestore rules and indexes, then refresh. "+(e.message||"");}
  }
  document.getElementById("analytics-refresh")?.addEventListener("click",load);
