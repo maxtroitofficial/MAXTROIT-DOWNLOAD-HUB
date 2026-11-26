@@ -1016,3 +1016,52 @@ body.flash-editor-workspace #flash-editor-panel .flash-editor-controls{
   padding-bottom:22px!important;
  }
 }
+
+
+/* Flash Editor: restore the original full-page vertical scrolling workflow. */
+html:has(body.flash-editor-workspace),
+body.flash-editor-workspace{
+  height:auto!important;min-height:100%!important;
+  overflow-x:hidden!important;overflow-y:auto!important;
+}
+body.flash-editor-workspace #admin-app:not([hidden]){
+  height:auto!important;min-height:100dvh!important;
+  max-height:none!important;overflow:visible!important;
+}
+body.flash-editor-workspace #admin-app>.topbar{
+  position:relative!important;top:auto!important;
+}
+body.flash-editor-workspace #admin-app>.preview-area{
+  display:flex!important;flex:0 0 auto!important;flex-direction:column!important;
+  height:auto!important;min-height:0!important;max-height:none!important;
+  overflow:visible!important;overscroll-behavior:auto!important;
+}
+body.flash-editor-workspace #admin-app>.preview-area>#flash-editor-panel:not([hidden]){
+  display:flex!important;flex:0 0 auto!important;flex-direction:column!important;
+  height:auto!important;min-height:0!important;max-height:none!important;
+  overflow:visible!important;
+}
+body.flash-editor-workspace #flash-editor-panel .flash-editor-live{
+  position:relative!important;top:auto!important;order:0!important;
+  height:auto!important;min-height:0!important;max-height:none!important;
+  overflow:visible!important;flex:0 0 auto!important;
+}
+body.flash-editor-workspace #flash-editor-panel .flash-editor-controls{
+  display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+  order:1!important;width:100%!important;height:auto!important;
+  min-height:0!important;max-height:none!important;
+  overflow:visible!important;flex:0 0 auto!important;
+  align-content:start!important;
+}
+body.flash-editor-workspace #flash-editor-panel .fs-stage-wrap{
+  height:auto!important;min-height:0!important;overflow:visible!important;
+}
+@media(max-width:850px){
+ body.flash-editor-workspace #admin-app>.topbar{position:relative!important}
+ body.flash-editor-workspace #admin-app>.preview-area{padding-bottom:28px!important}
+ body.flash-editor-workspace #flash-editor-panel .flash-editor-live{order:0!important}
+ body.flash-editor-workspace #flash-editor-panel .flash-editor-controls{
+  order:1!important;max-height:none!important;overflow:visible!important;
+  display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+ }
+}
