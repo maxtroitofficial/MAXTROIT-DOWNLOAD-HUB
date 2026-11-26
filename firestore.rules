@@ -43,7 +43,8 @@ service cloud.firestore {
         && request.resource.data.createdAt == request.time
         && (!("downloadId" in request.resource.data) || (request.resource.data.downloadId is string && request.resource.data.downloadId.size() <= 100));
       allow read: if isAdmin();
-      allow update, delete: if false;
+      allow update: if false;
+      allow delete: if isAdmin();
     }
     match /{document=**} {
       allow read, write: if false;
