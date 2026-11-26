@@ -928,3 +928,25 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   justify-content:space-between!important;align-items:center!important;
  }
 }
+
+
+/* Keep the admin section switcher compact: one horizontal scroll row on phones. */
+@media(max-width:850px){
+ .preview-flash-toggle{
+  display:flex!important;flex-flow:row nowrap!important;
+  align-items:stretch!important;justify-content:flex-start!important;
+  gap:7px!important;width:100%!important;max-width:100%!important;
+  height:64px!important;min-height:64px!important;max-height:64px!important;
+  padding:6px!important;overflow-x:auto!important;overflow-y:hidden!important;
+  overscroll-behavior-x:contain;scroll-snap-type:x proximity;
+  box-sizing:border-box!important;
+ }
+ .preview-flash-toggle button{
+  display:inline-flex!important;flex:0 0 auto!important;
+  width:auto!important;min-width:132px!important;max-width:none!important;
+  min-height:48px!important;height:48px!important;max-height:48px!important;
+  padding:8px 13px!important;white-space:nowrap!important;
+  font-size:12px!important;line-height:1!important;
+  scroll-snap-align:start;
+ }
+}
