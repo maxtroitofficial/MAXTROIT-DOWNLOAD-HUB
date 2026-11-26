@@ -950,3 +950,54 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
  #admin-app .preview-area:has(#flash-editor-panel:not([hidden])) #flash-editor-panel .flash-editor-controls{order:1!important;max-height:100%!important;overflow-y:auto!important}
  #admin-app .preview-area:has(#flash-editor-panel:not([hidden])) #flash-editor-panel .flash-editor-live{order:2!important;min-height:0!important;overflow:hidden!important}
 }
+
+
+/* Flash workspace: compact section switcher so it cannot push the live preview off-screen. */
+body.flash-editor-workspace #admin-app>.preview-area>.preview-heading{
+ display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;
+ align-items:center!important;gap:8px!important;padding:10px 14px!important;
+}
+body.flash-editor-workspace #admin-app>.preview-area>.preview-heading>.preview-flash-toggle{
+ grid-column:1/-1!important;display:flex!important;flex-flow:row nowrap!important;
+ align-items:center!important;justify-content:flex-start!important;gap:7px!important;
+ width:100%!important;max-width:100%!important;min-width:0!important;
+ padding:6px!important;margin:0!important;overflow-x:auto!important;overflow-y:hidden!important;
+}
+body.flash-editor-workspace #admin-app>.preview-area>.preview-heading>.preview-flash-toggle button{
+ flex:0 0 auto!important;width:auto!important;min-width:max-content!important;
+ min-height:38px!important;height:38px!important;padding:7px 13px!important;
+ font-size:13px!important;line-height:1.1!important;border-radius:9px!important;
+}
+body.flash-editor-workspace #admin-app>.preview-area>.preview-heading{flex:0 0 auto!important}
+body.flash-editor-workspace #admin-app>.preview-area{height:auto!important;min-height:0!important;overflow:visible!important}
+body.flash-editor-workspace #admin-app>.preview-area>.we-left[hidden],
+body.flash-editor-workspace #admin-app>.preview-area>.we-right[hidden],
+body.flash-editor-workspace #admin-app>.preview-area>#site-preview[hidden]{display:none!important}
+body.flash-editor-workspace #admin-app>.preview-area>#flash-editor-panel:not([hidden]){
+ display:grid!important;grid-template-columns:minmax(280px,360px) minmax(0,1fr)!important;
+ grid-template-rows:minmax(0,1fr)!important;gap:14px!important;
+ width:100%!important;height:calc(100dvh - 190px)!important;min-height:440px!important;
+ max-height:none!important;overflow:hidden!important;box-sizing:border-box!important;
+}
+body.flash-editor-workspace #admin-app>.preview-area>#flash-editor-panel .flash-editor-controls{
+ grid-column:1!important;grid-row:1!important;order:0!important;
+ min-height:0!important;max-height:100%!important;overflow-y:auto!important;
+}
+body.flash-editor-workspace #admin-app>.preview-area>#flash-editor-panel .flash-editor-live{
+ grid-column:2!important;grid-row:1!important;order:0!important;
+ min-height:0!important;height:100%!important;overflow:auto!important;
+}
+@media(max-width:850px){
+ body.flash-editor-workspace #admin-app>.preview-area>.preview-heading{display:flex!important;flex-wrap:wrap!important}
+ body.flash-editor-workspace #admin-app>.preview-area>.preview-heading>.preview-flash-toggle{display:flex!important;flex-wrap:nowrap!important}
+ body.flash-editor-workspace #admin-app>.preview-area>#flash-editor-panel:not([hidden]){
+  display:flex!important;flex-direction:column!important;height:auto!important;min-height:0!important;
+  overflow:visible!important;gap:10px!important;
+ }
+ body.flash-editor-workspace #admin-app>.preview-area>#flash-editor-panel .flash-editor-controls{
+  order:1!important;max-height:48dvh!important;overflow-y:auto!important;flex:0 1 auto!important;
+ }
+ body.flash-editor-workspace #admin-app>.preview-area>#flash-editor-panel .flash-editor-live{
+  order:2!important;min-height:420px!important;height:auto!important;overflow:visible!important;
+ }
+}
