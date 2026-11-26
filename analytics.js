@@ -16,10 +16,12 @@
   const visitorId=stableVisitorId(),sessionId=stableSessionId();
   const visitorName="Visitor-"+visitorId.replace(/[^a-z0-9]/gi,"").slice(-6).toUpperCase();
 
-  const ua=navigator.userAgent||"";
-  const deviceType=/(smart-tv|smarttv|hbbtv|tizen|web0s|webos|appletv|googletv|android tv|roku|aftb|aftt|fire tv)/i.test(ua)?"TV":(/ipad|tablet|playbook|silk/i.test(ua)||(/android/i.test(ua)&&!/mobile/i.test(ua)))?"Tablet":(/mobi|iphone|ipod|android.*mobile|windows phone/i.test(ua))?"Mobile":"Desktop";
-  const deviceOS=/windows nt/i.test(ua)?"Windows":/android/i.test(ua)?"Android":/(iphone|ipad|ipod)/i.test(ua)?"iOS":/mac os x/i.test(ua)?"macOS":/cros/i.test(ua)?"ChromeOS":/linux/i.test(ua)?"Linux":/(tizen|webos|appletv|roku)/i.test(ua)?"Smart TV OS":"Unknown";
-  const deviceBrowser=/edg\//i.test(ua)?"Edge":/opr\//i.test(ua)?"Opera":/samsungbrowser/i.test(ua)?"Samsung Internet":/firefox\//i.test(ua)?"Firefox":/crios\//i.test(ua)?"Chrome (iOS)":/chrome\//i.test(ua)?"Chrome":/safari\//i.test(ua)?"Safari":/android/i.test(ua)?"Android Browser":"Other";
+  const ua=navigator.userAgent||"", platform=navigator.userAgentData?.platform||navigator.platform||"";
+  const brands=(navigator.userAgentData?.brands||[]).map(x=>x.brand).join(" ");
+  const deviceType=/(smart-tv|smarttv|hbbtv|tizen|web0s|webos|appletv|googletv|android tv|roku|aftb|aftt|fire tv)/i.test(ua)?"TV":(/ipad|tablet|playbook|silk/i.test(ua)||(/android/i.test(ua)&&!/mobile/i.test(ua))||(platform==="MacIntel"&&navigator.maxTouchPoints>1))?"Tablet":(/mobi|iphone|ipod|android.*mobile|windows phone/i.test(ua))?"Mobile":"Desktop";
+  const osHint=String(platform);
+  const deviceOS=/windows nt|windows/i.test(ua+" "+osHint)?"Windows":/android/i.test(ua+" "+osHint)?"Android":/(iphone|ipad|ipod)/i.test(ua)?"iOS":/mac os x|macintel|macintosh/i.test(ua+" "+osHint)?"macOS":/cros|chrome os/i.test(ua+" "+osHint)?"ChromeOS":/linux/i.test(ua+" "+osHint)?"Linux":/(tizen|webos|appletv|roku)/i.test(ua)?"Smart TV OS":"Unknown";
+  const deviceBrowser=/edg\\//i.test(ua)?"Edge":/opr\\//i.test(ua)?"Opera":/samsungbrowser/i.test(ua)?"Samsung Internet":/firefox\\//i.test(ua)?"Firefox":/crios\\//i.test(ua)?"Chrome (iOS)":/chrome\\//i.test(ua)?"Chrome":/safari\\//i.test(ua)?"Safari":/android/i.test(ua)?"Android Browser":/edge/i.test(brands)?"Edge":/opera/i.test(brands)?"Opera":/chrome/i.test(brands)?"Chrome":/firefox/i.test(brands)?"Firefox":/safari/i.test(brands)?"Safari":"Other";
   const page=(location.pathname.split("/").pop()||"index.html").slice(0,80);
   let lastTick=document.visibilityState==="visible"?Date.now():0,lastWrite=0;
   const record=(type,activeSeconds=0,extra={})=>{
