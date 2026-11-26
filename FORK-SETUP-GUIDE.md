@@ -143,3 +143,7 @@ Before calling your fork independent, all must be true:
 - [ ] Separate Firebase Hosting site
 - [ ] Test changes appear only on the fork website
 - [ ] Original MAXTROIT website and admin panel remain unchanged
+
+## Admin Panel APK status
+
+This repository currently provides the Admin Panel as the HTTPS page `/admin.html`. The existing `manifest.json` is for the public Download Hub, not an Android Admin APK. No signed Admin Panel APK is included in this fork template yet. Do not treat the public PWA manifest as an Admin APK. A universal Android wrapper still needs a separate Android build, a strict HTTPS website allowlist, safe URL validation, app signing, and device testing before an APK can be distributed. Never embed Firebase service-account credentials or admin passwords in an APK.
