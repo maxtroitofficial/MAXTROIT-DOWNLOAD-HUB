@@ -649,3 +649,34 @@ body.downloads-workspace #admin-app>.preview-area>.preview-heading,body.download
 
 /* Respect native hidden state when switching between admin workspaces. */
 #admin-app[hidden],#admin-app .preview-area[hidden],#admin-app #site-preview[hidden],#admin-app .flash-editor-panel[hidden],#admin-app #design-studio[hidden],#admin-app #music-admin[hidden]{display:none!important}
+
+
+/* Mobile-only Website Editor layout correction */
+@media(max-width:560px){
+ #admin-app .preview-area{
+  height:auto!important;min-height:0!important;max-height:none!important;
+  flex:1 0 auto!important;overflow:visible!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-template-rows:auto minmax(340px,58dvh) auto auto!important;
+  gap:10px!important;padding:10px!important;
+ }
+ #admin-app .preview-heading{grid-column:1!important;grid-row:1!important;display:flex;flex-wrap:wrap;align-items:center;gap:8px!important}
+ #admin-app .preview-heading>b{font-size:18px!important}
+ #admin-app .preview-heading>span{flex:1 0 100%;order:3;white-space:normal!important;line-height:1.4}
+ #admin-app #expand-site-preview{margin-left:auto;min-height:42px}
+ #admin-app .preview-heading .preview-flash-toggle{order:4;width:100%;display:flex;overflow-x:auto;flex-wrap:nowrap}
+ #admin-app #site-preview{grid-column:1!important;grid-row:2!important;width:100%!important;height:58dvh!important;min-height:340px!important;max-height:620px!important}
+ #admin-app .we-left{grid-column:1!important;grid-row:3!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;padding:10px!important}
+ #admin-app .we-left .we-panel-title,#admin-app .we-left .we-divider{display:none!important}
+ #admin-app .we-left .we-help{display:block!important;grid-column:1/-1;margin:4px 0 0!important}
+ #admin-app .we-nav{justify-content:center!important;min-width:0!important;min-height:46px!important;padding:8px 5px!important;font-size:12px!important}
+ #admin-app .we-nav span{font-size:12px!important}
+ #admin-app .we-right{grid-column:1!important;grid-row:4!important;display:flex!important;flex-direction:column!important;gap:8px!important;padding:12px!important}
+ #admin-app .we-inspector-head,#admin-app .we-selection-note{width:100%!important;box-sizing:border-box}
+ #admin-app .we-inspector-section{width:100%!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important}
+ #admin-app .we-inspector-section>b{grid-column:1/-1!important}
+ #admin-app .we-action{min-width:0!important}
+ #admin-app .top-actions{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+ #admin-app .top-actions button{min-height:42px!important;font-size:11px!important}
+}
