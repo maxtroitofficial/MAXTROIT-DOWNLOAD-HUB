@@ -1001,3 +1001,60 @@ body.flash-editor-workspace #admin-app>.preview-area>#flash-editor-panel .flash-
   order:2!important;min-height:420px!important;height:auto!important;overflow:visible!important;
  }
 }
+
+
+/* Flash preview visibility + height repair (final cascade override) */
+body.flash-editor-workspace #admin-app>.preview-area>#flash-editor-panel:not([hidden]){
+  display:grid!important;
+  grid-template-columns:minmax(270px,340px) minmax(0,1fr)!important;
+  grid-template-rows:minmax(0,1fr)!important;
+  align-items:stretch!important;
+  width:100%!important;height:auto!important;
+  min-height:620px!important;max-height:none!important;
+  overflow:visible!important;box-sizing:border-box!important;
+}
+body.flash-editor-workspace #admin-app>.preview-area>#flash-editor-panel .flash-editor-controls{
+  grid-column:1!important;grid-row:1!important;
+  max-height:calc(100dvh - 250px)!important;
+  min-height:520px!important;overflow-y:auto!important;
+}
+body.flash-editor-workspace #admin-app>.preview-area>#flash-editor-panel .flash-editor-live{
+  display:flex!important;visibility:visible!important;opacity:1!important;
+  grid-column:2!important;grid-row:1!important;
+  flex-direction:column!important;align-items:stretch!important;
+  min-width:0!important;min-height:620px!important;height:auto!important;
+  max-height:none!important;overflow:visible!important;
+}
+body.flash-editor-workspace #admin-app>.preview-area>#flash-editor-panel .fs-stage-wrap{
+  display:flex!important;flex:1 1 auto!important;flex-direction:column!important;
+  align-items:center!important;justify-content:center!important;
+  width:100%!important;min-width:0!important;min-height:0!important;
+}
+body.flash-editor-workspace #admin-app>.preview-area>#flash-editor-panel #fs-stage{
+  display:flex!important;visibility:visible!important;opacity:1!important;
+  position:relative!important;flex:0 0 auto!important;
+  width:min(100%,380px)!important;height:clamp(420px,62dvh,680px)!important;
+  min-height:420px!important;max-height:none!important;
+  aspect-ratio:9/16!important;margin:14px auto!important;
+  box-sizing:border-box!important;
+}
+@media(max-width:850px){
+ body.flash-editor-workspace #admin-app>.preview-area>#flash-editor-panel:not([hidden]){
+  display:flex!important;flex-direction:column!important;
+  min-height:0!important;height:auto!important;overflow:visible!important;
+ }
+ body.flash-editor-workspace #admin-app>.preview-area>#flash-editor-panel .flash-editor-controls{
+  min-height:0!important;max-height:48dvh!important;overflow-y:auto!important;
+ }
+ body.flash-editor-workspace #admin-app>.preview-area>#flash-editor-panel .flash-editor-live{
+  display:flex!important;visibility:visible!important;opacity:1!important;
+  min-height:500px!important;height:auto!important;overflow:visible!important;
+ }
+ body.flash-editor-workspace #admin-app>.preview-area>#flash-editor-panel .fs-stage-wrap{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+ }
+ body.flash-editor-workspace #admin-app>.preview-area>#flash-editor-panel #fs-stage{
+  width:min(78vw,320px)!important;height:auto!important;min-height:0!important;
+  aspect-ratio:9/16!important;max-height:none!important;
+ }
+}
