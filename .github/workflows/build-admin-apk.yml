@@ -21,6 +21,17 @@ on:
       - fork-setup-guide
     paths:
       - "android-admin/**"
+      - "admin.html"
+      - "admin.js"
+      - "admin.css"
+      - "firebase.js"
+      - "firebase-config.js"
+      - "music-admin.js"
+      - "downloads-admin.js"
+      - "social-admin.js"
+      - "builder-*.js"
+      - "website-editor-ui.js"
+      - "analytics-admin.js"
       - ".github/workflows/build-admin-apk.yml"
   workflow_dispatch:
 
