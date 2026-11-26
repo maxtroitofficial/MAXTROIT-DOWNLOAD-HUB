@@ -23,7 +23,7 @@
    const snap=await hubCloud.db.collection("analyticsEvents").where("createdAt",">=",cutoff).orderBy("createdAt","desc").limit(5000).get();
    const rows=snap.docs.map(d=>d.data()).filter(r=>r.schemaVersion===3),now=Date.now(),today=new Date();today.setHours(0,0,0,0);
    const visitors=new Map(),todayVisitors=new Set(),active=new Set(),pages={},downloads={},uniquePageLoads=new Set();let pageViews=0,downloadClicks=0;
-   const daily={};
+   const daily={},dailyUniquePageLoads=new Set();
    rows.forEach(r=>{
     const t=r.createdAt?.toMillis?r.createdAt.toMillis():0,vid=r.visitorId||"",countable=!!vid&&!vid.startsWith("ephemeral-");
     if(!countable)return;
@@ -31,7 +31,7 @@
     if(t&&t<v.firstSeen)v.firstSeen=t;if(t>v.lastSeen){v.lastSeen=t;v.lastPage=r.page||"—";v.deviceType=r.deviceType||v.deviceType;v.deviceOS=r.deviceOS||v.deviceOS;v.deviceBrowser=r.deviceBrowser||v.deviceBrowser;}
     if(r.type==="page_view"){const sid=r.sessionId||"unknown",pg=r.page||"Other",uniqueKey=vid+"|"+sid+"|"+pg;v.sessions.add(sid);if(!uniquePageLoads.has(uniqueKey)){uniquePageLoads.add(uniqueKey);pageViews++;v.pageViews++;pages[pg]=(pages[pg]||0)+1;}if(t>=today.getTime())todayVisitors.add(vid);}
     if(r.type==="heartbeat"){v.seconds+=Math.max(0,Number(r.activeSeconds)||0);if(t>=now-120000)active.add(vid);}
-    if(t){const dayKey=new Date(t).toISOString().slice(0,10);if(!daily[dayKey])daily[dayKey]={views:0,downloads:0};if(r.type==="page_view")daily[dayKey].views++;if(r.type==="download_click")daily[dayKey].downloads++;}
+    if(t){const dayKey=new Date(t).toISOString().slice(0,10);if(!daily[dayKey])daily[dayKey]={views:0,downloads:0};if(r.type==="page_view"){const dailyKey=vid+"|"+(r.sessionId||"unknown")+"|"+(r.page||"Other");if(!dailyUniquePageLoads.has(dailyKey)){dailyUniquePageLoads.add(dailyKey);daily[dayKey].views++;}}if(r.type==="download_click")daily[dayKey].downloads++;}
     if(r.type==="download_click"){downloadClicks++;const k=r.downloadId||"Unknown";downloads[k]=(downloads[k]||0)+1;}
    });
    document.getElementById("analytics-total-visitors").textContent=fmt(visitors.size);
