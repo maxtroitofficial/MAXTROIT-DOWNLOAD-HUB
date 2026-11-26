@@ -1,8 +1,8 @@
 {
   "id": "/",
-  "name": "MAXTROIT APP",
-  "short_name": "MAXTROIT APP",
-  "description": "MAXTROIT APP — official downloads, tools and resources.",
+  "name": "My Download Hub",
+  "short_name": "Download Hub",
+  "description": "Your customizable download hub.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
