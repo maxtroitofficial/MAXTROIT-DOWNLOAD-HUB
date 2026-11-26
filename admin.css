@@ -728,3 +728,15 @@ body.downloads-workspace #admin-app>.preview-area>.preview-heading,body.download
 .analytics-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.analytics-head h2{margin:0 0 5px}.analytics-head p,.analytics-note{color:#68748a;font-size:13px}.analytics-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:20px 0}.analytics-stat{padding:17px;border:1px solid #e0e6ef;border-radius:12px;background:#f8fafc}.analytics-stat span{display:block;color:#64748b;font-size:12px}.analytics-stat strong{display:block;margin-top:8px;font-size:28px;color:#18243a}.analytics-lists{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}.analytics-list{padding:16px;border:1px solid #e0e6ef;border-radius:12px}.analytics-list h3{margin:0 0 12px}.analytics-list ul{list-style:none;margin:0;padding:0}.analytics-list li{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #edf0f5;font-size:13px}.analytics-list li:last-child{border:0}.analytics-admin button{padding:9px 14px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;color:#243149;cursor:pointer}
 body.analytics-workspace #admin-app>.preview-area,body.analytics-workspace #admin-app>#music-admin,body.analytics-workspace #admin-app>#downloads-admin,body.analytics-workspace #admin-app>#social-admin,body.analytics-workspace #admin-app>#design-studio,body.analytics-workspace #admin-app>#flash-editor-panel,body.analytics-workspace #admin-app>.tool-dock{display:none!important}body.analytics-workspace #analytics-admin{display:block!important}
 @media(max-width:650px){.analytics-admin{margin:8px;padding:14px}.analytics-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.analytics-stat strong{font-size:23px}}
+
+
+/* Visitor register table */
+.analytics-visitors{margin-top:16px;overflow:hidden}
+.analytics-table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.analytics-table{width:100%;min-width:680px;border-collapse:collapse;text-align:left}
+.analytics-table th,.analytics-table td{padding:11px 10px;border-bottom:1px solid #e8edf4;font-size:13px;white-space:nowrap}
+.analytics-table th{color:#64748b;font-weight:700;background:#f8fafc}
+.analytics-table td{color:#25314b}
+.analytics-table td:first-child{font-weight:700}
+.analytics-table td:last-child{font-weight:600}
+@media(max-width:650px){.analytics-visitors{padding:12px}.analytics-table th,.analytics-table td{padding:10px 8px;font-size:12px}}
