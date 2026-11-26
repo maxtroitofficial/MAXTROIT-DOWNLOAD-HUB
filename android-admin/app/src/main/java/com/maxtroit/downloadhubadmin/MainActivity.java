@@ -7,6 +7,11 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.View;
+import android.text.TextUtils;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import android.webkit.CookieManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
@@ -44,22 +49,35 @@ public class MainActivity extends Activity {
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(Color.WHITE);
+        // Android 15 / targetSdk 35 draws edge-to-edge; keep app controls clear of system bars.
+        ViewCompat.setOnApplyWindowInsetsListener(root, (view, windowInsets) -> {
+            Insets bars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+            view.setPadding(0, bars.top, 0, bars.bottom);
+            return windowInsets;
+        });
 
         LinearLayout bar = new LinearLayout(this);
         bar.setOrientation(LinearLayout.HORIZONTAL);
         bar.setGravity(Gravity.CENTER_VERTICAL);
-        bar.setPadding(dp(8), dp(3), dp(8), dp(3));
+        bar.setPadding(dp(8), 0, dp(8), 0);
+        bar.setMinimumHeight(dp(56));
         bar.setBackgroundColor(Color.rgb(16,24,43));
 
         Button reload = new Button(this);
         reload.setText("Refresh");
-        bar.addView(reload);
+        reload.setTextSize(12);
+        reload.setMinHeight(dp(40));
+        reload.setMinimumHeight(dp(40));
+        bar.addView(reload, new LinearLayout.LayoutParams(-2, dp(44)));
 
         TextView label = new TextView(this);
-        label.setText("  Download Hub Admin · Built-in panel");
+        label.setText("  Download Hub Admin");
         label.setTextColor(Color.WHITE);
+        label.setTextSize(13);
+        label.setSingleLine(true);
+        label.setEllipsize(TextUtils.TruncateAt.END);
         label.setGravity(Gravity.CENTER_VERTICAL);
-        bar.addView(label, new LinearLayout.LayoutParams(0, dp(48), 1));
+        bar.addView(label, new LinearLayout.LayoutParams(0, dp(56), 1));
         root.addView(bar);
 
         webView = new WebView(this);
