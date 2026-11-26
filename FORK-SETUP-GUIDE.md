@@ -144,6 +144,17 @@ Before calling your fork independent, all must be true:
 - [ ] Test changes appear only on the fork website
 - [ ] Original MAXTROIT website and admin panel remain unchanged
 
+## Install the Admin Panel on Android
+
+After your own website is deployed over HTTPS and the Admin Panel works:
+
+1. Open your own `/admin.html` URL in Chrome on Android.
+2. Open Chrome's menu and choose **Install app** or **Add to Home screen** (the wording varies by device).
+3. Confirm the install. The shortcut opens your own Admin Panel in an app-style window.
+4. Sign in using your own Firebase admin account.
+
+This is an installable PWA shortcut, not an APK file. It keeps using your own website and Firebase project.
+
 ## Admin Panel APK status
 
 This repository currently provides the Admin Panel as the HTTPS page `/admin.html`. The existing `manifest.json` is for the public Download Hub, not an Android Admin APK. No signed Admin Panel APK is included in this fork template yet. Do not treat the public PWA manifest as an Admin APK. A universal Android wrapper still needs a separate Android build, a strict HTTPS website allowlist, safe URL validation, app signing, and device testing before an APK can be distributed. Never embed Firebase service-account credentials or admin passwords in an APK.
