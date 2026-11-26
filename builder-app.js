@@ -34,7 +34,7 @@ function importExistingSite(){
   const styles={};try{const cs=doc.defaultView.getComputedStyle(el);for(const key of styleKeys){const val=cs[key];if(val&&val!=="none"&&val!=="normal"&&val!=="rgba(0, 0, 0, 0)")styles[key]=val;}}catch(_){}
   const node=C().makeNode(type,props,styles);node.children=children;return node;
  }
- const source=doc.querySelector("main")||doc.body;const roots=[...source.children].map(el=>convert(el)).filter(Boolean);
+ const source=doc.querySelector("main")||doc.body;const roots=[...source.children].filter(el=>el.id!=="collection").map(el=>convert(el)).filter(Boolean);
  if(!roots.length){$("#mb-status").textContent="No importable website elements were found.";return;}
  current().tree=roots;tree=roots;selected=null;history=new C().History(roots);dirty=true;render();scheduleSave();$("#mb-status").textContent="Existing website imported. Review the layout before publishing.";
 }
