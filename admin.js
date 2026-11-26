@@ -43,7 +43,14 @@ $("#delete").onclick=()=>{if(!selected)return;snapshot();const k=keyFor(selected
 $("#reset").onclick=()=>{if(!selected)return;snapshot();const k=keyFor(selected);delete edits.elements[k];selected.hidden=false;clearPick();refresh();say("Element reset hua. Save ya Publish karo.");};
 $("#undo").onclick=()=>{if(!history.length)return;future.push(JSON.stringify(edits));edits=JSON.parse(history.pop());refresh();buttons()};$("#redo").onclick=()=>{if(!future.length)return;history.push(JSON.stringify(edits));edits=JSON.parse(future.pop());refresh();buttons()};
 let startupEnabled=false,startupConfig={enabled:false,animation:"fade",textAnimation:"fade",speed:.8,duration:1800,displayDuration:8,delay:0,logoSize:210,glowEnabled:true,glowColor:"#70bfff",glowIntensity:65,glowSize:35,shineEnabled:true,shineColor:"#ffffff",shineSpeed:1300,shineBrightness:75,shineWidth:22,background:"#16091f",backgroundMode:"gradient",textColor:"#ffffff",font:"montserrat",fontWeight:"700",fontSize:22,letterSpacing:1,textAlign:"center",textEffect:"shadow",label:"MAXTROIT OFFICIAL",easing:"ease-out",logo:"",glowEnabled:true,glowColor:"#70bfff",glowIntensity:65,glowSize:35,shineEnabled:true,shineColor:"#ffffff",shineSpeed:1300,shineBrightness:75,shineWidth:22,logoX:50,logoY:43,labelX:50,labelY:72};
-function setFlashEditorMode(open){const panel=$("#flash-editor-panel"),frame=$("#site-preview"),tab=$("#flash-editor-tab"),title=$("#preview-mode-title");panel.hidden=!open;frame.hidden=!!open;tab.setAttribute("aria-pressed",String(!!open));title.textContent=open?"Flash Screen Preview":"Website Preview";if(open){renderFlashPreview();replayFlashPreview();requestAnimationFrame(()=>window.scrollTo({top:0,behavior:"instant"}))}}
+function setFlashEditorMode(open){
+ const panel=$("#flash-editor-panel"),frame=$("#site-preview"),tab=$("#flash-editor-tab"),title=$("#preview-mode-title");
+ panel.hidden=!open;frame.hidden=!!open;
+ document.body.classList.toggle("flash-editor-workspace",!!open);
+ tab.setAttribute("aria-pressed",String(!!open));
+ title.textContent=open?"Flash Screen Preview":"Website Preview";
+ if(open){renderFlashPreview();replayFlashPreview();requestAnimationFrame(()=>window.scrollTo({top:0,behavior:"instant"}))}
+}
 $("#flash-editor-tab").addEventListener("click",()=>setFlashEditorMode($("#flash-editor-panel").hidden));
 /* Website Templates: built-in templates + sandboxed custom HTML import. */
 let customDesignSource="",customDesignFileName="";
