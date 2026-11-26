@@ -69,7 +69,7 @@
    ["analytics-total-visitors","analytics-today-visitors","analytics-active-users","analytics-page-views","analytics-download-clicks"].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent="0";});
    ["analytics-pages-list","analytics-downloads-list"].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML="<li>No data recorded yet</li>";});
    const body=document.getElementById("analytics-visitors-list");
-   if(body)body.innerHTML='<tr><td colspan="7">No visitors recorded yet</td></tr>';
+   if(body)body.innerHTML='<tr><td colspan="10">No visitors recorded yet</td></tr>';
    if(status)status.textContent="Analytics reset complete. "+removed+" old event(s) deleted. New visits will appear from now on.";
   }catch(e){
    console.error("Analytics reset failed:",e);
