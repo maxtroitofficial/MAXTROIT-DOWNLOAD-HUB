@@ -26,7 +26,7 @@
         ]
       }
     ],
-    "site": "d-hub"
+    "site": "YOUR_FIREBASE_HOSTING_SITE_ID"
   },
   "firestore": {
     "rules": "firestore.rules"
