@@ -24,6 +24,11 @@ service cloud.firestore {
       match /versions/{versionId} {
         allow read, write: if isAdmin();
       }
+      // Public published snapshots are separated from private drafts.
+      match /publicPages/{pageId} {
+        allow read: if true;
+        allow create, update, delete: if isAdmin();
+      }
     }
     match /{document=**} {
       allow read, write: if false;
