@@ -189,4 +189,37 @@ $("#fs-save").addEventListener("click",async()=>{const button=$("#fs-save"),labe
 async function saveDraft(){if(!authOk(hubCloud.auth.currentUser))throw Error("Admin login required");const ref=hubCloud.db.collection("siteConfig").doc("public"),snap=await ref.get(),old=snap.data()||{},stamp=Date.now(),draft={...(old.editorStudioDraft||{}),visualEdits:edits,updatedAt:stamp};await ref.set({editorStudioDraft:draft},{merge:true});const check=await ref.get(),saved=check.data()||{};if(saved.editorStudioDraft?.updatedAt!==stamp||JSON.stringify(saved.editorStudioDraft?.visualEdits)!==JSON.stringify(edits))throw Error("Draft save verify nahi hua");return stamp}
 $("#save").onclick=async()=>{const b=$("#save");b.disabled=true;say("Draft save ho raha hai…");try{await saveDraft();say("Draft saved and verified. Public website abhi change nahi hui; publish karne par live hogi.")}catch(e){say("Draft save failed: "+e.message)}finally{b.disabled=false}};
 $("#publish").onclick=async()=>{if(!authOk(hubCloud.auth.currentUser)){say("Admin login required");return}if(!confirm("Saved visual changes public website par publish karein?"))return;const b=$("#publish");b.disabled=true;say("Public website par publish ho raha hai…");try{const stamp=await saveDraft(),ref=hubCloud.db.collection("siteConfig").doc("public");await ref.set({visualEdits:edits,visualEditsUpdated:stamp},{merge:true});const check=await ref.get(),saved=check.data()||{};if(saved.visualEditsUpdated!==stamp||JSON.stringify(saved.visualEdits)!==JSON.stringify(edits))throw Error("Publish verify nahi hua");say("Published and verified. Public User Panel par changes dekhne ke liye page refresh karein.")}catch(e){say("Publish failed: "+e.message)}finally{b.disabled=false}};
+}
+/* Admin account security settings */
+const securityTab=$("#security-admin-tab"),securityPanel=$("#security-admin");
+if(securityTab&&securityPanel){
+ securityTab.addEventListener("click",()=>{
+  ["#flash-editor-panel","#site-preview","#design-studio","#music-admin","#downloads-admin","#social-admin","#analytics-admin","#advanced-builder","#website-builder"].forEach(sel=>{const el=$(sel);if(el)el.hidden=true});
+  document.querySelectorAll(".we-left,.we-right,.tool-dock").forEach(el=>el.hidden=true);
+  securityPanel.hidden=false;
+  document.querySelectorAll(".preview-flash-toggle button").forEach(b=>b.setAttribute("aria-pressed",String(b===securityTab)));
+  $("#preview-mode-title").textContent="Security & Login";
+  requestAnimationFrame(()=>window.scrollTo({top:0,behavior:"instant"}));
+ });
+}
+$("#admin-password-form")?.addEventListener("submit",async e=>{
+ e.preventDefault();
+ const form=e.currentTarget,button=$("#admin-password-submit"),status=$("#admin-password-status");
+ const current=$("#admin-current-password").value,next=$("#admin-new-password").value,confirmNext=$("#admin-confirm-password").value;
+ const user=hubCloud?.auth?.currentUser;
+ if(!user||!authOk(user)){status.textContent="Admin login required. Please sign in again.";return}
+ if(next.length<8){status.textContent="New password must be at least 8 characters.";return}
+ if(next!==confirmNext){status.textContent="New password and confirmation do not match.";return}
+ if(current===next){status.textContent="Choose a different password.";return}
+ button.disabled=true;status.textContent="Verifying current password…";
+ try{
+  const credential=firebase.auth.EmailAuthProvider.credential(user.email,current);
+  await user.reauthenticateWithCredential(credential);
+  await user.updatePassword(next);
+  form.reset();status.textContent="Password changed successfully. Use the new password next time you log in.";
+ }catch(err){
+  const messages={"auth/wrong-password":"Current password is incorrect.","auth/invalid-credential":"Current password is incorrect.","auth/weak-password":"Choose a stronger password.","auth/requires-recent-login":"Please sign out, sign in again, then change the password.","auth/too-many-requests":"Too many attempts. Wait and try again.","auth/network-request-failed":"Network error. Check your connection."};
+  status.textContent=messages[err?.code]||("Password change failed: "+(err?.message||err?.code||"Unknown error"));
+ }finally{button.disabled=false}
+});
 })();
