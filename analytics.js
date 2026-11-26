@@ -15,10 +15,15 @@
   };
   const visitorId=stableVisitorId(),sessionId=stableSessionId();
   const visitorName="Visitor-"+visitorId.replace(/[^a-z0-9]/gi,"").slice(-6).toUpperCase();
+
+  const ua=navigator.userAgent||"";
+  const deviceType=/(smart-tv|smarttv|hbbtv|tizen|web0s|webos|appletv|googletv|android tv|roku|aftb|aftt|fire tv)/i.test(ua)?"TV":(/ipad|tablet|playbook|silk/i.test(ua)||(/android/i.test(ua)&&!/mobile/i.test(ua)))?"Tablet":(/mobi|iphone|ipod|android.*mobile|windows phone/i.test(ua))?"Mobile":"Desktop";
+  const deviceOS=/windows nt/i.test(ua)?"Windows":/android/i.test(ua)?"Android":/(iphone|ipad|ipod)/i.test(ua)?"iOS":/mac os x/i.test(ua)?"macOS":/cros/i.test(ua)?"ChromeOS":/linux/i.test(ua)?"Linux":/(tizen|webos|appletv|roku)/i.test(ua)?"Smart TV OS":"Unknown";
+  const deviceBrowser=/edg\//i.test(ua)?"Edge":/opr\//i.test(ua)?"Opera":/samsungbrowser/i.test(ua)?"Samsung Internet":/firefox\//i.test(ua)?"Firefox":/crios\//i.test(ua)?"Chrome (iOS)":/chrome\//i.test(ua)?"Chrome":/safari\//i.test(ua)?"Safari":/android/i.test(ua)?"Android Browser":"Other";
   const page=(location.pathname.split("/").pop()||"index.html").slice(0,80);
   let lastTick=document.visibilityState==="visible"?Date.now():0,lastWrite=0;
   const record=(type,activeSeconds=0,extra={})=>{
-    const data={schemaVersion:3,type,visitorId,visitorName,sessionId,page,activeSeconds:Math.max(0,Math.min(90,Math.round(activeSeconds))),createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+    const data={schemaVersion:3,type,visitorId,visitorName,sessionId,page,deviceType,deviceOS,deviceBrowser,activeSeconds:Math.max(0,Math.min(90,Math.round(activeSeconds))),createdAt:firebase.firestore.FieldValue.serverTimestamp()};
     if(extra.downloadId)data.downloadId=String(extra.downloadId).slice(0,100);
     hubCloud.db.collection("analyticsEvents").add(data).catch(e=>console.warn("MAXTROIT analytics event was not saved:",e));
   };
