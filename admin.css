@@ -748,3 +748,44 @@ body.analytics-workspace #admin-app>.preview-area,body.analytics-workspace #admi
 /* Advanced analytics daily traffic chart */
 .analytics-trend{margin:16px 0}.analytics-daily-chart{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;align-items:end}.analytics-day{min-width:0;display:grid;gap:7px;font-size:12px;color:#64748b}.analytics-day>span{font-weight:700}.analytics-bars{height:105px;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;gap:5px;padding:6px;background:#f1f5f9;border-radius:8px}.analytics-bars i,.analytics-bars b{display:block;height:13px;min-width:2px;border-radius:4px;background:#5267d8}.analytics-bars b{background:#16a085}.analytics-day small{font-size:10px;line-height:1.4;white-space:normal}
 @media(max-width:650px){.analytics-daily-chart{grid-template-columns:repeat(4,minmax(0,1fr))}.analytics-day small{font-size:9px}}
+
+
+/* MAXTROIT Admin UX refresh — responsive navigation and consistent workspaces */
+#admin-app .topbar{position:sticky;top:0;z-index:100;min-height:64px;height:auto;box-shadow:0 4px 18px rgba(15,23,42,.08)}
+#admin-app .top-actions{display:flex;flex-wrap:wrap;justify-content:flex-end}
+#admin-app .top-actions button{min-height:40px;white-space:nowrap}
+#admin-app .preview-heading{align-items:center;flex-wrap:wrap}
+#admin-app .preview-flash-toggle{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;width:100%;min-width:0;overflow:visible}
+#admin-app .preview-flash-toggle button{min-width:0;min-height:44px;white-space:normal;line-height:1.25}
+#admin-app .preview-flash-toggle button[aria-pressed="true"]{background:#5b45d6;color:#fff;border-color:#5b45d6}
+#admin-app .music-admin,#admin-app .downloads-admin,#admin-app .social-admin,#admin-app .analytics-admin{border-radius:16px;box-shadow:0 10px 30px rgba(15,23,42,.07)}
+#admin-app .music-admin-head h2,#admin-app .downloads-admin-head h2,#admin-app .social-admin-head h2,#admin-app .analytics-head h2{letter-spacing:-.025em}
+@media(max-width:760px){
+ #admin-app .topbar{align-items:flex-start;gap:8px;padding:10px 12px;flex-direction:column}
+ #admin-app .brand{width:100%;justify-content:space-between}
+ #admin-app .top-actions{width:100%;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+ #admin-app .top-actions button{min-width:0;min-height:42px;padding:8px 5px;font-size:12px}
+ #admin-app .preview-area{height:auto;min-height:0;padding:10px;gap:10px}
+ #admin-app .preview-heading{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+ #admin-app #preview-mode-title{font-size:17px}
+ #admin-app #editor-status{grid-column:1/-1;grid-row:2;font-size:12px;line-height:1.45}
+ #admin-app #expand-site-preview{grid-column:2;grid-row:1}
+ #admin-app .preview-flash-toggle{grid-column:1/-1;grid-row:3;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+ #admin-app .preview-flash-toggle button{min-height:44px;padding:8px 6px;font-size:12px}
+ #admin-app .music-admin,#admin-app .downloads-admin,#admin-app .social-admin,#admin-app .analytics-admin{margin:10px;padding:14px;max-height:none;overflow:visible}
+ #admin-app .music-admin-grid{grid-template-columns:1fr}
+ #admin-app .downloads-admin-form{grid-template-columns:1fr}
+ #admin-app .downloads-media-fields{grid-template-columns:1fr}
+ #admin-app .social-admin-row{grid-template-columns:1fr}
+ #admin-app .social-admin-add{grid-template-columns:1fr}
+ #admin-app .analytics-head{display:grid;grid-template-columns:1fr 1fr;align-items:stretch}
+ #admin-app .analytics-head>div{grid-column:1/-1}
+ #admin-app .analytics-head button{margin:0;width:100%}
+ #admin-app .analytics-daily-chart{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(max-width:420px){
+ #admin-app .top-actions{grid-template-columns:repeat(3,minmax(0,1fr))}
+ #admin-app .preview-flash-toggle{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #admin-app .analytics-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #admin-app .analytics-daily-chart{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
