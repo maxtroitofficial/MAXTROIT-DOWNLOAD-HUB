@@ -32,7 +32,8 @@ service cloud.firestore {
     }
     match /analyticsEvents/{eventId} {
       // Public clients may append narrowly-scoped anonymous usage events; only admin can read them.
-      allow create: if request.resource.data.keys().hasOnly(["type", "visitorId", "sessionId", "page", "createdAt", "downloadId"])
+      allow create: if request.resource.data.keys().hasOnly(["schemaVersion", "type", "visitorId", "sessionId", "page", "createdAt", "downloadId"])
+        && request.resource.data.schemaVersion == 2
         && request.resource.data.type in ["page_view", "heartbeat", "download_click"]
         && request.resource.data.visitorId is string && request.resource.data.visitorId.size() <= 100
         && request.resource.data.sessionId is string && request.resource.data.sessionId.size() <= 100
