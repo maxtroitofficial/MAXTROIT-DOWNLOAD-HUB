@@ -35,3 +35,21 @@ Firestore rules allow public reads of downloads and the public site settings doc
 - Requests have a timeout message. If a write times out, its final server-side result may be uncertain; check the list before retrying.
 - The dashboard reports whether its Firestore read succeeded; it does not claim that the public website is externally reachable.
 - Browser/device testing and Firebase Console configuration must be verified in the target environment before deployment.
+
+## Website Builder
+
+The admin panel includes an advanced Website Builder workspace. It supports:
+- Importing the existing homepage layout (the downloads collection remains managed by the existing app).
+- Nested content blocks, selection, layer reordering, duplicate/delete, and responsive desktop/tablet/mobile styles.
+- Draft autosave to Firestore, publish snapshots, and version restore.
+- Image uploads to the restricted `builder-media` Storage path.
+- Published homepage snapshots are stored separately in `sites/maxtroit/publicPages/home`; public clients can read published snapshots without receiving private draft documents.
+
+Open `admin.html`, sign in with the configured administrator account, then choose **Website Builder**. The builder's imported layout should be reviewed on desktop and mobile before publishing. Existing downloads, music, social links, Flash Screen and admin workflows remain separate.
+
+## Builder data and limitations
+
+- Draft pages: `sites/maxtroit/pages/{pageId}` (administrator-only).
+- Version snapshots: `sites/maxtroit/versions/{versionId}` (administrator-only).
+- Public snapshots: `sites/maxtroit/publicPages/{pageId}` (public read; administrator write).
+- The current public-site bridge renders the published `home` page above the existing downloads collection. Additional page routing, full offline conflict resolution, richer media library management and browser/device end-to-end testing remain future work.
