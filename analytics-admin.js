@@ -12,8 +12,8 @@
   ["music-admin-tab","downloads-admin-tab","social-admin-tab","design-studio-tab","flash-editor-tab"].forEach(id=>{const el=document.getElementById(id);if(el)el.setAttribute("aria-pressed","false")});
   ["music-workspace","downloads-workspace","social-workspace","design-workspace"].forEach(c=>document.body.classList.remove(c));
  };
- function setOpen(open){if(open){closeOthers();document.body.classList.add("analytics-workspace");}else document.body.classList.remove("analytics-workspace");panel.hidden=!open;tab.setAttribute("aria-pressed",String(open));tab.textContent=open?"← Website Editor":"Analytics";if(open)load();}
- tab.addEventListener("click",e=>{e.preventDefault();setOpen(panel.hidden);});
+ function setOpen(open){if(open){closeOthers();document.body.classList.add("analytics-workspace");}else document.body.classList.remove("analytics-workspace");panel.hidden=!open;panel.style.display=open?"block":"none";tab.setAttribute("aria-pressed",String(open));tab.textContent=open?"← Website Editor":"Analytics";if(open)load();}
+ tab.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();setOpen(panel.hidden);});
  document.getElementById("admin-back")?.addEventListener("click",()=>{if(!panel.hidden)setOpen(false)},true);
  async function load(){
   if(typeof hubCloud==="undefined"||!hubCloud?.ready||!hubCloud.db){if(status)status.textContent="Firebase connection unavailable. Refresh and try again.";return;}
@@ -55,7 +55,6 @@
    document.getElementById("analytics-downloads-list").innerHTML=render(downloads);
    const dateTime=t=>t?new Date(t).toLocaleString([],{year:"numeric",month:"short",day:"2-digit",hour:"2-digit",minute:"2-digit"}):"—";
    const list=[...visitors.values()].sort((a,b)=>b.lastSeen-a.lastSeen);
-   const chart=document.getElementById("analytics-daily-chart");if(chart)chart.innerHTML="<p>No data recorded yet</p>";
    const body=document.getElementById("analytics-visitors-list");
    body.innerHTML=list.length?list.map(v=>'<tr><td>'+escapeHtml(v.name)+'</td><td>'+escapeHtml(v.deviceType)+'</td><td>'+escapeHtml(v.deviceOS)+'</td><td>'+escapeHtml(v.deviceBrowser)+'</td><td>'+fmt(v.sessions.size)+'</td><td>'+fmt(v.pageViews)+'</td><td>'+duration(v.seconds)+'</td><td>'+dateTime(v.firstSeen)+'</td><td>'+dateTime(v.lastSeen)+'</td><td>'+escapeHtml(v.lastPage)+'</td><td>'+(v.lastSeen>=now-120000?"Active":"Away")+'</td></tr>').join(""):'<tr><td colspan="11">No visitors recorded yet</td></tr>';
    if(status)status.textContent=rows.length?"Visitor register updated. Time counts only while the page is visible and open; browser storage resets may create a new anonymous visitor.":"No v3 visitor events yet. Open the public website and keep it visible for at least 30 seconds.";
@@ -81,8 +80,9 @@
    }
    ["analytics-total-visitors","analytics-today-visitors","analytics-active-users","analytics-page-views","analytics-download-clicks","analytics-returning-visitors","analytics-new-visitors","analytics-conversion"].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent="0";});
    ["analytics-pages-list","analytics-downloads-list"].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML="<li>No data recorded yet</li>";});
+   const chart=document.getElementById("analytics-daily-chart");if(chart)chart.innerHTML="<p>No data recorded yet</p>";
    const body=document.getElementById("analytics-visitors-list");
-   if(body)body.innerHTML='<tr><td colspan="10">No visitors recorded yet</td></tr>';
+   if(body)body.innerHTML='<tr><td colspan="11">No visitors recorded yet</td></tr>';
    if(status)status.textContent="Analytics reset complete. "+removed+" old event(s) deleted. New visits will appear from now on.";
   }catch(e){
    console.error("Analytics reset failed:",e);
