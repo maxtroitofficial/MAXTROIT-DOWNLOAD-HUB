@@ -789,3 +789,74 @@ body.analytics-workspace #admin-app>.preview-area,body.analytics-workspace #admi
  #admin-app .analytics-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
  #admin-app .analytics-daily-chart{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+
+
+/* MAXTROIT admin usability pass — consistent navigation, workspace sizing and mobile controls */
+#admin-app>.topbar{
+  background:#111827!important;color:#f8fafc!important;border-bottom:1px solid #334155!important;
+  box-shadow:0 5px 18px rgba(15,23,42,.16);gap:14px;padding:10px 16px;
+}
+#admin-app>.topbar .brand strong{color:#fff;letter-spacing:.08em}
+#admin-app>.topbar .brand span{color:#a5b4fc;letter-spacing:.14em}
+#admin-app>.topbar .top-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+#admin-app>.topbar .top-actions button{
+  min-height:38px;padding:8px 11px;border:1px solid #475569;border-radius:9px;
+  background:#1e293b;color:#e2e8f0;font-weight:650;cursor:pointer;
+}
+#admin-app>.topbar .top-actions #save{background:#334155;border-color:#64748b}
+#admin-app>.topbar .top-actions #publish{background:#6d4aff;border-color:#8b75ff;color:#fff}
+#admin-app>.topbar .top-actions #logout{background:#3b1f2b;border-color:#85445b;color:#fecdd3}
+#admin-app>.topbar .top-actions button:disabled{opacity:.45;cursor:not-allowed}
+.preview-heading{gap:8px 12px}
+.preview-flash-toggle{
+  display:grid!important;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));
+  gap:7px;width:100%;min-width:0;padding:8px;
+  border:1px solid #dbe2ee;border-radius:12px;background:#f1f4fa;
+}
+.preview-flash-toggle button{
+  min-width:0;min-height:42px;padding:9px 10px;border:1px solid #d4dbea;
+  border-radius:9px;background:#fff;color:#263248;font-weight:650;
+  white-space:normal;line-height:1.2;
+}
+.preview-flash-toggle button[aria-pressed="true"]{
+  background:#5b45d6!important;border-color:#5b45d6!important;color:#fff!important;
+}
+#open-advanced-builder{background:#172c46;color:#e0f2fe;border-color:#315b80}
+#editor-status{font-size:12px;line-height:1.4}
+#music-admin:not([hidden]),#design-studio:not([hidden]),.downloads-admin:not([hidden]),.social-admin:not([hidden]){
+  box-sizing:border-box;max-height:none!important;min-height:0;
+}
+#analytics-admin:not([hidden]){
+  box-sizing:border-box;max-height:none!important;min-height:0;
+}
+body.music-workspace #admin-app,body.design-workspace #admin-app,
+body.downloads-workspace #admin-app,body.social-workspace #admin-app,
+body.analytics-workspace #admin-app{height:100dvh;min-height:0;overflow:auto!important}
+body.music-workspace #admin-app>.topbar,body.design-workspace #admin-app>.topbar,
+body.downloads-workspace #admin-app>.topbar,body.social-workspace #admin-app>.topbar,
+body.analytics-workspace #admin-app>.topbar{position:sticky;top:0;z-index:50}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+  outline:3px solid #8b75ff!important;outline-offset:2px;
+}
+@media(max-width:850px){
+  #admin-app>.topbar{display:flex!important;flex-direction:column;align-items:stretch;padding:9px 10px!important;gap:8px!important}
+  #admin-app>.topbar .brand{min-height:22px}
+  #admin-app>.topbar .top-actions{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:5px!important}
+  #admin-app>.topbar .top-actions button{min-width:0;min-height:40px;padding:7px 3px!important;font-size:11px!important}
+  .preview-heading{display:flex!important;align-items:center;flex-wrap:wrap}
+  .preview-heading>#preview-mode-title{flex:1 1 45%}
+  .preview-heading>#editor-status{flex:1 1 100%;order:3}
+  .preview-flash-toggle{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px;padding:7px}
+  .preview-flash-toggle button{min-height:44px;font-size:12px}
+  #music-admin:not([hidden]),#design-studio:not([hidden]),.downloads-admin:not([hidden]),.social-admin:not([hidden]),#analytics-admin:not([hidden]){
+    width:calc(100% - 14px);margin:7px auto;padding:12px;border-radius:12px;
+  }
+  .downloads-admin-list-head,.social-admin-head,.analytics-head{flex-wrap:wrap;gap:9px}
+}
+@media(max-width:390px){
+  #admin-app>.topbar .top-actions button{font-size:10px!important;padding:6px 1px!important}
+  .preview-flash-toggle button{font-size:11px;padding:8px 5px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
