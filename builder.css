@@ -25,3 +25,16 @@
 .mb-canvas .mb-cta{text-align:center;background:#20183e;color:#fff}
 .mb-canvas .mb-logos{display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap}
 @media(max-width:767px){.mb-inspector-body{grid-template-columns:1fr}.mb-inspector-tabs{grid-template-columns:repeat(4,1fr)}}
+
+/* Shape and drawing palette */
+#advanced-builder .mb-shape-tools button{font-weight:700;letter-spacing:.1px}
+#advanced-builder .mb-canvas .mb-rect,
+#advanced-builder .mb-canvas .mb-circle,
+#advanced-builder .mb-canvas .mb-pill,
+#advanced-builder .mb-canvas .mb-line,
+#advanced-builder .mb-canvas .mb-triangle{display:block;min-width:0;min-height:0;max-width:100%;margin:12px auto}
+#advanced-builder .mb-canvas .mb-arrow{display:block;min-height:0;text-align:center;font-weight:800;line-height:1;margin:10px auto}
+#advanced-builder .mb-canvas .mb-line{height:3px;min-height:3px}
+#advanced-builder .mb-canvas .mb-triangle{border-style:solid;border-top:0}
+#advanced-builder .mb-canvas .mb-circle{aspect-ratio:1/1}
+@media(max-width:767px){#advanced-builder .mb-shape-tools{grid-template-columns:repeat(3,minmax(0,1fr))}}
