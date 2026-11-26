@@ -1,0 +1,13 @@
+/* Shared MAXTROIT page renderer. Uses DOM APIs and an explicit safe element allowlist. */
+(()=>{"use strict";
+const C=()=>window.MAXTROITBuilderCore;
+const tags={section:"section",container:"div",heading:"h2",text:"p",image:"img",button:"a",video:"video",spacer:"div",divider:"hr",hero:"section",features:"section",pricing:"section",faq:"section",gallery:"section",download:"article",footer:"footer"};
+function renderNode(node,device="desktop",selectedId=null){const tag=tags[node.type]||"div",el=document.createElement(tag),p=node.props||{},style=C().resolveStyles(node.styles,device);el.dataset.nodeId=node.id;el.className="mb-node mb-"+node.type;if(node.id===selectedId)el.classList.add("mb-selected");if(node.type==="image"){el.src=p.src||"";el.alt=p.alt||"";}else if(node.type==="button"){el.href=safeUrl(p.href||"#");el.textContent=p.text||"Button";}else if(node.type==="video"){el.controls=true;el.src=safeUrl(p.src||"");}else if(node.type==="divider"){}else if(node.type==="spacer"){el.setAttribute("aria-hidden","true");}else if(node.type==="hero"){const h=document.createElement("h1");h.textContent=p.title||"Your headline";el.append(h);if(p.text){const q=document.createElement("p");q.textContent=p.text;el.append(q)}}else if(["features","pricing","faq","gallery","download"].includes(node.type)){const h=document.createElement("h2");h.textContent=p.title||label(node.type);el.append(h);if(p.text){const q=document.createElement("p");q.textContent=p.text;el.append(q)}}else{el.textContent=p.text||p.title||"";}
+Object.entries(style).forEach(([k,v])=>{if(v!==""&&v!=null)el.style.setProperty(kebab(k),String(v));});
+(node.children||[]).forEach(ch=>el.append(renderNode(ch,device,selectedId)));return el;}
+function safeUrl(v){const s=String(v||"");return /^(https:\/\/|mailto:|tel:|#|\/)/i.test(s)?s:"#";}
+function kebab(s){return s.replace(/[A-Z]/g,m=>"-"+m.toLowerCase());}
+function label(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+function renderTree(tree,host,device="desktop",selectedId=null){host.replaceChildren();(tree||[]).forEach(n=>host.append(renderNode(n,device,selectedId)));return host;}
+window.MAXTROITBuilderRenderer={renderTree,renderNode};
+})();

@@ -3,7 +3,7 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [main, feature/full-website-editor]
+    branches: [main, feature/full-website-editor, feature/complete-website-builder]
 permissions:
   contents: read
 jobs:
@@ -16,8 +16,10 @@ jobs:
           node-version: 20
       - name: JavaScript syntax
         run: |
-          for file in admin.js app.js download.js firebase.js firebase-config.js; do
+          for file in admin.js app.js download.js firebase.js firebase-config.js builder-core.js builder-renderer.js builder-app.js website-editor-ui.js; do
             node --check "$file"
           done
       - name: Visual editor regression invariants
-        run: node tests/invariants.mjs
+        run: |
+          node tests/invariants.mjs
+          node tests/builder-core.test.mjs

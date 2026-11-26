@@ -1,0 +1,14 @@
+import fs from "node:fs";
+import vm from "node:vm";
+import assert from "node:assert/strict";
+const context={window:{},Math,JSON};vm.createContext(context);vm.runInContext(fs.readFileSync("builder-core.js","utf8"),context);
+const C=context.window.MAXTROITBuilderCore;
+const a=C.makeNode("section",{title:"A"}),b=C.makeNode("text",{text:"B"});
+let tree=C.insertNode([],a);tree=C.insertNode(tree,b,a.id);
+assert.equal(C.findNode(tree,b.id).props.text,"B");
+assert.equal(JSON.stringify(C.resolveStyles({desktop:{color:"red",padding:"1px"},tablet:{padding:"2px"},mobile:{color:"blue"}},"mobile")),JSON.stringify({color:"blue",padding:"2px"}));
+tree=C.updateNode(tree,b.id,n=>{n.props.text="Changed"});assert.equal(C.findNode(tree,b.id).props.text,"Changed");
+tree=C.moveNode(tree,a.id,1);assert.equal(tree[0].id,a.id);
+tree=C.removeNode(tree,b.id);assert.equal(C.findNode(tree,b.id),null);
+const h=new C.History({value:1});h.push({value:2});assert.equal(h.undo().value,1);assert.equal(h.redo().value,2);
+console.log("MAXTROIT builder core tests: PASS");
