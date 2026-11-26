@@ -153,7 +153,7 @@ After your own website is deployed over HTTPS and the Admin Panel works:
 3. Confirm the install. The shortcut opens your own Admin Panel in an app-style window.
 4. Sign in using your own Firebase admin account.
 
-This is an installable PWA shortcut, not an APK file. It keeps using your own website and Firebase project.
+This is an installable PWA shortcut. The repository also contains a universal Android WebView wrapper under `android-admin/`. Its GitHub Actions workflow builds a debug APK artifact; open the Actions tab, select **Build universal Admin APK**, and download the `download-hub-admin-debug-apk` artifact after a successful run. Debug APK is for testing/sideloading, not a Play Store release.
 
 ## Admin Panel APK status
 
