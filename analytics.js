@@ -28,7 +28,7 @@
     if(document.visibilityState!=="visible"&&!force)return;
     const now=Date.now(),elapsed=lastTick?Math.min(45,Math.max(0,(now-lastTick)/1000)):0;
     lastTick=document.visibilityState==="visible"?now:0;
-    if(now-lastWrite<25000)return;
+    if(now-lastWrite<25000&&!force)return;
     lastWrite=now;
     record("heartbeat",elapsed);
   };
