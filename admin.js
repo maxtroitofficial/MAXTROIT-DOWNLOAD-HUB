@@ -189,17 +189,21 @@ $("#fs-save").addEventListener("click",async()=>{const button=$("#fs-save"),labe
 async function saveDraft(){if(!authOk(hubCloud.auth.currentUser))throw Error("Admin login required");const ref=hubCloud.db.collection("siteConfig").doc("public"),snap=await ref.get(),old=snap.data()||{},stamp=Date.now(),draft={...(old.editorStudioDraft||{}),visualEdits:edits,updatedAt:stamp};await ref.set({editorStudioDraft:draft},{merge:true});const check=await ref.get(),saved=check.data()||{};if(saved.editorStudioDraft?.updatedAt!==stamp||JSON.stringify(saved.editorStudioDraft?.visualEdits)!==JSON.stringify(edits))throw Error("Draft save verify nahi hua");return stamp}
 $("#save").onclick=async()=>{const b=$("#save");b.disabled=true;say("Draft save ho raha hai…");try{await saveDraft();say("Draft saved and verified. Public website abhi change nahi hui; publish karne par live hogi.")}catch(e){say("Draft save failed: "+e.message)}finally{b.disabled=false}};
 $("#publish").onclick=async()=>{if(!authOk(hubCloud.auth.currentUser)){say("Admin login required");return}if(!confirm("Saved visual changes public website par publish karein?"))return;const b=$("#publish");b.disabled=true;say("Public website par publish ho raha hai…");try{const stamp=await saveDraft(),ref=hubCloud.db.collection("siteConfig").doc("public");await ref.set({visualEdits:edits,visualEditsUpdated:stamp},{merge:true});const check=await ref.get(),saved=check.data()||{};if(saved.visualEditsUpdated!==stamp||JSON.stringify(saved.visualEdits)!==JSON.stringify(edits))throw Error("Publish verify nahi hua");say("Published and verified. Public User Panel par changes dekhne ke liye page refresh karein.")}catch(e){say("Publish failed: "+e.message)}finally{b.disabled=false}};
-/* Admin account security settings */
+/* Admin account security workspace: isolate the section from all editor panels. */
 const securityTab=$("#security-admin-tab"),securityPanel=$("#security-admin");
+function closeSecurityWorkspace(){
+ document.body.classList.remove("security-workspace");
+ if(securityPanel)securityPanel.hidden=true;
+}
 if(securityTab&&securityPanel){
  securityTab.addEventListener("click",()=>{
-  ["#flash-editor-panel","#site-preview","#design-studio","#music-admin","#downloads-admin","#social-admin","#analytics-admin","#advanced-builder","#website-builder"].forEach(sel=>{const el=$(sel);if(el)el.hidden=true});
-  document.querySelectorAll(".we-left,.we-right,.tool-dock").forEach(el=>el.hidden=true);
+  document.body.classList.add("security-workspace");
   securityPanel.hidden=false;
   document.querySelectorAll(".preview-flash-toggle button").forEach(b=>b.setAttribute("aria-pressed",String(b===securityTab)));
-  $("#preview-mode-title").textContent="Security & Login";
   requestAnimationFrame(()=>window.scrollTo({top:0,behavior:"instant"}));
  });
+ document.querySelectorAll(".preview-flash-toggle button:not(#security-admin-tab)").forEach(b=>b.addEventListener("click",closeSecurityWorkspace));
+ $("#admin-back")?.addEventListener("click",()=>{closeSecurityWorkspace();setFlashEditorMode(false);document.querySelectorAll(".preview-flash-toggle button").forEach(b=>b.setAttribute("aria-pressed","false"));});
 }
 $("#admin-password-form")?.addEventListener("submit",async e=>{
  e.preventDefault();
