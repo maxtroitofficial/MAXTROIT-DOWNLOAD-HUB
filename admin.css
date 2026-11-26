@@ -588,3 +588,64 @@ body.downloads-workspace #admin-app>.preview-area>.preview-heading,body.download
  #admin-app .preview-flash-toggle{width:100%;overflow-x:auto;flex-wrap:nowrap;padding-bottom:3px}
  #admin-app .preview-flash-toggle button{white-space:nowrap;flex:0 0 auto;font-size:11px}
 }
+
+
+/* Rebuilt Website Editor workspace: dedicated tool rail, canvas and inspector. */
+#admin-app .preview-area{display:grid;grid-template-columns:216px minmax(0,1fr) 252px;grid-template-rows:auto minmax(0,1fr);gap:12px;padding:12px 14px;height:calc(100dvh - 68px);min-height:0;align-items:stretch}
+#admin-app .preview-heading{grid-column:1/-1;grid-row:1;display:flex;align-items:center;gap:10px;min-width:0}
+#admin-app .preview-heading>b{font-size:15px;white-space:nowrap}
+#admin-app .preview-heading>span{margin-right:auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#admin-app #site-preview{grid-column:2;grid-row:2;width:100%;height:100%;min-height:0;border-radius:12px}
+#admin-app .we-sidebar{grid-row:2;min-width:0;min-height:0;overflow:auto;background:#111b2d;border:1px solid #293a54;border-radius:13px;padding:14px;color:#e7edf8;display:flex;flex-direction:column;gap:8px}
+#admin-app .we-left{grid-column:1}
+#admin-app .we-right{grid-column:3}
+#admin-app .we-panel-title,#admin-app .we-eyebrow{font-size:10px;letter-spacing:1.5px;font-weight:800;color:#93a4bf;margin:3px 0 7px}
+#admin-app .we-nav,#admin-app .we-action{width:100%;display:flex;align-items:center;gap:10px;justify-content:flex-start;min-height:42px;padding:9px 11px;background:#192840;border:1px solid #30435f;color:#e8eef9;border-radius:8px;text-align:left}
+#admin-app .we-nav.active{background:#34256a;border-color:#7056c8}
+#admin-app .we-nav span{font-size:13px}
+#admin-app .we-divider{height:1px;background:#293a54;margin:7px 0}
+#admin-app .we-help,#admin-app .we-selection-note{margin-top:auto;padding:12px;background:#17253b;border:1px solid #2d405d;border-radius:9px;color:#aebbd0;font-size:12px;line-height:1.55}
+#admin-app .we-help b{color:#e8eef9}
+#admin-app .we-help p{margin:6px 0 0}
+#admin-app .we-inspector-head{padding-bottom:13px;border-bottom:1px solid #293a54}
+#admin-app .we-inspector-head strong{display:block;font-size:15px;margin:4px 0}
+#admin-app .we-inspector-head p{font-size:12px;color:#aebbd0;overflow-wrap:anywhere;margin:0}
+#admin-app .we-inspector-section{display:grid;gap:7px;padding:12px 0;border-bottom:1px solid #293a54}
+#admin-app .we-inspector-section>b{font-size:12px;color:#aebbd0;margin-bottom:2px}
+#admin-app .we-action{font-size:12px;min-height:39px}
+#admin-app .we-action.danger{color:#ffb5c0;border-color:#75404b}
+#admin-app .we-legacy-dock{display:none!important}
+#admin-app .flash-editor-panel{grid-column:1/-1;grid-row:2;min-height:0;overflow:auto}
+#admin-app .preview-area:has(#flash-editor-panel:not([hidden])){display:flex;flex-direction:column}
+#admin-app .preview-area:has(#flash-editor-panel:not([hidden])) .we-sidebar,#admin-app .preview-area:has(#flash-editor-panel:not([hidden])) #site-preview{display:none}
+#admin-app .preview-area.preview-expanded{display:flex;flex-direction:column;z-index:99999}
+#admin-app .preview-area.preview-expanded .we-sidebar{display:none}
+#admin-app .preview-area.preview-expanded #site-preview{display:block;flex:1 1 0}
+@media(max-width:900px){
+ #admin-app .preview-area{grid-template-columns:164px minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;height:calc(100dvh - 100px);padding:9px;gap:8px}
+ #admin-app .preview-heading{grid-column:1/-1}
+ #admin-app #site-preview{grid-column:2;grid-row:2}
+ #admin-app .we-left{grid-column:1;grid-row:2}
+ #admin-app .we-right{grid-column:1/-1;grid-row:3;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:start;gap:8px}
+ #admin-app .we-inspector-head{grid-column:1/-1}
+ #admin-app .we-selection-note{grid-column:1/-1;margin:0}
+ #admin-app .we-inspector-section{padding:5px 0;border:0}
+}
+@media(max-width:560px){
+ #admin-app .topbar{min-height:0}
+ #admin-app .preview-area{height:calc(100dvh - 118px);grid-template-columns: minmax(0,1fr);grid-template-rows:auto minmax(260px,1fr) auto;overflow:auto}
+ #admin-app .preview-heading{grid-column:1;gap:6px}
+ #admin-app .preview-heading .preview-flash-toggle{order:5}
+ #admin-app #site-preview{grid-column:1;grid-row:2;min-height:260px}
+ #admin-app .we-left{grid-column:1;grid-row:3;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:9px}
+ #admin-app .we-left .we-panel-title,#admin-app .we-left .we-divider,#admin-app .we-help{display:none}
+ #admin-app .we-nav{justify-content:center;padding:7px 5px;font-size:12px;min-height:44px}
+ #admin-app .we-nav span{font-size:11px}
+ #admin-app .we-right{grid-column:1;grid-row:4;display:flex;gap:6px;padding:10px}
+ #admin-app .we-inspector-section{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+ #admin-app .we-inspector-section>b{grid-column:1/-1}
+ #admin-app .we-selection-note{width:100%}
+}
+
+/* Respect native hidden state when switching between admin workspaces. */
+#admin-app[hidden],#admin-app .preview-area[hidden],#admin-app #site-preview[hidden],#admin-app .flash-editor-panel[hidden],#admin-app #design-studio[hidden],#admin-app #music-admin[hidden]{display:none!important}
