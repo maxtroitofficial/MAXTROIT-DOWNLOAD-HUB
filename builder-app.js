@@ -38,5 +38,5 @@ $("#mb-delete").onclick=()=>{if(pages.length<2)return;pages.splice(pageIndex,1);
 $("#mb-back").onclick=()=>{root.hidden=true;$(".preview-area").hidden=false;$(".we-legacy-dock").hidden=false;};
 $("#open-advanced-builder").onclick=()=>{$(".preview-area").hidden=true;$(".we-legacy-dock").hidden=true;$("#design-studio").hidden=true;root.hidden=false;render();};
 $("#mb-upload").onchange=async e=>{const file=e.target.files[0];if(!file)return;if(file.size>5*1024*1024||!/^image\/(jpeg|png|webp|gif|svg\+xml)$/.test(file.type)){alert("Choose JPG, PNG, WEBP, GIF or SVG up to 5 MB.");return;}try{const ref=firebase.storage().ref("builder-media/"+hubCloud.auth.currentUser.uid+"/"+Date.now()+"-"+file.name),snap=await ref.put(file,{contentType:file.type}),url=await snap.ref.getDownloadURL();if(selected){const n=C().findNode(current().tree,selected);n.props.src=url;n.props.alt=n.props.alt||file.name;dirty=true;render();scheduleSave();}}catch(err){$("#mb-status").textContent="Upload failed: "+err.message;}};
-$("#mb-device").value=device;render();loadPage();window.addEventListener("online",()=>{if(dirty)saveDraft();});
+$("#mb-device").value=device;render();if(window.hubCloud?.auth){hubCloud.auth.onAuthStateChanged(user=>{if(user)loadPage();});}else{loadPage();}window.addEventListener("online",()=>{if(dirty)saveDraft();});
 })();
