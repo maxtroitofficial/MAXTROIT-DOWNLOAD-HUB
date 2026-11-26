@@ -50,6 +50,13 @@ function saveHistory(){history.push(current().tree);tree=current().tree;dirty=tr
 function update(fn){current().tree=fn(current().tree);tree=current().tree;saveHistory();}
 function bindCanvasSelection(){const canvas=$("#mb-canvas");canvas.querySelectorAll("[data-node-id]").forEach(el=>el.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();selected=el.dataset.nodeId;render();}));}
 function render(){const canvas=$("#mb-canvas"),node=C().findNode(current().tree,selected);R().renderTree(current().tree,canvas,device,selected);bindCanvasSelection();$("#mb-layers").innerHTML="";C().walk(current().tree,(n,parent)=>{const row=document.createElement("div");row.className="mb-layer-row";const b=document.createElement("button");b.type="button";b.draggable=true;b.className="mb-layer"+(n.id===selected?" active":"");b.style.paddingLeft=(12+(parent?14:0))+"px";b.textContent=(n.props.title||n.props.text||n.type).slice(0,32);b.onclick=()=>{selected=n.id;render();};b.addEventListener("dragstart",e=>{e.dataTransfer.setData("text/plain",n.id);e.dataTransfer.effectAllowed="move";});row.addEventListener("dragover",e=>{e.preventDefault();e.dataTransfer.dropEffect="move";});row.addEventListener("drop",e=>{e.preventDefault();const from=e.dataTransfer.getData("text/plain");if(from&&from!==n.id){current().tree=moveBefore(current().tree,from,n.id);selected=from;saveHistory();}});row.append(b);$("#mb-layers").append(row);});let pageSelect=$("#mb-page-select");if(pageSelect){pageSelect.innerHTML="";pages.forEach((p,i)=>{const o=document.createElement("option");o.value=String(i);o.textContent=p.name;pageSelect.append(o);});pageSelect.value=String(pageIndex);}$("#mb-page-name").textContent=current().name;$("#mb-status").textContent=dirty?"Unsaved changes":"Saved";$("#mb-undo").disabled=!history.canUndo;$("#mb-redo").disabled=!history.canRedo;inspector();}
+function colorHex(value,fallback="#111827"){
+ if(/^#[0-9a-f]{6}$/i.test(value||""))return value;
+ if(/^#[0-9a-f]{3}$/i.test(value||""))return "#"+value.slice(1).split("").map(x=>x+x).join("");
+ const probe=document.createElement("span");probe.style.color=value||"";document.body.append(probe);
+ const rgb=getComputedStyle(probe).color;probe.remove();
+ const m=rgb.match(/\\d+/g);return m&&m.length>=3?"#"+m.slice(0,3).map(v=>Number(v).toString(16).padStart(2,"0")).join(""):fallback;
+}
 function inspector(){
  const n=C().findNode(current().tree,selected),panel=$("#mb-inspector");panel.innerHTML="";
  if(!n){panel.textContent="Select an element on the canvas or in Layers.";return;}
@@ -59,7 +66,7 @@ function inspector(){
  const groups=["Content","Layout","Style","Effects"];let active="Content";
  function control(host,label,key,value,type="text",placeholder=""){
   const wrap=document.createElement("label");wrap.className="mb-control";wrap.textContent=label;
-  const input=document.createElement("input");input.type=type;input.value=value??"";input.placeholder=placeholder;
+  const input=document.createElement("input");input.type=type;input.value=type==="color"?colorHex(value):value??"";input.placeholder=placeholder;
   input.addEventListener("input",()=>{if(type==="color"&&input.value==="")return;
    if(["text","url","textarea"].includes(type)){n.props[key]=input.value;}
    else{n.styles[device][key]=input.value;}
@@ -91,10 +98,11 @@ function inspector(){
    selectControl(body,"Justify content","justifyContent",styles.justifyContent,[["","Default"],["start","Start"],["center","Center"],["end","End"],["space-between","Space between"],["space-around","Space around"]]);
   }
   if(active==="Style"){
-   control(body,"Text color","color",styles.color||"","#");
-   control(body,"Background","background",styles.background||"","#");
+   control(body,"Text color","color",styles.color||"","#color");
+   control(body,"Background color","backgroundColor",styles.backgroundColor||"","#color");
+   control(body,"Background / gradient CSS","background",styles.background||"");
    control(body,"Font size","fontSize",styles.fontSize||"");
-   control(body,"Font weight","fontWeight",styles.fontWeight||"");
+   selectControl(body,"Font weight","fontWeight",String(styles.fontWeight||""),[["","Theme default"],["300","Light"],["400","Regular"],["500","Medium"],["600","Semi bold"],["700","Bold"],["800","Extra bold"],["900","Black"]]);
    control(body,"Line height","lineHeight",styles.lineHeight||"");
    control(body,"Letter spacing","letterSpacing",styles.letterSpacing||"");
    control(body,"Border radius","borderRadius",styles.borderRadius||"");
