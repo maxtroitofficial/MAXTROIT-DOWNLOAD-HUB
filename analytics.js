@@ -2,7 +2,7 @@
 (()=>{
   if(!window.hubCloud?.ready || !window.hubCloud.db || !window.firebase?.firestore) return;
   const makeId=()=>window.crypto?.randomUUID?.() || ("mx-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2)+"-"+Math.random().toString(36).slice(2));
-  const cookieGet=key=>{const m=document.cookie.match(new RegExp("(?:^|; )"+key.replace(/[.*+?^${}()|[\\]\\]/g,"\\$&")+"=([^;]*)"));return m?decodeURIComponent(m[1]):"";};
+  const cookieGet=key=>{const part=document.cookie.split("; ").find(x=>x.startsWith(key+"="));return part?decodeURIComponent(part.slice(key.length+1)):"";};
   const cookieSet=(key,value)=>{try{document.cookie=key+"="+encodeURIComponent(value)+"; Max-Age=31536000; Path=/; SameSite=Lax; Secure";return cookieGet(key)===value;}catch(e){return false;}};
   const stableVisitorId=()=>{
     const key="maxtroitAnalyticsVisitor";
@@ -24,10 +24,10 @@
   };
   record("page_view");
   record("heartbeat");
-  const heartbeat=()=>{
-    if(document.visibilityState!=="visible")return;
+  const heartbeat=(force=false)=>{
+    if(document.visibilityState!=="visible"&&!force)return;
     const now=Date.now(),elapsed=lastTick?Math.min(45,Math.max(0,(now-lastTick)/1000)):0;
-    lastTick=now;
+    lastTick=document.visibilityState==="visible"?now:0;
     if(now-lastWrite<25000)return;
     lastWrite=now;
     record("heartbeat",elapsed);
@@ -35,11 +35,11 @@
   const timer=setInterval(heartbeat,30000);
   document.addEventListener("visibilitychange",()=>{
     if(document.visibilityState==="visible"){lastTick=Date.now();record("heartbeat");}
-    else{heartbeat();lastTick=0;}
+    else{heartbeat(true);lastTick=0;}
   });
   document.addEventListener("click",e=>{
     const a=e.target.closest("#download");
     if(a)record("download_click",0,{downloadId:new URLSearchParams(location.search).get("id")||""});
   },true);
-  window.addEventListener("pagehide",()=>{heartbeat();clearInterval(timer);},{once:true});
+  window.addEventListener("pagehide",()=>{heartbeat(true);clearInterval(timer);},{once:true});
 })();
