@@ -98,8 +98,8 @@ function inspector(){
    selectControl(body,"Justify content","justifyContent",styles.justifyContent,[["","Default"],["start","Start"],["center","Center"],["end","End"],["space-between","Space between"],["space-around","Space around"]]);
   }
   if(active==="Style"){
-   control(body,"Text color","color",styles.color||"","#color");
-   control(body,"Background color","backgroundColor",styles.backgroundColor||"","#color");
+   control(body,"Text color","color",styles.color||"#111827","color");
+   control(body,"Background color","backgroundColor",styles.backgroundColor||"#ffffff","color");
    control(body,"Background / gradient CSS","background",styles.background||"");
    control(body,"Font size","fontSize",styles.fontSize||"");
    selectControl(body,"Font weight","fontWeight",String(styles.fontWeight||""),[["","Theme default"],["300","Light"],["400","Regular"],["500","Medium"],["600","Semi bold"],["700","Bold"],["800","Extra bold"],["900","Black"]]);
