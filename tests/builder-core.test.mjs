@@ -6,7 +6,7 @@ const C=context.window.MAXTROITBuilderCore;
 const a=C.makeNode("section",{title:"A"}),b=C.makeNode("text",{text:"B"});
 let tree=C.insertNode([],a);tree=C.insertNode(tree,b,a.id);
 assert.equal(C.findNode(tree,b.id).props.text,"B");
-assert.deepEqual(JSON.parse(JSON.stringify(C.resolveStyles({desktop:{color:"red",padding:"1px"},tablet:{padding:"2px"},mobile:{color:"blue"}},"mobile")),{color:"blue",padding:"2px"});
+assert.equal(JSON.stringify(C.resolveStyles({desktop:{color:"red",padding:"1px"},tablet:{padding:"2px"},mobile:{color:"blue"}},"mobile")),JSON.stringify({color:"blue",padding:"2px"}));
 tree=C.updateNode(tree,b.id,n=>{n.props.text="Changed"});assert.equal(C.findNode(tree,b.id).props.text,"Changed");
 tree=C.moveNode(tree,a.id,1);assert.equal(tree[0].id,a.id);
 tree=C.removeNode(tree,b.id);assert.equal(C.findNode(tree,b.id),null);
