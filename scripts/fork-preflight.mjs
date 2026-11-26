@@ -48,7 +48,7 @@ const cliProject = firebaserc.projects && firebaserc.projects.default;
 if (!apiKey || !authDomain || !storageBucket || !senderId || !appId || !projectId || !adminUid || !firestoreUid || !storageUid || !hostingSite || !cliProject) {
   fail("A Firebase project, admin UID, Hosting site, or CLI project value is missing.");
 }
-if (projectId === "YOUR_FIREBASE_PROJECT_ID" || cliProject === "YOUR_FIREBASE_PROJECT_ID" || adminUid === "YOUR_FIREBASE_ADMIN_UID" || firestoreUid === "YOUR_FIREBASE_ADMIN_UID" || storageUid === "YOUR_FIREBASE_ADMIN_UID" || hostingSite === "YOUR_FIREBASE_HOSTING_SITE_ID") {
+if (apiKey === "YOUR_FIREBASE_WEB_API_KEY" || authDomain === "YOUR_FIREBASE_PROJECT_ID.firebaseapp.com" || storageBucket === "YOUR_FIREBASE_PROJECT_ID.firebasestorage.app" || senderId === "YOUR_FIREBASE_MESSAGING_SENDER_ID" || appId === "YOUR_FIREBASE_WEB_APP_ID" || projectId === "YOUR_FIREBASE_PROJECT_ID" || cliProject === "YOUR_FIREBASE_PROJECT_ID" || adminUid === "YOUR_FIREBASE_ADMIN_UID" || firestoreUid === "YOUR_FIREBASE_ADMIN_UID" || storageUid === "YOUR_FIREBASE_ADMIN_UID" || hostingSite === "YOUR_FIREBASE_HOSTING_SITE_ID") {
   fail("Replace all Firebase setup placeholders before deployment.");
 }
 if (apiKey === "AIzaSyD3Cpzu1tWUw7xqUKsC9COPwQDloNRKJKA" || authDomain === "maxtroit-download-hub.firebaseapp.com" || storageBucket.startsWith("maxtroit-download-hub.") || senderId === "957047554501" || appId === "1:957047554501:web:4ff8204465ba338ec94bac") {
