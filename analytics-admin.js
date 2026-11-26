@@ -48,6 +48,35 @@
    if(status)status.textContent=rows.length?"Visitor register updated. Time counts only while the page is visible and open; browser storage resets may create a new anonymous visitor.":"No v3 visitor events yet. Open the public website and keep it visible for at least 30 seconds.";
   }catch(e){console.error("Analytics load failed:",e);if(status)status.textContent="Could not load analytics. Check Firestore rules/indexes, then refresh. "+(e.message||"");}
  }
+
+ async function clearAllAnalytics(){
+  if(typeof hubCloud==="undefined"||!hubCloud?.ready||!hubCloud.db){if(status)status.textContent="Firebase connection unavailable. Nothing was deleted.";return;}
+  const ok=window.confirm("Clear ALL analytics history and visitor list? This permanently deletes analytics events only. Website content, downloads and user data will not be changed.");
+  if(!ok)return;
+  const btn=document.getElementById("analytics-clear-all");
+  if(btn)btn.disabled=true;
+  if(status)status.textContent="Clearing analytics history…";
+  try{
+   let removed=0;
+   while(true){
+    const snap=await hubCloud.db.collection("analyticsEvents").limit(400).get();
+    if(snap.empty)break;
+    const batch=hubCloud.db.batch();
+    snap.docs.forEach(doc=>batch.delete(doc.ref));
+    await batch.commit();
+    removed+=snap.size;
+   }
+   ["analytics-total-visitors","analytics-today-visitors","analytics-active-users","analytics-page-views","analytics-download-clicks"].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent="0";});
+   ["analytics-pages-list","analytics-downloads-list"].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML="<li>No data recorded yet</li>";});
+   const body=document.getElementById("analytics-visitors-list");
+   if(body)body.innerHTML='<tr><td colspan="7">No visitors recorded yet</td></tr>';
+   if(status)status.textContent="Analytics reset complete. "+removed+" old event(s) deleted. New visits will appear from now on.";
+  }catch(e){
+   console.error("Analytics reset failed:",e);
+   if(status)status.textContent="Could not clear analytics. Check admin permissions and try again. "+(e.message||"");
+  }finally{if(btn)btn.disabled=false;}
+ }
  document.getElementById("analytics-refresh")?.addEventListener("click",load);
+ document.getElementById("analytics-clear-all")?.addEventListener("click",clearAllAnalytics);
  setOpen(false);
 })();
