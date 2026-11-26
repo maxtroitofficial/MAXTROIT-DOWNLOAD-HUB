@@ -70,7 +70,7 @@ firebase use --add
 
 When prompted, select the Firebase project you created in Step 2 and give it an alias such as `default`.
 
-Check `.firebaserc` and confirm that it names your own project ID, not `maxtroit-download-hub`.
+Check `.firebaserc` and confirm that it names your own project ID, not `maxtroit-download-hub`. This file is local to your clone and should not be committed with personal project settings.
 
 ## Step 6 — Choose a unique Hosting site
 
@@ -89,7 +89,7 @@ They must all belong to your own project.
 
 1. Run `firebase use` and verify it shows your own project.
 2. Check the project ID and Hosting site ID again.
-3. Deploy only after confirming both are yours:
+3. Run the repository preflight check first. It blocks known original-project IDs, the original Hosting site, the original admin UID, and mismatched project/admin values:\n\n```bash\nnode scripts/fork-preflight.mjs\n```\n\nThis check is a guardrail, not proof that you own the Firebase project or Hosting site. Confirm ownership in Firebase Console.\n\n4. Deploy only after confirming both are yours:
 
 ```bash
 firebase deploy
@@ -108,7 +108,7 @@ Make future edits in your own repository and deploy to your own Hosting site. Ch
 
 ## Using ChatGPT to help with setup
 
-You can connect ChatGPT to GitHub using ChatGPT's **Settings → Plugins/Apps** area (the exact label may vary by app version) and authorize access only to the repository you want help with.
+You can connect ChatGPT to GitHub using ChatGPT's **Settings → Apps** area (the label and available connectors may vary by account) and authorize access only to the repository you want help with.
 
 Then ask ChatGPT:
 
