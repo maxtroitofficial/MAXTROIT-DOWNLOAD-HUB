@@ -19,7 +19,6 @@ service firebase.storage {
       allow create, update: if isAdmin()
         && userId == request.auth.uid
         && request.resource != null
-        && request.resource.size <= 5 * 1024 * 1024
         && request.resource.contentType.matches('image/(jpeg|png|webp|gif)');
       allow delete: if isAdmin() && userId == request.auth.uid;
     }
