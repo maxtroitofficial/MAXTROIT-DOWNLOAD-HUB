@@ -1,7 +1,7 @@
 (()=>{const $=s=>document.querySelector(s),login=$("#login-screen"),app=$("#admin-app"),form=$("#login-form"),status=$("#login-status"),frame=$("#site-preview"),say=t=>$("#editor-status").textContent=t,uid=window.ADMIN_UID;let doc=null,selected=null,editingText=false,edits={elements:{},orders:{}},history=[],future=[],drag=null;const authOk=u=>!!u&&!!uid&&u.uid===uid;
 async function loadDraft(){try{const snap=await hubCloud.db.collection("siteConfig").doc("public").get();const data=snap.data()||{},draft=data.editorStudioDraft?.visualEdits||data.visualEdits;if(draft&&typeof draft==="object"){edits={elements:draft.elements||{},orders:draft.orders||{}};buttons();if(doc)applyEdits();say("Saved draft load ho gaya. Publish karne par public website update hogi.");}else{edits={elements:{},orders:{}};buttons();}}catch(e){say("Draft load nahi hua: "+(e.message||e));}}
 function showLoginStatus(message){status.textContent=message;status.style.display="block";status.style.visibility="visible";status.style.minHeight="22px";status.setAttribute("aria-live","assertive")}
-function renderAuth(u){if(!u){login.hidden=false;app.hidden=true;return}if(!authOk(u)){login.hidden=false;app.hidden=true;showLoginStatus("This account is not authorised.");hubCloud.auth.signOut().catch(()=>{});return}login.hidden=true;app.hidden=false;if(typeof loadDraft==="function")loadDraft();loadStartupSwitch()}
+function renderAuth(u){if(!u){login.hidden=false;app.hidden=true;return}if(!authOk(u)){login.hidden=false;app.hidden=true;showLoginStatus("This account is not authorised.");hubCloud.auth.signOut().catch(()=>{});return}login.hidden=true;app.hidden=false;if(typeof loadDraft==="function")loadDraft();loadStartupSwitch();loadBrandLogoState()}
 try{if(window.hubCloud?.ready&&hubCloud.auth){hubCloud.auth.onAuthStateChanged(renderAuth,error=>showLoginStatus("Authentication error: "+(error?.message||"Please try again.")))}else{const b=form.querySelector("button");b.disabled=false;showLoginStatus("Login service unavailable. Please refresh and try again.")}}catch(initError){showLoginStatus("Login setup error: "+(initError?.message||"Please refresh the page."))}
 form.addEventListener("submit",async e=>{e.preventDefault();const d=new FormData(form),b=form.querySelector("button");if(!window.hubCloud?.ready||!hubCloud.auth){showLoginStatus("Login service unavailable. Please refresh the page.");return}b.disabled=true;showLoginStatus("Signing in…");try{const result=await hubCloud.auth.signInWithEmailAndPassword(String(d.get("email")||"").trim(),String(d.get("password")||""));if(!authOk(result.user)){showLoginStatus("This account is not authorised.");await hubCloud.auth.signOut()}}catch(err){const messages={"auth/invalid-credential":"Email or password is incorrect.","auth/user-not-found":"Email or password is incorrect.","auth/wrong-password":"Email or password is incorrect.","auth/too-many-requests":"Too many attempts. Wait a while and try again.","auth/network-request-failed":"Network error. Check your internet connection.","auth/operation-not-allowed":"Email/password sign-in is disabled in Firebase Authentication."};showLoginStatus(messages[err?.code]||("Login failed: "+(err?.message||err?.code||"Unknown error")))}finally{b.disabled=false}});
 $("#logout").onclick=()=>hubCloud.auth.signOut().catch(()=>{});
@@ -44,8 +44,8 @@ $("#reset").onclick=()=>{if(!selected)return;snapshot();const k=keyFor(selected)
 $("#undo").onclick=()=>{if(!history.length)return;future.push(JSON.stringify(edits));edits=JSON.parse(history.pop());refresh();buttons()};$("#redo").onclick=()=>{if(!future.length)return;history.push(JSON.stringify(edits));edits=JSON.parse(future.pop());refresh();buttons()};
 let startupEnabled=false,startupConfig={enabled:false,animation:"fade",textAnimation:"fade",speed:.8,duration:1800,displayDuration:8,delay:0,logoSize:210,glowEnabled:true,glowColor:"#70bfff",glowIntensity:65,glowSize:35,shineEnabled:true,shineColor:"#ffffff",shineSpeed:1300,shineBrightness:75,shineWidth:22,background:"#16091f",backgroundMode:"gradient",textColor:"#ffffff",font:"montserrat",fontWeight:"700",fontSize:22,letterSpacing:1,textAlign:"center",textEffect:"shadow",label:"MAXTROIT OFFICIAL",easing:"ease-out",logo:"",glowEnabled:true,glowColor:"#70bfff",glowIntensity:65,glowSize:35,shineEnabled:true,shineColor:"#ffffff",shineSpeed:1300,shineBrightness:75,shineWidth:22,logoX:50,logoY:43,labelX:50,labelY:72};
 function setFlashEditorMode(open){
- const panel=$("#flash-editor-panel"),frame=$("#site-preview"),tab=$("#flash-editor-tab"),title=$("#preview-mode-title");
- panel.hidden=!open;frame.hidden=!!open;
+ const panel=$("#flash-editor-panel"),brandPanel=$("#brand-logo-panel"),frame=$("#site-preview"),tab=$("#flash-editor-tab"),title=$("#preview-mode-title");
+ panel.hidden=!open;if(brandPanel)brandPanel.hidden=true;$("#brand-logo-tab")?.setAttribute("aria-pressed","false");frame.hidden=!!open;
  document.body.classList.toggle("flash-editor-workspace",!!open);
  tab.setAttribute("aria-pressed",String(!!open));
  title.textContent=open?"Flash Screen Preview":"Website Preview";
@@ -169,6 +169,56 @@ $("#design-apply-custom").addEventListener("click",async()=>{
  if(saved.templateId!=="uploaded"||saved.activeUploadedTemplateId!==id||picked?.html!==customDesignSource)throw Error("Custom template save verify nahi hua");
  out.textContent="Custom template save aur apply ho gayi. Public website update ho rahi hai.";frame.contentWindow?.location?.reload();
  }catch(e){out.textContent="Custom template save failed: "+e.message}finally{button.disabled=false}
+});
+
+
+function setBrandLogoMode(open){
+ const panel=$("#brand-logo-panel"),flash=$("#flash-editor-panel"),frame=$("#site-preview"),tab=$("#brand-logo-tab");
+ if(!panel)return;
+ panel.hidden=!open;if(flash)flash.hidden=true;frame.hidden=!!open;
+ $("#flash-editor-tab").setAttribute("aria-pressed","false");tab.setAttribute("aria-pressed",String(!!open));
+ $("#preview-mode-title").textContent=open?"Website & Flash Screen Logo":"Website Preview";
+ if(open)loadBrandLogoState();
+}
+$("#brand-logo-tab").addEventListener("click",()=>setBrandLogoMode($("#brand-logo-panel").hidden));
+let pendingBrandLogo="";
+function showBrandLogoPreview(src){
+ const img=$("#brand-logo-preview"),empty=$("#brand-logo-empty");
+ if(src){img.src=src;img.hidden=false;empty.hidden=true}else{img.removeAttribute("src");img.hidden=true;empty.hidden=false}
+}
+async function loadBrandLogoState(){
+ const status=$("#brand-logo-status"),button=$("#brand-logo-save");
+ try{
+  const snap=await hubCloud.db.collection("siteConfig").doc("public").get(),data=snap.data()||{};
+  pendingBrandLogo=String(data.logo||data.startupScreen?.logo||"");
+  showBrandLogoPreview(pendingBrandLogo);
+  button.disabled=!pendingBrandLogo;
+  status.textContent=pendingBrandLogo?"Current shared logo load ho gaya. Naya image choose karke replace kar sakte ho.":"Abhi logo set nahi hai. Image choose karke save karo.";
+ }catch(error){status.textContent="Logo load failed: "+error.message}
+}
+$("#brand-logo-file").addEventListener("change",event=>{
+ const file=event.target.files?.[0];if(!file)return;
+ if(!file.type.startsWith("image/")){$("#brand-logo-status").textContent="Valid image file select karo.";event.target.value="";return}
+ if(file.size>200000){$("#brand-logo-status").textContent="Image 200 KB se chhoti rakho, taaki Firestore document limit safe rahe.";event.target.value="";return}
+ const reader=new FileReader();
+ reader.onload=()=>{pendingBrandLogo=String(reader.result||"");showBrandLogoPreview(pendingBrandLogo);$("#brand-logo-save").disabled=!pendingBrandLogo;$("#brand-logo-status").textContent="Preview ready. Save Logo Everywhere dabao."};
+ reader.onerror=()=>$("#brand-logo-status").textContent="Image read nahi ho payi.";
+ reader.readAsDataURL(file);
+});
+$("#brand-logo-save").addEventListener("click",async()=>{
+ const button=$("#brand-logo-save"),status=$("#brand-logo-status");
+ if(!pendingBrandLogo||!authOk(hubCloud.auth.currentUser)){status.textContent="Admin login required ya image missing hai.";return}
+ button.disabled=true;status.textContent="Website aur Flash Screen logo save ho rahe hain…";
+ try{
+  const ref=hubCloud.db.collection("siteConfig").doc("public"),snap=await ref.get(),old=snap.data()||{},startup=old.startupScreen||{};
+  await ref.set({logo:pendingBrandLogo,startupScreen:{...startup,logo:pendingBrandLogo}},{merge:true});
+  const verify=await ref.get(),saved=verify.data()||{};
+  if(saved.logo!==pendingBrandLogo||saved.startupScreen?.logo!==pendingBrandLogo)throw Error("Logo save verify nahi hua.");
+  showBrandLogoPreview(pendingBrandLogo);
+  status.textContent="Logo save aur verify ho gaya. Website header, hero aur Flash Screen update ho rahe hain. Browser/app icon refresh mein thoda waqt lag sakta hai.";
+  frame.contentWindow?.location?.reload();
+ }catch(error){status.textContent="Logo save failed: "+error.message}
+ finally{button.disabled=false}
 });
 
 function readFlashEditor(){return {...startupConfig,animation:$("#fs-animation").value,textAnimation:$("#fs-text-animation").value,speed:Number($("#fs-speed").value),logoX:Number(startupConfig.logoX??50),logoY:Number(startupConfig.logoY??43),labelX:Number(startupConfig.labelX??50),labelY:Number(startupConfig.labelY??72),duration:Math.max(500,Math.min(12000,Number($("#fs-duration").value)||2200)),displayDuration:Math.max(3,Math.min(30,Number($("#fs-display-duration").value)||8)),delay:Math.max(0,Math.min(5000,Number($("#fs-delay").value)||0)),logoSize:Number($("#fs-size").value),glowEnabled:$("#fs-glow-enabled").value==="true",glowColor:$("#fs-glow-color").value,glowIntensity:Number($("#fs-glow-intensity").value),glowSize:Number($("#fs-glow-size").value),shineEnabled:$("#fs-shine-enabled").value==="true",shineColor:$("#fs-shine-color").value,shineSpeed:Number($("#fs-shine-speed").value),shineBrightness:Number($("#fs-shine-brightness").value),shineWidth:Number($("#fs-shine-width").value),background:$("#fs-background").value,backgroundMode:$("#fs-background-mode").value,textColor:$("#fs-text-color").value,font:$("#fs-font").value,fontWeight:$("#fs-font-weight").value,fontSize:Number($("#fs-font-size").value),letterSpacing:Number($("#fs-letter-spacing").value),textAlign:$("#fs-text-align").value,textEffect:$("#fs-text-effect").value,label:$("#fs-label").value.trim()||"MAXTROIT OFFICIAL",easing:$("#fs-easing").value}}
