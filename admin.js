@@ -262,7 +262,44 @@ $("#startup-master-switch").addEventListener("change",async e=>{const box=e.curr
 $("#fs-label").addEventListener("input",()=>{const label=$("#fs-preview-label");label.textContent=$("#fs-label").value;startupConfig.label=$("#fs-label").value;});
 let startupLogoFileDraft=null,startupLogoPreviewUrl="";$("#fs-logo").addEventListener("change",e=>{const file=e.target.files?.[0];if(!file)return;if(!/^image\/(png|jpeg|webp|gif)$/.test(file.type)){$("#fs-status").textContent="PNG, JPG, WebP ya GIF image select karein.";e.target.value="";return}if(file.size>5*1024*1024){$("#fs-status").textContent="Logo 5 MB se chhota hona chahiye.";e.target.value="";return}if(startupLogoPreviewUrl)URL.revokeObjectURL(startupLogoPreviewUrl);startupLogoFileDraft=file;startupLogoPreviewUrl=URL.createObjectURL(file);startupConfig.logo=startupLogoPreviewUrl;renderFlashPreview();replayFlashPreview();$("#fs-status").textContent="Logo preview ready. Save Flash Settings dabakar upload karein.";e.target.value=""});
 
-async function saveFlashSettings(button){const label=$("#fs-status");button.disabled=true;label.textContent="Flash settings save ho rahi hain…";try{const next=readFlashEditor();next.enabled=startupEnabled;const ref=hubCloud.db.collection("siteConfig").doc("public"),snap=await ref.get(),old=snap.data()?.startupScreen||{};if(startupLogoFileDraft){if(!window.firebase?.storage)throw Error("Firebase Storage SDK load nahi hua. Page refresh karke dobara try karein.");const uid=hubCloud.auth.currentUser?.uid;if(!authOk(hubCloud.auth.currentUser))throw Error("Admin login required.");const ext=({"image/png":"png","image/jpeg":"jpg","image/webp":"webp","image/gif":"gif"})[startupLogoFileDraft.type];if(!ext)throw Error("Unsupported logo format.");const storageRef=firebase.storage().ref().child("builder-media/"+uid+"/flash-logo-"+Date.now()+"."+ext);const uploaded=await storageRef.put(startupLogoFileDraft,{contentType:startupLogoFileDraft.type,cacheControl:"public,max-age=31536000"});next.logo=await uploaded.ref.getDownloadURL()}else if(startupLogoPreviewUrl){next.logo=old.logo||""}await ref.set({startupScreen:{...old,...next,enabled:startupEnabled}},{merge:true});const check=await ref.get(),saved=check.data()?.startupScreen||{},verifyKeys=["animation","textAnimation","speed","duration","displayDuration","delay","logoSize","background","backgroundMode","textColor","font","fontWeight","fontSize","letterSpacing","textAlign","textEffect","label","easing","logoX","logoY","labelX","labelY","logo","glowEnabled","glowColor","glowIntensity","glowSize","shineEnabled","shineColor","shineSpeed","shineBrightness","shineWidth"];const failedKeys=verifyKeys.filter(key=>JSON.stringify(saved[key]??null)!==JSON.stringify(next[key]??null));if(saved.enabled!==startupEnabled)failedKeys.push("enabled");if(failedKeys.length)throw Error("Save verify nahi hua: "+failedKeys.join(", "));startupConfig={...next};startupLogoFileDraft=null;if(startupLogoPreviewUrl){URL.revokeObjectURL(startupLogoPreviewUrl);startupLogoPreviewUrl=""}renderFlashPreview();label.textContent="Flash logo upload, settings save aur verify ho gayi. Public Flash Screen par apply ho gaya."}catch(err){label.textContent="Flash save failed: "+(err.code?err.code+" — ":"")+(err.message||err)}finally{button.disabled=false}}
+async function saveFlashSettings(button){
+ const label=$("#fs-status");button.disabled=true;
+ const withTimeout=(promise,stage,ms=45000)=>Promise.race([promise,new Promise((_,reject)=>setTimeout(()=>reject(new Error(stage+" mein timeout. Internet/Firebase connection check karke dobara try karein.")),ms))]);
+ try{
+  label.textContent="Step 1/4: Flash settings read ho rahi hain…";
+  const next=readFlashEditor();next.enabled=startupEnabled;
+  const ref=hubCloud.db.collection("siteConfig").doc("public");
+  const snap=await withTimeout(ref.get(),"Firestore read");const old=snap.data()?.startupScreen||{};
+  if(startupLogoFileDraft){
+   label.textContent="Step 2/4: Logo upload shuru ho raha hai…";
+   if(!window.firebase?.storage)throw Error("Firebase Storage SDK load nahi hua. Page refresh karke dobara try karein.");
+   const uid=hubCloud.auth.currentUser?.uid;if(!authOk(hubCloud.auth.currentUser))throw Error("Admin login required.");
+   const ext=({"image/png":"png","image/jpeg":"jpg","image/webp":"webp","image/gif":"gif"})[startupLogoFileDraft.type];
+   if(!ext)throw Error("Unsupported logo format.");
+   const storageRef=firebase.storage().ref().child("builder-media/"+uid+"/flash-logo-"+Date.now()+"."+ext);
+   const task=storageRef.put(startupLogoFileDraft,{contentType:startupLogoFileDraft.type,cacheControl:"public,max-age=31536000"});
+   const uploadPromise=new Promise((resolve,reject)=>task.on(firebase.storage.TaskEvent.STATE_CHANGED,snapshot=>{
+    const pct=snapshot.totalBytes?Math.round(snapshot.bytesTransferred/snapshot.totalBytes*100):0;
+    label.textContent="Step 2/4: Logo upload ho raha hai… "+pct+"%";
+   },reject,()=>resolve(task.snapshot)));
+   const uploaded=await withTimeout(uploadPromise,"Logo upload",90000);
+   label.textContent="Step 2/4: Logo URL mil raha hai…";
+   next.logo=await withTimeout(uploaded.ref.getDownloadURL(),"Logo URL");
+  }
+  label.textContent="Step 3/4: Flash settings Firestore mein save ho rahi hain…";
+  await withTimeout(ref.set({startupScreen:{...old,...next,enabled:startupEnabled}},{merge:true}),"Firestore save");
+  label.textContent="Step 4/4: Save verify ho raha hai…";
+  const check=await withTimeout(ref.get(),"Firestore verification"),saved=check.data()?.startupScreen||{};
+  const verifyKeys=["animation","textAnimation","speed","duration","displayDuration","delay","logoSize","background","backgroundMode","textColor","font","fontWeight","fontSize","letterSpacing","textAlign","textEffect","label","easing","logoX","logoY","labelX","labelY","logo","glowEnabled","glowColor","glowIntensity","glowSize","shineEnabled","shineColor","shineSpeed","shineBrightness","shineWidth"];
+  const failedKeys=verifyKeys.filter(key=>JSON.stringify(saved[key]??null)!==JSON.stringify(next[key]??null));
+  if(saved.enabled!==startupEnabled)failedKeys.push("enabled");
+  if(failedKeys.length)throw Error("Save verify nahi hua: "+failedKeys.join(", "));
+  startupConfig={...next};startupLogoFileDraft=null;
+  if(startupLogoPreviewUrl){URL.revokeObjectURL(startupLogoPreviewUrl);startupLogoPreviewUrl=""}
+  renderFlashPreview();label.textContent="Flash logo upload, settings save aur verify ho gayi. Public Flash Screen par apply ho gaya.";
+ }catch(err){label.textContent="Flash save failed: "+(err.code?err.code+" — ":"")+(err.message||err)}
+ finally{button.disabled=false}
+}
 function stableJson(value){if(Array.isArray(value))return "["+value.map(stableJson).join(",")+"]";if(value&&typeof value==="object")return "{"+Object.keys(value).sort().map(k=>JSON.stringify(k)+":"+stableJson(value[k])).join(",")+"}";return JSON.stringify(value)}
 function editorError(e){return (e?.code?e.code+" — ":"")+(e?.message||String(e)||"Unknown error")}
 async function saveDraft(){if(!window.hubCloud?.ready||!hubCloud.auth)throw Error("Firebase service not ready. Refresh and sign in again.");if(!authOk(hubCloud.auth.currentUser))throw Error("Admin login required");const ref=hubCloud.db.collection("siteConfig").doc("public"),snap=await ref.get(),old=snap.data()||{},stamp=Date.now(),draft={...(old.editorStudioDraft||{}),visualEdits:edits,updatedAt:stamp};await ref.set({editorStudioDraft:draft},{merge:true});const check=await ref.get(),saved=check.data()||{};if(saved.editorStudioDraft?.updatedAt!==stamp||stableJson(saved.editorStudioDraft?.visualEdits)!==stableJson(edits))throw Error("Draft save verify failed. Firestore data did not match the saved draft.");return stamp}
