@@ -1112,7 +1112,7 @@ input,select,textarea{font-size:16px}
  #admin-app .preview-heading>b{white-space:normal!important}
  #admin-app .preview-heading>span{white-space:normal!important;overflow:visible!important}
  #admin-app .preview-flash-toggle{order:10!important;width:100%!important;max-width:100%!important}
- #admin-app #site-preview{display:block!important;flex:none!important;width:100%!important;height:65dvh!important;min-height:420px!important}
+ #admin-app #site-preview:not([hidden]){display:block!important;flex:none!important;width:100%!important;height:65dvh!important;min-height:420px!important}
  #admin-app .we-sidebar{display:flex!important;width:100%!important;max-height:none!important;overflow:visible!important}
  #admin-app .we-left{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important}
  #admin-app .we-left .we-panel-title,#admin-app .we-left .we-divider,#admin-app .we-help{display:block!important;grid-column:1/-1}
