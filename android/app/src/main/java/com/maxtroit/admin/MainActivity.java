@@ -24,7 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.view.Gravity;
 import android.view.View;
-import android.graphics.Color;
+import android.graphics.Color;\nimport android.graphics.Bitmap;\nimport android.graphics.BitmapFactory;\nimport android.graphics.drawable.Icon;\nimport android.content.pm.ShortcutInfo;\nimport android.content.pm.ShortcutManager;\nimport android.util.Base64;\nimport java.io.ByteArrayOutputStream;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.webkit.JavascriptInterface;
@@ -124,7 +124,7 @@ public class MainActivity extends Activity {
         else webView.restoreState(savedInstanceState);
     }
 
-    private void showIconPicker() {
+    private class AndroidIconBridge {\n        @JavascriptInterface public String setPreset(int selected) {\n            if (selected < 0 || selected >= aliases.length) return "Invalid icon preset.";\n            runOnUiThread(() -> setAppIcon(selected));\n            return "Launcher icon preset changed. Launcher refresh may take a moment.";\n        }\n        @JavascriptInterface public String createPinnedShortcut(String dataUrl, String label) {\n            if (android.os.Build.VERSION.SDK_INT < 26) return "Custom icon shortcuts require Android 8.0 or newer.";\n            try {\n                int comma = dataUrl.indexOf(",");\n                if (comma < 0 || !dataUrl.startsWith("data:image/")) return "Invalid image data.";\n                byte[] bytes = Base64.decode(dataUrl.substring(comma + 1), Base64.DEFAULT);\n                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);\n                if (bitmap == null) return "Image could not be decoded.";\n                Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 512, 512, true);\n                Intent launch = new Intent(MainActivity.this, MainActivity.class);\n                launch.setAction(Intent.ACTION_VIEW);\n                ShortcutInfo shortcut = new ShortcutInfo.Builder(MainActivity.this, "maxtroit-custom-icon")\n                    .setShortLabel(label == null || label.trim().isEmpty() ? "MAXTROIT Admin" : label.trim().substring(0, Math.min(24, label.trim().length())))\n                    .setIcon(Icon.createWithBitmap(scaled)).setIntent(launch).build();\n                ShortcutManager manager = getSystemService(ShortcutManager.class);\n                if (manager == null || !manager.isRequestPinShortcutSupported()) return "Launcher does not support pinned shortcuts.";\n                runOnUiThread(() -> manager.requestPinShortcut(shortcut, null));\n                return "Home-screen shortcut request sent. Confirm the launcher prompt.";\n            } catch (Exception e) { return "Could not create shortcut: " + e.getMessage(); }\n        }\n    }\n\n    private void showIconPicker() {
         String[] choices = {"Classic MAXTROIT", "Vice City", "Neon"};
         new AlertDialog.Builder(this).setTitle("Choose App Icon")
             .setItems(choices, (dialog, which) -> setAppIcon(which)).setNegativeButton("Cancel", null).show();
