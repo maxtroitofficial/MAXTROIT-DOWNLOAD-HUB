@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - fix/remove-security-login-live
   workflow_dispatch:
 
 permissions:
@@ -16,6 +17,22 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Validate Admin Panel change and preserve normal login
+        run: |
+          node --check admin.js
+          node tests/invariants.mjs
+          node tests/builder-core.test.mjs
+          node - <<'NODE'
+          const fs = require('fs');
+          const html = fs.readFileSync('admin.html', 'utf8');
+          const js = fs.readFileSync('admin.js', 'utf8');
+          const css = fs.readFileSync('admin.css', 'utf8');
+          if (/security-admin-tab|id="security-admin"|Security &amp; Login/i.test(html)) throw new Error('Security & Login UI remains in admin.html');
+          if (/security-workspace|admin-password-form|securityTab|securityPanel/i.test(js + css)) throw new Error('Security workspace code remains');
+          if (!html.includes('id="login-form"') || !js.includes('signInWithEmailAndPassword')) throw new Error('Normal email/password admin login is missing');
+          console.log('Security UI removed; normal admin login preserved.');
+          NODE
 
       - name: Authenticate to Google Cloud with Workload Identity Federation
         uses: google-github-actions/auth@v2
