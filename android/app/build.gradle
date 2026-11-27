@@ -8,8 +8,8 @@ android {
         applicationId 'com.maxtroit.admin'
         minSdk 23
         targetSdk 35
-        versionCode 3
-        versionName '1.0.3'
+        versionCode 4
+        versionName '1.0.4'
     }
 }
 // Trigger a fresh APK build after admin UI rollback.
