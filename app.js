@@ -22,8 +22,7 @@ function syncPwaBrandIcon(logo){
  img.onerror=()=>console.warn("PWA logo could not be loaded");
  img.src=logo;
 }
-function syncBrowserBrandIcon(logo){if(!logo)return;const mime=(String(logo).match(/^data:(image\\/[^;]+)/i)||[])[1]||"image/png";for(const link of document.querySelectorAll('link[rel="icon"],link[rel="apple-touch-icon"]')){link.href=logo;if(link.rel==="icon")link.type=mime;}}
-function setupPwaInstall(){
+function syncBrowserBrandIcon(logo){if(!logo)return;const mime=String(logo).startsWith("data:")?String(logo).slice(5).split(";")[0]:"image/png";for(const link of document.querySelectorAll("link[rel=icon],link[rel=apple-touch-icon]")){link.href=logo;if(link.rel==="icon")link.type=mime;}}function setupPwaInstall(){
  const button=document.querySelector("#pwa-install-button");
  if(!button||button.dataset.ready)return;
  button.dataset.ready="1";
