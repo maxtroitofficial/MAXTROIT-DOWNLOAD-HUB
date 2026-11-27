@@ -144,18 +144,26 @@ public class MainActivity extends Activity {
                 int comma = dataUrl.indexOf(",");
                 if (comma < 0 || !dataUrl.startsWith("data:image/")) return "Invalid image data.";
                 byte[] bytes = Base64.decode(dataUrl.substring(comma + 1), Base64.DEFAULT);
+                if (bytes.length == 0 || bytes.length > 3 * 1024 * 1024) return "Optimized icon image is too large.";
                 Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                 if (bitmap == null) return "Image could not be decoded.";
                 Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 512, 512, true);
+                if (bitmap != scaled) bitmap.recycle();
                 Intent launch = new Intent(MainActivity.this, MainActivity.class);
                 launch.setAction(Intent.ACTION_VIEW);
-                ShortcutInfo shortcut = new ShortcutInfo.Builder(MainActivity.this, "maxtroit-custom-icon")
-                    .setShortLabel(label == null || label.trim().isEmpty() ? "MAXTROIT Admin" : label.trim().substring(0, Math.min(24, label.trim().length())))
+                String cleanLabel = label == null || label.trim().isEmpty() ? "MAXTROIT Admin" : label.trim();
+                cleanLabel = cleanLabel.substring(0, Math.min(24, cleanLabel.length()));
+                String shortcutId = "maxtroit-custom-icon-" + System.currentTimeMillis();
+                ShortcutInfo shortcut = new ShortcutInfo.Builder(MainActivity.this, shortcutId)
+                    .setShortLabel(cleanLabel)
                     .setIcon(Icon.createWithBitmap(scaled)).setIntent(launch).build();
                 ShortcutManager manager = getSystemService(ShortcutManager.class);
-                if (manager == null || !manager.isRequestPinShortcutSupported()) return "Launcher does not support pinned shortcuts.";
-                runOnUiThread(() -> manager.requestPinShortcut(shortcut, null));
-                return "Home-screen shortcut request sent. Confirm the launcher prompt.";
+                if (manager == null || !manager.isRequestPinShortcutSupported()) return "This launcher does not support home-screen shortcuts.";
+                runOnUiThread(() -> {
+                    boolean requested = manager.requestPinShortcut(shortcut, null);
+                    if (!requested) Toast.makeText(MainActivity.this, "Launcher could not add the shortcut.", Toast.LENGTH_LONG).show();
+                });
+                return "Shortcut request sent. Accept the Android home-screen confirmation to finish.";
             } catch (Exception e) { return "Could not create shortcut: " + e.getMessage(); }
         }
     }
