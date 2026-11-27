@@ -45,8 +45,14 @@ public class MainActivity extends Activity {
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setStatusBarColor(Color.rgb(16, 24, 47));
+        getWindow().setNavigationBarColor(Color.rgb(16, 24, 47));
+        getWindow().getDecorView().setSystemUiVisibility(0);
+        getWindow().setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         FrameLayout root = new FrameLayout(this);
+        root.setBackgroundColor(Color.rgb(243, 246, 251));
         webView = new WebView(this);
+        webView.setBackgroundColor(Color.WHITE);
         webView.addJavascriptInterface(new AndroidIconBridge(), "AndroidIconBridge");
         root.addView(webView, new FrameLayout.LayoutParams(-1, -1));
         Button iconButton = new Button(this);
