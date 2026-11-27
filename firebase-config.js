@@ -1,12 +1,12 @@
-// Add your own Firebase Web App configuration before deployment.
-// These browser identifiers are public configuration, not admin credentials.
+// Original MY DOWNLOAD HUB Firebase Web App configuration.
+// Browser config is public; access is protected by Firebase Authentication and security rules.
 window.FIREBASE_CONFIG = {
-  apiKey: "YOUR_FIREBASE_WEB_API_KEY",
-  authDomain: "YOUR_FIREBASE_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_FIREBASE_PROJECT_ID",
-  storageBucket: "YOUR_FIREBASE_PROJECT_ID.firebasestorage.app",
-  messagingSenderId: "YOUR_FIREBASE_MESSAGING_SENDER_ID",
-  appId: "YOUR_FIREBASE_WEB_APP_ID"
+  apiKey: "AIzaSyD3Cpzu1tWUw7xqUKsC9COPwQDloNRKJKA",
+  authDomain: "maxtroit-download-hub.firebaseapp.com",
+  projectId: "maxtroit-download-hub",
+  storageBucket: "maxtroit-download-hub.firebasestorage.app",
+  messagingSenderId: "957047554501",
+  appId: "1:957047554501:web:4ff8204465ba338ec94bac",
+  measurementId: "G-S9CVTLL0ND"
 };
-// Replace with the UID of the admin account created in YOUR Firebase Authentication.
-window.ADMIN_UID = "YOUR_FIREBASE_ADMIN_UID";
+window.ADMIN_UID = "5607ISIL0PMq6HLmzhTxyFa2elY2";
