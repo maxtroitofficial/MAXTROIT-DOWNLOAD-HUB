@@ -196,14 +196,45 @@ async function loadBrandLogoState(){
   status.textContent=pendingBrandLogo?"Current shared logo load ho gaya. Naya image choose karke replace kar sakte ho.":"Abhi logo set nahi hai. Image choose karke save karo.";
  }catch(error){status.textContent="Logo load failed: "+error.message}
 }
-$("#brand-logo-file").addEventListener("change",event=>{
+async function compressBrandLogo(file){
+ const allowed=["image/png","image/jpeg","image/webp","image/svg+xml","image/gif","image/bmp"];
+ if(!allowed.includes(file.type))throw new Error("PNG, JPG, WebP, SVG, GIF ya BMP image upload karo.");
+ let source;
+ if(typeof createImageBitmap==="function"){
+  try{source=await createImageBitmap(file)}catch(_){}
+ }
+ if(!source){
+  const url=URL.createObjectURL(file);
+  try{source=await new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(new Error("Image open nahi ho payi."));img.src=url})}
+  finally{URL.revokeObjectURL(url)}
+ }
+ const width=source.width||source.naturalWidth,height=source.height||source.naturalHeight;
+ if(!width||!height)throw new Error("Image dimensions read nahi ho paaye.");
+ const canvas=document.createElement("canvas"),ctx=canvas.getContext("2d");
+ if(!ctx)throw new Error("Image compression is browser mein supported nahi hai.");
+ let scale=Math.min(1,1600/Math.max(width,height));
+ let blob=null;
+ for(let attempt=0;attempt<9;attempt++){
+  canvas.width=Math.max(1,Math.round(width*scale));canvas.height=Math.max(1,Math.round(height*scale));
+  ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(source,0,0,canvas.width,canvas.height);
+  const quality=[0.9,0.84,0.78,0.7,0.62,0.54,0.46,0.4,0.34][attempt];
+  blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/webp",quality));
+  if(blob&&blob.size<=240*1024)break;
+  scale*=0.82;
+ }
+ if(source.close)source.close();
+ if(!blob||blob.size>240*1024)throw new Error("Is image ko Firestore-safe size mein compress nahi kar paaye. Chhota logo try karo.");
+ return await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result||""));reader.onerror=()=>reject(new Error("Compressed image read nahi ho payi."));reader.readAsDataURL(blob)});
+}
+$("#brand-logo-file").addEventListener("change",async event=>{
  const file=event.target.files?.[0];if(!file)return;
- if(!file.type.startsWith("image/")){$("#brand-logo-status").textContent="Valid image file select karo.";event.target.value="";return}
- if(file.size>200000){$("#brand-logo-status").textContent="Image 200 KB se chhoti rakho, taaki Firestore document limit safe rahe.";event.target.value="";return}
- const reader=new FileReader();
- reader.onload=()=>{pendingBrandLogo=String(reader.result||"");showBrandLogoPreview(pendingBrandLogo);$("#brand-logo-save").disabled=!pendingBrandLogo;$("#brand-logo-status").textContent="Preview ready. Save Logo Everywhere dabao."};
- reader.onerror=()=>$("#brand-logo-status").textContent="Image read nahi ho payi.";
- reader.readAsDataURL(file);
+ pendingBrandLogo="";$("#brand-logo-save").disabled=true;
+ $("#brand-logo-status").textContent="Logo compress ho raha hai…";
+ try{
+  pendingBrandLogo=await compressBrandLogo(file);
+  showBrandLogoPreview(pendingBrandLogo);$("#brand-logo-save").disabled=false;
+  $("#brand-logo-status").textContent="Logo optimized ("+Math.round(pendingBrandLogo.length/1024)+" KB approx). Preview ready; Save Logo Everywhere dabao.";
+ }catch(error){$("#brand-logo-status").textContent=error.message||"Image process nahi ho payi.";event.target.value=""}
 });
 $("#brand-logo-save").addEventListener("click",async()=>{
  const button=$("#brand-logo-save"),status=$("#brand-logo-status");
