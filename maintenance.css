@@ -13,3 +13,16 @@ body.maintenance-workspace #admin-app>.topbar{position:sticky!important;top:0!im
 body.maintenance-workspace #maintenance-admin-panel:not([hidden]){display:block!important;position:relative!important;height:auto!important;max-height:none!important;overflow:visible!important;padding-bottom:calc(55px + env(safe-area-inset-bottom))!important}
 #admin-app>.topbar .top-actions #maintenance-admin-tab{display:inline-flex!important;visibility:visible!important;opacity:1!important;flex:0 0 auto!important;white-space:nowrap!important}
 @media(max-width:650px){.maintenance-head{align-items:flex-start;flex-direction:column}.maintenance-card{padding:16px}.maintenance-head h2{font-size:23px}}
+
+.maintenance-preview{align-items:flex-start;flex-wrap:wrap}.maintenance-preview>div:last-child{flex:1 1 180px}
+.maintenance-mini-scene{position:relative;flex:0 0 190px;height:150px;overflow:hidden;border:1px solid #244b8b;border-radius:12px;background:radial-gradient(ellipse at center bottom,#16478d,#07132d 75%)}
+.mini-gear{position:absolute;left:10px;top:8px;font-size:34px;color:#3670bd;animation:mini-spin 9s linear infinite}
+.mini-bot{position:absolute;left:63px;bottom:8px;width:65px;height:112px;animation:mini-bob 2s ease-in-out infinite}
+.mini-helmet{position:absolute;top:0;left:4px;width:57px;height:20px;border-radius:30px 30px 6px 6px;background:#ffc52e;color:#15203b;text-align:center;font-style:normal;font-weight:900}
+.mini-face{position:absolute;top:17px;left:8px;width:50px;height:39px;border:4px solid #dbeafe;border-radius:15px;background:#081126;color:#00d9ff;text-align:center;font-size:17px;font-style:normal;padding-top:6px}
+.mini-vest{position:absolute;top:61px;left:15px;width:37px;height:34px;border:3px solid #dbeafe;border-radius:8px;background:#d8c52e;color:#17213b;text-align:center;font-weight:900;font-style:normal;padding-top:5px}
+.mini-arm{position:absolute;top:61px;right:0;width:9px;height:38px;border-radius:8px;background:#dbeafe;transform-origin:top;animation:mini-wave 1.4s ease-in-out infinite}
+.mini-sign{position:absolute;right:5px;top:34px;padding:6px;background:#ffce39;color:#17213b;border:3px solid #e99b16;border-radius:5px;font-size:9px;line-height:1.1;font-weight:1000;transform:rotate(5deg);animation:mini-sign 2s ease-in-out infinite}
+.mini-cone{position:absolute;left:8px;bottom:4px;font-size:24px}
+@keyframes mini-spin{to{transform:rotate(360deg)}}@keyframes mini-bob{50%{transform:translateY(-5px)}}@keyframes mini-wave{50%{transform:rotate(-24deg)}}@keyframes mini-sign{50%{translate:0 -4px}}
+@media(max-width:650px){.maintenance-preview{align-items:center}.maintenance-mini-scene{flex-basis:100%;max-width:240px;margin:auto}}
