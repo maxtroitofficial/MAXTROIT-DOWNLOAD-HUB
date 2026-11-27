@@ -1,9 +1,8 @@
 name: Deploy MAXTROIT Download Hub
 
+# Automatic deployment is intentionally paused until the live Firebase
+# project, Hosting target, and security rules are verified.
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 permissions:
@@ -12,30 +11,8 @@ permissions:
 
 jobs:
   deploy:
+    if: false
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Authenticate to Google Cloud with Workload Identity Federation
-        uses: google-github-actions/auth@v2
-        with:
-          workload_identity_provider: projects/957047554501/locations/global/workloadIdentityPools/github-pool/providers/github
-          service_account: github-firebase-deploy@maxtroit-download-hub.iam.gserviceaccount.com
-
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
-
-      - name: Install Firebase CLI
-        run: npm install -g firebase-tools
-
-      - name: Ensure d-hub Hosting site exists
-        shell: bash
-        run: |
-          set -euo pipefail
-          if ! firebase hosting:sites:list --project maxtroit-download-hub --json | grep -q 'sites/d-hub'; then
-            firebase hosting:sites:create d-hub --project maxtroit-download-hub --non-interactive
-          fi
-
-      - name: Deploy website and Firestore rules to d-hub.web.app
-        run: firebase deploy --only hosting,firestore:rules --project maxtroit-download-hub --non-interactive
+      - name: Deployment paused
+        run: echo "Deployment paused pending live-site recovery."
