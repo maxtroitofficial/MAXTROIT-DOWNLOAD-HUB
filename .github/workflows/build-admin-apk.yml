@@ -1,4 +1,4 @@
-name: Build MAXTROIT Admin APK
+name: Build MAXTROIT Admin Universal APK
 
 on:
   workflow_dispatch:
@@ -27,12 +27,34 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "8.9"
-      - name: Build debug APK
+      - name: Build one universal APK (no ABI splits)
         run: gradle --no-daemon -p android assembleDebug
-      - name: Upload APK
+      - name: Verify and name universal APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="android/app/build/outputs/apk/debug/app-debug.apk"
+          test -s "$APK"
+          mkdir -p dist
+          cp "$APK" dist/MAXTROIT-Admin-Universal.apk
+          unzip -t dist/MAXTROIT-Admin-Universal.apk
+          SIZE=$(stat -c%s dist/MAXTROIT-Admin-Universal.apk)
+          if [ "$SIZE" -lt 100000 ]; then
+            echo "APK is unexpectedly small ($SIZE bytes); refusing to publish."
+            exit 1
+          fi
+          AAPT=$(find "$ANDROID_HOME/build-tools" -name aapt -type f | sort -V | tail -n 1)
+          "$AAPT" dump badging dist/MAXTROIT-Admin-Universal.apk | tee dist/apk-metadata.txt
+          grep -q "package: name='com.maxtroit.admin'" dist/apk-metadata.txt
+          grep -q "application-label:'MAXTROIT Admin'" dist/apk-metadata.txt
+          sha256sum dist/MAXTROIT-Admin-Universal.apk | tee dist/SHA256SUMS.txt
+      - name: Upload verified universal APK
         uses: actions/upload-artifact@v4
         with:
-          name: MAXTROIT-Admin-APK
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          name: MAXTROIT-Admin-Universal-APK
+          path: |
+            dist/MAXTROIT-Admin-Universal.apk
+            dist/apk-metadata.txt
+            dist/SHA256SUMS.txt
           if-no-files-found: error
           retention-days: 30
