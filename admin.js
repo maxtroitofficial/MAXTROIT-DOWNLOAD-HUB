@@ -52,6 +52,44 @@ function setFlashEditorMode(open){
  if(open){renderFlashPreview();replayFlashPreview();requestAnimationFrame(()=>window.scrollTo({top:0,behavior:"instant"}))}
 }
 $("#flash-editor-tab").addEventListener("click",()=>setFlashEditorMode($("#flash-editor-panel").hidden));
+/* Main website logo settings — separate from the Flash Screen logo. */
+function setLogoSettingsMode(open){
+ const panel=$("#logo-settings-panel"),preview=document.querySelector(".preview-area"),flash=$("#flash-editor-panel"),design=$("#design-studio"),music=$("#music-admin"),social=$("#social-admin"),dock=document.querySelector(".tool-dock");
+ panel.hidden=!open;if(preview)preview.hidden=open;if(flash)flash.hidden=true;if(design)design.hidden=true;if(music)music.hidden=true;if(social)social.hidden=true;if(dock)dock.hidden=open;
+ document.body.classList.toggle("logo-settings-workspace",open);
+ $("#logo-settings-tab").setAttribute("aria-pressed",String(open));
+ ["flash-editor-tab","design-studio-tab","music-admin-tab","downloads-admin-tab","analytics-admin-tab","social-admin-tab"].forEach(id=>{const el=$("#"+id);if(el)el.setAttribute("aria-pressed","false")});
+ if(open)loadLogoSettings();
+}
+let siteLogoDraft="",siteLogoSavedSize=64;
+function renderSiteLogoPreview(){
+ const img=$("#site-logo-preview"),fallback=$("#site-logo-fallback"),size=Math.max(32,Math.min(120,Number($("#site-logo-size").value)||64));
+ $("#site-logo-size-value").textContent=size+" px";
+ img.style.width=size+"px";img.style.height=size+"px";
+ if(siteLogoDraft){img.src=siteLogoDraft;img.hidden=false;fallback.hidden=true}else{img.hidden=true;fallback.hidden=false}
+}
+async function loadLogoSettings(){
+ const out=$("#site-logo-status");out.textContent="Logo settings load ho rahi hain…";
+ try{const snap=await hubCloud.db.collection("siteConfig").doc("public").get(),data=snap.data()||{};siteLogoDraft=String(data.logo||"");siteLogoSavedSize=Math.max(32,Math.min(120,Number(data.siteLogoSize)||64));$("#site-logo-size").value=siteLogoSavedSize;renderSiteLogoPreview();out.textContent=siteLogoDraft?"Saved website logo load ho gaya.":"Abhi custom website logo set nahi hai."}
+ catch(e){out.textContent="Logo settings load failed: "+e.message}
+}
+$("#logo-settings-tab").addEventListener("click",()=>setLogoSettingsMode($("#logo-settings-panel").hidden));
+$("#site-logo-size").addEventListener("input",renderSiteLogoPreview);
+$("#site-logo-file").addEventListener("change",e=>{
+ const file=e.target.files?.[0];if(!file)return;
+ if(!/^image\/(png|jpeg|webp|gif)$/.test(file.type)){ $("#site-logo-status").textContent="PNG, JPG, WebP ya GIF image select karein.";e.target.value="";return}
+ if(file.size>650000){$("#site-logo-status").textContent="Image 650 KB se chhoti honi chahiye.";e.target.value="";return}
+ const reader=new FileReader();reader.onload=()=>{siteLogoDraft=String(reader.result||"");renderSiteLogoPreview();$("#site-logo-status").textContent="Preview update ho gaya. Website par apply karne ke liye Save dabayein."};reader.onerror=()=>{$("#site-logo-status").textContent="Image read nahi ho saki."};reader.readAsDataURL(file);e.target.value="";
+});
+$("#site-logo-remove").addEventListener("click",()=>{siteLogoDraft="";renderSiteLogoPreview();$("#site-logo-status").textContent="Logo remove preview. Save & Apply dabakar confirm karein."});
+$("#site-logo-save").addEventListener("click",async()=>{
+ const button=$("#site-logo-save"),out=$("#site-logo-status");if(!authOk(hubCloud.auth.currentUser)){out.textContent="Admin login required.";return}
+ button.disabled=true;out.textContent="Website logo save ho raha hai…";
+ try{const ref=hubCloud.db.collection("siteConfig").doc("public"),size=Math.max(32,Math.min(120,Number($("#site-logo-size").value)||64));await ref.set({logo:siteLogoDraft,siteLogoSize:size},{merge:true});const check=await ref.get(),saved=check.data()||{};if(String(saved.logo||"")!==siteLogoDraft||Number(saved.siteLogoSize)!==size)throw Error("Save verify nahi hua");siteLogoSavedSize=size;out.textContent="Website logo save aur verify ho gaya. Public website par apply ho gaya.";if(frame?.contentWindow)frame.contentWindow.location.reload()}
+ catch(e){out.textContent="Logo save failed: "+e.message}
+ finally{button.disabled=false}
+});
+
 /* Website Templates: built-in templates + sandboxed custom HTML import. */
 let customDesignSource="",customDesignFileName="";
 function setDesignStudioMode(open){
