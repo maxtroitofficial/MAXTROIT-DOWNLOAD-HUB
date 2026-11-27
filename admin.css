@@ -1066,3 +1066,36 @@ body.flash-editor-workspace #flash-editor-panel .fs-stage-wrap{
  }
 }
 
+
+
+/* Native Android WebView + small-screen admin polish */
+html,body{width:100%;max-width:100%;overflow-x:hidden;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+button,input,select,textarea{max-width:100%;touch-action:manipulation}
+input,select,textarea{font-size:16px}
+@media(max-width:600px){
+  body{min-width:0!important}
+  #admin-app{width:100%;min-width:0;overflow-x:clip}
+  #admin-app>.topbar{padding:8px 10px!important;gap:9px!important}
+  #admin-app>.topbar .brand{justify-content:center}
+  #admin-app>.topbar .top-actions{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  #admin-app>.topbar .top-actions button{min-height:44px!important;border-radius:10px!important;font-size:11px!important;padding:8px 3px!important}
+  #admin-app>.preview-area{width:100%;padding:8px 8px 20px!important;gap:10px!important}
+  #admin-app .preview-heading{min-width:0;overflow:visible}
+  #admin-app .preview-flash-toggle{height:58px!important;min-height:58px!important;max-height:58px!important;padding:5px!important}
+  #admin-app .preview-flash-toggle button{min-width:120px!important;min-height:44px!important;height:44px!important;font-size:12px!important}
+  #site-preview{width:100%!important;max-width:100%!important;height:65dvh!important;min-height:360px!important;border-radius:8px!important}
+  #flash-editor-panel,#brand-logo-panel,.music-admin,.downloads-admin,.social-admin,.analytics-admin,.design-studio{min-width:0!important;max-width:100%!important}
+  #flash-editor-panel .flash-editor-controls input,
+  #flash-editor-panel .flash-editor-controls select,
+  #flash-editor-panel .flash-editor-controls textarea{min-height:44px!important;font-size:16px!important}
+  #flash-editor-panel .flash-editor-controls input[type=range]{min-height:32px!important}
+  #flash-editor-panel .flash-editor-actions{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  #flash-editor-panel .flash-editor-actions button{min-height:44px!important}
+  .brand-logo-card{width:100%;padding:16px!important}
+  .brand-logo-card button{min-height:46px}
+}
+@media(max-width:360px){
+  #admin-app>.topbar .top-actions button{font-size:10px!important;padding:7px 2px!important}
+  #admin-app>.topbar .top-actions{gap:4px!important}
+  #admin-app .preview-flash-toggle button{min-width:110px!important}
+}
