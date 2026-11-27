@@ -1,0 +1,15 @@
+#maintenance-admin-panel[hidden]{display:none!important}
+#maintenance-admin-panel{box-sizing:border-box;padding:22px 16px 50px;min-height:calc(100dvh - 70px);background:linear-gradient(145deg,#09132f,#101b3d);color:#f5f7ff}
+.maintenance-head{max-width:900px;margin:0 auto 20px;display:flex;justify-content:space-between;align-items:center;gap:14px}.maintenance-head small{color:#52caff;font-weight:800;letter-spacing:2px}.maintenance-head h2{margin:5px 0;font-size:27px}.maintenance-head p{color:#bdc9e8}
+.maintenance-card{max-width:900px;margin:auto;padding:22px;border:1px solid #29477e;border-radius:18px;background:#101d40;box-shadow:0 18px 50px #02061766}
+.maintenance-row{display:flex;justify-content:space-between;align-items:center;padding-bottom:18px;border-bottom:1px solid #2b3f6c}.maintenance-row b{font-size:20px}.maintenance-row p{color:#bdc9e8;margin:7px 0 0;font-size:13px}
+.maintenance-switch input{position:absolute;opacity:0}.maintenance-switch span{display:block;width:58px;height:32px;border-radius:30px;background:#475569;position:relative;cursor:pointer}.maintenance-switch span:after{content:"";position:absolute;width:24px;height:24px;left:4px;top:4px;background:white;border-radius:50%;transition:.2s}.maintenance-switch input:checked+span{background:#16a6e8}.maintenance-switch input:checked+span:after{transform:translateX(26px)}
+.maintenance-estimate{display:grid;gap:8px;max-width:340px;margin:22px 0;color:#dbe7ff;font-weight:700}.maintenance-estimate input{padding:12px;border-radius:9px;border:1px solid #40577f;background:#08132d;color:white}
+.maintenance-preview{display:flex;align-items:center;gap:16px;padding:17px;margin:18px 0 22px;border-radius:14px;background:#08132d;border:1px solid #234d8b}.maintenance-preview>span{font-size:42px}.maintenance-preview p{margin:6px 0;color:#ffcb48;font-weight:800}
+#maintenance-save{padding:12px 20px;border:0;border-radius:10px;background:#167bc3;color:white;font-weight:800}#maintenance-message{color:#c5d4f1;font-size:13px;min-height:20px}
+body.maintenance-workspace{overflow:hidden!important;height:100%!important}
+body.maintenance-workspace #admin-app{display:block!important;height:100dvh!important;min-height:0!important;max-height:100dvh!important;overflow-x:hidden!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior-y:contain!important}
+body.maintenance-workspace #admin-app>.topbar{position:sticky!important;top:0!important;z-index:100!important}
+body.maintenance-workspace #maintenance-admin-panel:not([hidden]){display:block!important;position:relative!important;height:auto!important;max-height:none!important;overflow:visible!important;padding-bottom:calc(55px + env(safe-area-inset-bottom))!important}
+#admin-app>.topbar .top-actions #maintenance-admin-tab{display:inline-flex!important;visibility:visible!important;opacity:1!important;flex:0 0 auto!important;white-space:nowrap!important}
+@media(max-width:650px){.maintenance-head{align-items:flex-start;flex-direction:column}.maintenance-card{padding:16px}.maintenance-head h2{font-size:23px}}
