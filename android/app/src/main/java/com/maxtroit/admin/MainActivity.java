@@ -1,7 +1,10 @@
 package com.maxtroit.admin;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DownloadManager;
+import android.content.ComponentName;
+import android.content.pm.PackageManager;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
@@ -15,18 +18,45 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.Toast;
+import android.view.Gravity;
+import android.view.View;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
+import android.webkit.JavascriptInterface;
 
 public class MainActivity extends Activity {
     private static final int FILE_CHOOSER_REQUEST = 41;
     private WebView webView;
     private ValueCallback<Uri[]> filePathCallback;
     private final String adminUrl = "https://d-hub.web.app/admin.html";
+    private final String[] aliases = {".IconDefault", ".IconVice", ".IconNeon"};
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FrameLayout root = new FrameLayout(this);
         webView = new WebView(this);
-        setContentView(webView);
+        root.addView(webView, new FrameLayout.LayoutParams(-1, -1));
+        Button iconButton = new Button(this);
+        iconButton.setText("APP ICON");
+        iconButton.setTextSize(10);
+        iconButton.setTypeface(null, Typeface.BOLD);
+        iconButton.setTextColor(Color.WHITE);
+        GradientDrawable bg = new GradientDrawable();
+        bg.setColor(Color.rgb(28, 30, 48));
+        bg.setCornerRadius(32);
+        iconButton.setBackground(bg);
+        iconButton.setPadding(18, 2, 18, 2);
+        FrameLayout.LayoutParams bp = new FrameLayout.LayoutParams(-2, 42, Gravity.TOP | Gravity.END);
+        bp.setMargins(0, 12, 12, 0);
+        root.addView(iconButton, bp);
+        iconButton.setOnClickListener(v -> showIconPicker());
+        setContentView(root);
+
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setUseWideViewPort(true);
@@ -94,6 +124,22 @@ public class MainActivity extends Activity {
         else webView.restoreState(savedInstanceState);
     }
 
+    private void showIconPicker() {
+        String[] choices = {"Classic MAXTROIT", "Vice City", "Neon"};
+        new AlertDialog.Builder(this).setTitle("Choose App Icon")
+            .setItems(choices, (dialog, which) -> setAppIcon(which)).setNegativeButton("Cancel", null).show();
+    }
+
+    private void setAppIcon(int selected) {
+        PackageManager pm = getPackageManager();
+        for (int i = 0; i < aliases.length; i++) {
+            pm.setComponentEnabledSetting(new ComponentName(this, getPackageName() + aliases[i]),
+                i == selected ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED : PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP);
+        }
+        Toast.makeText(this, "Icon updated. Launcher may take a moment to refresh.", Toast.LENGTH_LONG).show();
+    }
+
     @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == FILE_CHOOSER_REQUEST && filePathCallback != null) {
@@ -102,17 +148,14 @@ public class MainActivity extends Activity {
             filePathCallback = null;
         }
     }
-
     @Override protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         webView.saveState(outState);
     }
-
     @Override public void onBackPressed() {
         if (webView != null && webView.canGoBack()) webView.goBack();
         else super.onBackPressed();
     }
-
     @Override protected void onDestroy() {
         if (filePathCallback != null) filePathCallback.onReceiveValue(null);
         if (webView != null) webView.destroy();
