@@ -1,4 +1,24 @@
 (()=>{const $=s=>document.querySelector(s),login=$("#login-screen"),app=$("#admin-app"),form=$("#login-form"),status=$("#login-status"),frame=$("#site-preview"),say=t=>$("#editor-status").textContent=t,uid=window.ADMIN_UID;document.addEventListener("click",event=>{const button=event.target.closest("#fs-save");if(!button)return;event.preventDefault();if(button.disabled)return;saveFlashSettings(button)});let doc=null,selected=null,editingText=false,edits={elements:{},orders:{}},history=[],future=[],drag=null;const authOk=u=>!!u&&!!uid&&u.uid===uid;
+document.addEventListener("click",async event=>{
+ const button=event.target.closest("#save,#publish");if(!button)return;
+ event.preventDefault();event.stopImmediatePropagation();if(button.disabled)return;
+ const publish=button.id==="publish";
+ if(publish&&!authOk(window.hubCloud?.auth?.currentUser)){say("PUBLISH FAILED: Admin login required");return}
+ if(publish&&!confirm("Current editor changes ko public website par publish karein?"))return;
+ button.disabled=true;say(publish?"Changes save aur publish ho rahe hain…":"Draft save ho raha hai…");
+ try{
+  const stamp=await saveDraft();
+  if(publish){
+   const ref=window.hubCloud.db.collection("siteConfig").doc("public");
+   await ref.set({visualEdits:edits,visualEditsUpdated:stamp},{merge:true});
+   const check=await ref.get(),saved=check.data()||{};
+   if(saved.visualEditsUpdated!==stamp||stableJson(saved.visualEdits)!==stableJson(edits))throw Error("Publish verification failed. Public Firestore data did not match.");
+   say("PUBLISH SUCCESS: Changes Firestore par publish aur verify ho gaye. Public website refresh karein.");
+  }else say("Draft saved and verified. Public website unchanged. Publish Website dabakar live karein.");
+ }catch(e){say((publish?"PUBLISH FAILED: ":"SAVE FAILED: ")+editorError(e))}
+ finally{button.disabled=false}
+},true);
+
 async function loadDraft(){try{const snap=await hubCloud.db.collection("siteConfig").doc("public").get();const data=snap.data()||{},draft=data.editorStudioDraft?.visualEdits||data.visualEdits;if(draft&&typeof draft==="object"){edits={elements:draft.elements||{},orders:draft.orders||{}};buttons();if(doc)applyEdits();say("Saved draft load ho gaya. Publish karne par public website update hogi.");}else{edits={elements:{},orders:{}};buttons();}}catch(e){say("Draft load nahi hua: "+(e.message||e));}}
 function showLoginStatus(message){status.textContent=message;status.style.display="block";status.style.visibility="visible";status.style.minHeight="22px";status.setAttribute("aria-live","assertive")}
 function renderAuth(u){if(!u){login.hidden=false;app.hidden=true;return}if(!authOk(u)){login.hidden=false;app.hidden=true;showLoginStatus("This account is not authorised.");hubCloud.auth.signOut().catch(()=>{});return}login.hidden=true;app.hidden=false;if(typeof loadDraft==="function")loadDraft();loadStartupSwitch()}
@@ -246,6 +266,5 @@ async function saveFlashSettings(button){const label=$("#fs-status");button.disa
 function stableJson(value){if(Array.isArray(value))return "["+value.map(stableJson).join(",")+"]";if(value&&typeof value==="object")return "{"+Object.keys(value).sort().map(k=>JSON.stringify(k)+":"+stableJson(value[k])).join(",")+"}";return JSON.stringify(value)}
 function editorError(e){return (e?.code?e.code+" — ":"")+(e?.message||String(e)||"Unknown error")}
 async function saveDraft(){if(!window.hubCloud?.ready||!hubCloud.auth)throw Error("Firebase service not ready. Refresh and sign in again.");if(!authOk(hubCloud.auth.currentUser))throw Error("Admin login required");const ref=hubCloud.db.collection("siteConfig").doc("public"),snap=await ref.get(),old=snap.data()||{},stamp=Date.now(),draft={...(old.editorStudioDraft||{}),visualEdits:edits,updatedAt:stamp};await ref.set({editorStudioDraft:draft},{merge:true});const check=await ref.get(),saved=check.data()||{};if(saved.editorStudioDraft?.updatedAt!==stamp||stableJson(saved.editorStudioDraft?.visualEdits)!==stableJson(edits))throw Error("Draft save verify failed. Firestore data did not match the saved draft.");return stamp}
-$("#save").addEventListener("click",async()=>{const b=$("#save");if(b.disabled)return;b.disabled=true;say("Draft save ho raha hai…");try{await saveDraft();say("Draft saved and verified. Public website unchanged. Publish Website dabakar live karein.")}catch(e){say("SAVE FAILED: "+editorError(e))}finally{b.disabled=false}});
-$("#publish").addEventListener("click",async()=>{const b=$("#publish");if(b.disabled)return;if(!authOk(hubCloud?.auth?.currentUser)){say("PUBLISH FAILED: Admin login required");return}if(!confirm("Current editor changes ko public website par publish karein?"))return;b.disabled=true;say("Changes save aur publish ho rahe hain…");try{const stamp=await saveDraft(),ref=hubCloud.db.collection("siteConfig").doc("public");await ref.set({visualEdits:edits,visualEditsUpdated:stamp},{merge:true});const check=await ref.get(),saved=check.data()||{};if(saved.visualEditsUpdated!==stamp||stableJson(saved.visualEdits)!==stableJson(edits))throw Error("Publish verification failed. Public Firestore data did not match.");say("PUBLISH SUCCESS: Changes Firestore par publish aur verify ho gaye. Public website refresh karein.")}catch(e){say("PUBLISH FAILED: "+editorError(e))}finally{b.disabled=false}});
+
 })();
