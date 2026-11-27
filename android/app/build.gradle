@@ -12,3 +12,4 @@ android {
         versionName '1.0.3'
     }
 }
+// Trigger a fresh APK build after admin UI rollback.
