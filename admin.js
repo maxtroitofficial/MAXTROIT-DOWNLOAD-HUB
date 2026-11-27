@@ -45,7 +45,7 @@ $("#undo").onclick=()=>{if(!history.length)return;future.push(JSON.stringify(edi
 let startupEnabled=false,startupConfig={enabled:false,animation:"fade",textAnimation:"fade",speed:.8,duration:1800,displayDuration:8,delay:0,logoSize:210,glowEnabled:true,glowColor:"#70bfff",glowIntensity:65,glowSize:35,shineEnabled:true,shineColor:"#ffffff",shineSpeed:1300,shineBrightness:75,shineWidth:22,background:"#16091f",backgroundMode:"gradient",textColor:"#ffffff",font:"montserrat",fontWeight:"700",fontSize:22,letterSpacing:1,textAlign:"center",textEffect:"shadow",label:"MAXTROIT OFFICIAL",easing:"ease-out",logo:"",glowEnabled:true,glowColor:"#70bfff",glowIntensity:65,glowSize:35,shineEnabled:true,shineColor:"#ffffff",shineSpeed:1300,shineBrightness:75,shineWidth:22,logoX:50,logoY:43,labelX:50,labelY:72};
 function setFlashEditorMode(open){
  const panel=$("#flash-editor-panel"),brandPanel=$("#brand-logo-panel"),frame=$("#site-preview"),tab=$("#flash-editor-tab"),title=$("#preview-mode-title");
- panel.hidden=!open;if(brandPanel)brandPanel.hidden=true;$("#brand-logo-tab")?.setAttribute("aria-pressed","false");frame.hidden=!!open;
+ panel.hidden=!open;if(brandPanel)brandPanel.hidden=true;$("#app-icon-panel")?.setAttribute("hidden","");$("#app-icon-tab")?.setAttribute("aria-pressed","false");$("#brand-logo-tab")?.setAttribute("aria-pressed","false");frame.hidden=!!open;
  document.body.classList.toggle("flash-editor-workspace",!!open);
  tab.setAttribute("aria-pressed",String(!!open));
  title.textContent=open?"Flash Screen Preview":"Website Preview";
@@ -172,8 +172,15 @@ $("#design-apply-custom").addEventListener("click",async()=>{
 });
 
 
+function setAppIconMode(open){const panel=$("#app-icon-panel"),flash=$("#flash-editor-panel"),brand=$("#brand-logo-panel"),frame=$("#site-preview");if(!panel)return;panel.hidden=!open;if(flash)flash.hidden=true;if(brand)brand.hidden=true;frame.hidden=!!open;$("#flash-editor-tab").setAttribute("aria-pressed","false");$("#brand-logo-tab").setAttribute("aria-pressed","false");$("#app-icon-tab").setAttribute("aria-pressed",String(!!open));$("#preview-mode-title").textContent=open?"App Icon Studio":"Website Preview";}
+$("#app-icon-tab").addEventListener("click",()=>setAppIconMode($("#app-icon-panel").hidden));
+let customAppIconData="";
+$("#app-icon-file").addEventListener("change",async e=>{const f=e.target.files?.[0];if(!f)return;if(!/^image\\/(png|jpeg|webp)$/.test(f.type)){ $("#app-icon-status").textContent="PNG, JPG ya WebP image choose karo.";return;}if(f.size>8*1024*1024){$("#app-icon-status").textContent="Image 8 MB se chhoti honi chahiye.";return;}try{const bmp=await createImageBitmap(f),side=Math.min(bmp.width,bmp.height),canvas=document.createElement("canvas");canvas.width=canvas.height=512;const ctx=canvas.getContext("2d"),sx=(bmp.width-side)/2,sy=(bmp.height-side)/2;ctx.drawImage(bmp,sx,sy,side,side,0,0,512,512);bmp.close();customAppIconData=canvas.toDataURL("image/png");$("#app-icon-preview").src=customAppIconData;$("#app-icon-preview").hidden=false;$("#app-icon-empty").hidden=true;$("#app-icon-create").disabled=false;$("#app-icon-status").textContent="Square crop preview ready. Home-screen shortcut add kar sakte ho.";}catch(err){$("#app-icon-status").textContent="Image process nahi hui: "+err.message;}});
+$("#app-icon-create").addEventListener("click",()=>{const label=$("#app-icon-name").value.trim()||"MAXTROIT Admin";if(!customAppIconData)return;if(window.AndroidIconBridge?.createPinnedShortcut){$("#app-icon-status").textContent=window.AndroidIconBridge.createPinnedShortcut(customAppIconData,label);}else{$("#app-icon-status").textContent="Custom home-screen shortcut ke liye updated Android APK chahiye."}});
+document.querySelectorAll("[data-native-icon]").forEach(b=>b.addEventListener("click",()=>{if(window.AndroidIconBridge?.setPreset){$("#app-icon-status").textContent=window.AndroidIconBridge.setPreset(Number(b.dataset.nativeIcon));}else $("#app-icon-status").textContent="Built-in launcher icon switch sirf Android app mein available hai."}));
 function setBrandLogoMode(open){
  const panel=$("#brand-logo-panel"),flash=$("#flash-editor-panel"),frame=$("#site-preview"),tab=$("#brand-logo-tab");
+ if($("#app-icon-panel"))$("#app-icon-panel").hidden=true;$("#app-icon-tab")?.setAttribute("aria-pressed","false");
  if(!panel)return;
  panel.hidden=!open;if(flash)flash.hidden=true;frame.hidden=!!open;
  $("#flash-editor-tab").setAttribute("aria-pressed","false");tab.setAttribute("aria-pressed",String(!!open));
