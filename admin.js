@@ -291,8 +291,8 @@ async function saveFlashSettings(button){
    ],{type:"multipart/related; boundary="+boundary});
    const idToken=await withTimeout(hubCloud.auth.currentUser.getIdToken(),"Admin authentication");
    const uploadPromise=new Promise((resolve,reject)=>{
-    const xhr=new XMLHttpRequest(),url="https://firebasestorage.googleapis.com/v0/b/"+encodeURIComponent(bucket)+"/o?uploadType=multipart&name="+encodeURIComponent(objectPath);
-    xhr.open("POST",url,true);xhr.setRequestHeader("Authorization","Bearer "+idToken);xhr.setRequestHeader("Content-Type","multipart/related; boundary="+boundary);xhr.timeout=120000;
+    const xhr=new XMLHttpRequest(),url="https://firebasestorage.googleapis.com/v0/b/"+encodeURIComponent(bucket)+"/o?name="+encodeURIComponent(objectPath);
+    xhr.open("POST",url,true);xhr.setRequestHeader("Authorization","Bearer "+idToken);xhr.setRequestHeader("X-Goog-Upload-Protocol","multipart");xhr.setRequestHeader("Content-Type","multipart/related; boundary="+boundary);xhr.timeout=120000;
     xhr.upload.onprogress=event=>{const pct=event.lengthComputable?Math.round(event.loaded/event.total*100):0;label.textContent="Step 2/4: Logo upload ho raha hai… "+pct+"%";};
     xhr.onload=()=>{if(xhr.status>=200&&xhr.status<300){try{const result=JSON.parse(xhr.responseText||"{}");if(!result.name)throw Error("Firebase ne uploaded file ka naam return nahi kiya.");resolve(result);}catch(error){reject(error);}}else{let detail=xhr.responseText||("HTTP "+xhr.status);try{const parsed=JSON.parse(detail);detail=parsed.error?.message||detail;}catch(_){}reject(Error("Firebase Storage HTTP "+xhr.status+": "+detail));}};
     xhr.onerror=()=>reject(Error("Firebase Storage network/CORS error. Bucket aur Storage access check karein."));
