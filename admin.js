@@ -283,11 +283,11 @@ async function saveFlashSettings(button){
    const boundary="----FlashUpload"+token.replace(/[^a-zA-Z0-9]/g,"");
    const metadata={name:objectPath,contentType:startupLogoFileDraft.type,cacheControl:"public,max-age=31536000",metadata:{firebaseStorageDownloadTokens:token}};
    const multipart=new Blob([
-    "--"+boundary+"\\r\\nContent-Type: application/json; charset=UTF-8\\r\\n\\r\\n",
+    "--"+boundary+"\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n",
     JSON.stringify(metadata),
-    "\\r\\n--"+boundary+"\\r\\nContent-Type: "+startupLogoFileDraft.type+"\\r\\n\\r\\n",
+    "\r\n--"+boundary+"\r\nContent-Type: "+startupLogoFileDraft.type+"\r\n\r\n",
     startupLogoFileDraft,
-    "\\r\\n--"+boundary+"--"
+    "\r\n--"+boundary+"--"
    ],{type:"multipart/related; boundary="+boundary});
    const idToken=await withTimeout(hubCloud.auth.currentUser.getIdToken(),"Admin authentication");
    const uploadPromise=new Promise((resolve,reject)=>{
