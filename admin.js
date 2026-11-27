@@ -151,12 +151,28 @@ DELIVERY AND VALIDATION:
 });
 $("#design-html-file").addEventListener("change",async e=>{
  const file=e.target.files?.[0];if(!file)return;
- if(!/\.html?$/i.test(file.name)){e.target.value="";$("#design-studio-status").textContent="Sirf .html ya .htm file upload karo.";return}
- if(file.size>180000){e.target.value="";$("#design-studio-status").textContent="HTML file 180 KB se chhoti rakho, kyunki design Firebase mein save hoga.";return}
- try{customDesignSource=await file.text();if(!/<html[\s>]/i.test(customDesignSource)||!/<body[\s>]/i.test(customDesignSource))throw Error("Valid complete HTML document upload karo.");
- customDesignFileName=file.name;$("#design-name").value=file.name.replace(/\.html?$/i,"").slice(0,60);$("#design-preview-custom").disabled=false;$("#design-apply-custom").disabled=false;
- const out=$("#design-studio-status");out.textContent="File ready: "+file.name+" ("+Math.ceil(file.size/1024)+" KB). Preview kar sakte ho.";
- }catch(err){customDesignSource="";$("#design-preview-custom").disabled=true;$("#design-apply-custom").disabled=true;$("#design-studio-status").textContent="File read nahi hui: "+err.message}
+ const out=$("#design-studio-status"),isZip=/\.zip$/i.test(file.name);
+ customDesignSource="";customDesignFileName="";$("#design-preview-custom").disabled=true;$("#design-apply-custom").disabled=true;
+ try{
+  if(!/\.(html?|zip)$/i.test(file.name))throw Error("Sirf .html, .htm ya .zip file upload karo.");
+  if(isZip){
+   if(file.size>10000000)throw Error("ZIP file 10 MB se chhoti honi chahiye.");
+   if(!window.JSZip)throw Error("ZIP reader load nahi hua. Internet connection check karke page refresh karo.");
+   out.textContent="ZIP extract ho rahi hai…";
+   const archive=await JSZip.loadAsync(file,{checkCRC32:true});
+   const htmlFiles=Object.values(archive.files).filter(f=>!f.dir&&/\.html?$/i.test(f.name)&&!f.name.split("/").includes("__MACOSX"));
+   if(!htmlFiles.length)throw Error("ZIP ke andar .html ya .htm file nahi mili.");
+   htmlFiles.sort((a,b)=>a.name.split("/").length-b.name.split("/").length);
+   const entry=htmlFiles[0];customDesignSource=await entry.async("string");customDesignFileName=entry.name.split("/").pop();
+  }else{
+   if(file.size>180000)throw Error("HTML file 180 KB se chhoti rakho, kyunki design Firebase mein save hoga.");
+   customDesignSource=await file.text();customDesignFileName=file.name;
+  }
+  if(new Blob([customDesignSource]).size>180000)throw Error("ZIP se nikli HTML file 180 KB se badi hai. Firebase document limit ke liye ise 180 KB se chhota rakho.");
+  if(!/<html[\s>]/i.test(customDesignSource)||!/<body[\s>]/i.test(customDesignSource))throw Error("ZIP mein valid complete HTML document rakho.");
+  $("#design-name").value=customDesignFileName.replace(/\.html?$/i,"").slice(0,60);$("#design-preview-custom").disabled=false;$("#design-apply-custom").disabled=false;
+  out.textContent="Template ready: "+customDesignFileName+" ("+Math.ceil(new Blob([customDesignSource]).size/1024)+" KB HTML). Preview kar sakte ho.";
+ }catch(err){customDesignSource="";customDesignFileName="";e.target.value="";$("#design-preview-custom").disabled=true;$("#design-apply-custom").disabled=true;out.textContent="Template upload nahi hui: "+err.message}
 });
 $("#design-preview-custom").addEventListener("click",()=>{if(!customDesignSource)return;const preview=$("#design-custom-preview");preview.hidden=false;preview.srcdoc=customDesignSource;$("#design-studio-status").textContent="Custom template preview ready. Check karke Save & Apply karo."});
 $("#design-apply-custom").addEventListener("click",async()=>{
