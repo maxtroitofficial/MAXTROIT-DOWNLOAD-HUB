@@ -297,7 +297,7 @@ async function saveFlashSettings(button){
    });
    const uploaded=await withTimeout(uploadPromise,"Logo upload",130000);
    label.textContent="Step 2/4: Logo URL mil raha hai…";
-   next.logo="https://firebasestorage.googleapis.com/v0/b/"+encodeURIComponent(bucket)+"/o/"+encodeURIComponent(objectPath)+"?alt=media&token="+encodeURIComponent(token);
+   next.logo=await withTimeout(uploaded.ref.getDownloadURL(),"Logo download URL");
   }
   label.textContent="Step 3/4: Flash settings Firestore mein save ho rahi hain…";
   await withTimeout(ref.set({startupScreen:{...old,...next,enabled:startupEnabled}},{merge:true}),"Firestore save");
