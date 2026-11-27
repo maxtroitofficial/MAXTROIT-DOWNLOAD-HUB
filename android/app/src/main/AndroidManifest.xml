@@ -11,14 +11,5 @@
             android:exported="true"
             android:windowSoftInputMode="adjustResize"
             android:configChanges="orientation|screenSize|keyboardHidden" />
-        <activity-alias android:name=".IconDefault" android:targetActivity=".MainActivity" android:label="MAXTROIT Admin" android:icon="@drawable/icon_default" android:enabled="true" android:exported="true">
-            <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
-        </activity-alias>
-        <activity-alias android:name=".IconVice" android:targetActivity=".MainActivity" android:label="MAXTROIT Vice" android:icon="@drawable/icon_vice" android:enabled="false" android:exported="true">
-            <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
-        </activity-alias>
-        <activity-alias android:name=".IconNeon" android:targetActivity=".MainActivity" android:label="MAXTROIT Neon" android:icon="@drawable/icon_neon" android:enabled="false" android:exported="true">
-            <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
-        </activity-alias>
     </application>
 </manifest>
