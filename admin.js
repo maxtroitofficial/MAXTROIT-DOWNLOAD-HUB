@@ -276,15 +276,32 @@ async function saveFlashSettings(button){
    const uid=hubCloud.auth.currentUser?.uid;if(!authOk(hubCloud.auth.currentUser))throw Error("Admin login required.");
    const ext=({"image/png":"png","image/jpeg":"jpg","image/webp":"webp","image/gif":"gif"})[startupLogoFileDraft.type];
    if(!ext)throw Error("Unsupported logo format.");
-   const storageRef=firebase.storage().ref().child("builder-media/"+uid+"/flash-logo-"+Date.now()+"."+ext);
-   const task=storageRef.put(startupLogoFileDraft,{contentType:startupLogoFileDraft.type,cacheControl:"public,max-age=31536000"});
-   const uploadPromise=new Promise((resolve,reject)=>task.on(firebase.storage.TaskEvent.STATE_CHANGED,snapshot=>{
-    const pct=snapshot.totalBytes?Math.round(snapshot.bytesTransferred/snapshot.totalBytes*100):0;
-    label.textContent="Step 2/4: Logo upload ho raha hai… "+pct+"%";
-   },reject,()=>resolve(task.snapshot)));
-   const uploaded=await withTimeout(uploadPromise,"Logo upload",90000);
-   label.textContent="Step 2/4: Logo URL mil raha hai…";
-   next.logo=await withTimeout(uploaded.ref.getDownloadURL(),"Logo URL");
+   const bucket=firebase.app().options.storageBucket;
+   if(!bucket)throw Error("Firebase Storage bucket config missing hai.");
+   const objectPath="builder-media/"+uid+"/flash-logo-"+Date.now()+"."+ext;
+   const token=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():("flash-"+Date.now()+"-"+Math.random().toString(36).slice(2));
+   const boundary="----FlashUpload"+token.replace(/[^a-zA-Z0-9]/g,"");
+   const metadata={name:objectPath,contentType:startupLogoFileDraft.type,cacheControl:"public,max-age=31536000",metadata:{firebaseStorageDownloadTokens:token}};
+   const multipart=new Blob([
+    "--"+boundary+"\\r\\nContent-Type: application/json; charset=UTF-8\\r\\n\\r\\n",
+    JSON.stringify(metadata),
+    "\\r\\n--"+boundary+"\\r\\nContent-Type: "+startupLogoFileDraft.type+"\\r\\n\\r\\n",
+    startupLogoFileDraft,
+    "\\r\\n--"+boundary+"--"
+   ],{type:"multipart/related; boundary="+boundary});
+   const idToken=await withTimeout(hubCloud.auth.currentUser.getIdToken(),"Admin authentication");
+   const uploadPromise=new Promise((resolve,reject)=>{
+    const xhr=new XMLHttpRequest(),url="https://firebasestorage.googleapis.com/v0/b/"+encodeURIComponent(bucket)+"/o?uploadType=multipart&name="+encodeURIComponent(objectPath);
+    xhr.open("POST",url,true);xhr.setRequestHeader("Authorization","Bearer "+idToken);xhr.setRequestHeader("Content-Type","multipart/related; boundary="+boundary);xhr.timeout=120000;
+    xhr.upload.onprogress=event=>{const pct=event.lengthComputable?Math.round(event.loaded/event.total*100):0;label.textContent="Step 2/4: Logo upload ho raha hai… "+pct+"%";};
+    xhr.onload=()=>{if(xhr.status>=200&&xhr.status<300){try{const result=JSON.parse(xhr.responseText||"{}");if(!result.name)throw Error("Firebase ne uploaded file ka naam return nahi kiya.");resolve(result);}catch(error){reject(error);}}else{let detail=xhr.responseText||("HTTP "+xhr.status);try{const parsed=JSON.parse(detail);detail=parsed.error?.message||detail;}catch(_){}reject(Error("Firebase Storage HTTP "+xhr.status+": "+detail));}};
+    xhr.onerror=()=>reject(Error("Firebase Storage network/CORS error. Bucket aur Storage access check karein."));
+    xhr.ontimeout=()=>reject(Error("Firebase Storage upload 120 seconds mein response nahi de paya. Network ya bucket configuration check karein."));
+    xhr.onabort=()=>reject(Error("Firebase Storage upload cancel ho gaya."));
+    xhr.send(multipart);
+   });
+   const uploaded=await withTimeout(uploadPromise,"Logo upload",125000);
+   next.logo="https://firebasestorage.googleapis.com/v0/b/"+encodeURIComponent(bucket)+"/o/"+encodeURIComponent(objectPath)+"?alt=media&token="+encodeURIComponent(token);
   }
   label.textContent="Step 3/4: Flash settings Firestore mein save ho rahi hain…";
   await withTimeout(ref.set({startupScreen:{...old,...next,enabled:startupEnabled}},{merge:true}),"Firestore save");
