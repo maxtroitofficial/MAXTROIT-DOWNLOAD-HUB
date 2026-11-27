@@ -1099,3 +1099,27 @@ input,select,textarea{font-size:16px}
   #admin-app>.topbar .top-actions{gap:4px!important}
   #admin-app .preview-flash-toggle button{min-width:110px!important}
 }
+
+
+/* Native app/mobile editor: keep every workspace reachable and scrollable. */
+@media(max-width:600px){
+ html,body{height:auto!important;min-height:100%!important;overflow-x:hidden!important;overflow-y:auto!important}
+ #admin-app:not([hidden]){height:auto!important;min-height:100dvh!important;overflow:visible!important}
+ #admin-app>.topbar{position:sticky!important;top:0!important;z-index:50;flex-wrap:wrap!important}
+ #admin-app>.topbar .top-actions{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;width:100%!important}
+ #admin-app>.preview-area{height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important;display:flex!important;flex-direction:column!important;padding:8px!important}
+ #admin-app .preview-heading{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:8px!important;width:100%!important}
+ #admin-app .preview-heading>b{white-space:normal!important}
+ #admin-app .preview-heading>span{white-space:normal!important;overflow:visible!important}
+ #admin-app .preview-flash-toggle{order:10!important;width:100%!important;max-width:100%!important}
+ #admin-app #site-preview{display:block!important;flex:none!important;width:100%!important;height:65dvh!important;min-height:420px!important}
+ #admin-app .we-sidebar{display:flex!important;width:100%!important;max-height:none!important;overflow:visible!important}
+ #admin-app .we-left{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important}
+ #admin-app .we-left .we-panel-title,#admin-app .we-left .we-divider,#admin-app .we-help{display:block!important;grid-column:1/-1}
+ #admin-app .we-right{display:flex!important;flex-direction:column!important}
+ #admin-app .we-inspector-section{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;width:100%!important}
+ #admin-app .we-inspector-section>b{grid-column:1/-1}
+ #app-icon-panel:not([hidden]),#brand-logo-panel:not([hidden]){display:block!important;width:100%!important;height:auto!important;overflow:visible!important}
+ #app-icon-panel .brand-logo-card,#brand-logo-panel .brand-logo-card{width:100%!important;max-width:none!important}
+ #admin-app>.tool-dock{height:auto!important;overflow:visible!important}
+}
