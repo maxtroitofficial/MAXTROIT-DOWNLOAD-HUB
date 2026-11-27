@@ -280,29 +280,23 @@ async function saveFlashSettings(button){
    if(!bucket)throw Error("Firebase Storage bucket config missing hai.");
    const objectPath="builder-media/"+uid+"/flash-logo-"+Date.now()+"."+ext;
    const token=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():("flash-"+Date.now()+"-"+Math.random().toString(36).slice(2));
-   const idToken=await withTimeout(hubCloud.auth.currentUser.getIdToken(),"Admin authentication");
-   const apiBase="https://firebasestorage.googleapis.com/v0/b/"+encodeURIComponent(bucket)+"/o";
+   const storage=firebase.app().storage("gs://"+bucket);
+   storage.setMaxUploadRetryTime(120000);
+   storage.setMaxOperationRetryTime(30000);
+   const storageRef=storage.ref().child(objectPath);
+   const uploadTask=storageRef.put(startupLogoFileDraft,{contentType:startupLogoFileDraft.type,cacheControl:"public,max-age=31536000",customMetadata:{firebaseStorageDownloadTokens:token}});
    const uploadPromise=new Promise((resolve,reject)=>{
-    const xhr=new XMLHttpRequest(),url=apiBase+"?uploadType=media&name="+encodeURIComponent(objectPath);
-    xhr.open("POST",url,true);xhr.setRequestHeader("Authorization","Bearer "+idToken);xhr.setRequestHeader("Content-Type",startupLogoFileDraft.type);xhr.timeout=120000;
-    xhr.upload.onprogress=event=>{const pct=event.lengthComputable?Math.round(event.loaded/event.total*100):0;label.textContent="Step 2/4: Logo upload ho raha hai… "+pct+"%";};
-    xhr.onload=()=>{if(xhr.status>=200&&xhr.status<300){try{const result=JSON.parse(xhr.responseText||"{}");if(!result.name)throw Error("Firebase ne uploaded file ka naam return nahi kiya.");resolve(result);}catch(error){reject(error);}}else{let detail=xhr.responseText||("HTTP "+xhr.status);try{const parsed=JSON.parse(detail);detail=parsed.error?.message||detail;}catch(_){}reject(Error("Firebase Storage HTTP "+xhr.status+": "+detail));}};
-    xhr.onerror=()=>reject(Error("Firebase Storage media upload CORS/network error. Firebase project mein Storage bucket enable aur authorized domain check karein."));
-    xhr.ontimeout=()=>reject(Error("Firebase Storage upload 120 seconds mein response nahi de paya. Network ya bucket configuration check karein."));
-    xhr.onabort=()=>reject(Error("Firebase Storage upload cancel ho gaya."));
-    xhr.send(startupLogoFileDraft);
+    uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,snapshot=>{
+     const pct=snapshot.totalBytes?Math.round(snapshot.bytesTransferred/snapshot.totalBytes*100):0;
+     label.textContent="Step 2/4: Logo upload ho raha hai… "+pct+"%";
+    },error=>{
+     const code=error?.code||"storage/unknown";
+     const server=error?.serverResponse||"";
+     reject(Error("Firebase Storage "+code+": "+(error?.message||"Upload failed")+(server?" | "+server:"")));
+    },()=>resolve(uploadTask.snapshot));
    });
-   const uploaded=await withTimeout(uploadPromise,"Logo upload",125000);
-   label.textContent="Step 2/4: Logo metadata save ho rahi hai…";
-   const metadataPromise=new Promise((resolve,reject)=>{
-    const xhr=new XMLHttpRequest(),url=apiBase+"/"+encodeURIComponent(objectPath);
-    xhr.open("PATCH",url,true);xhr.setRequestHeader("Authorization","Bearer "+idToken);xhr.setRequestHeader("Content-Type","application/json");xhr.timeout=30000;
-    xhr.onload=()=>{if(xhr.status>=200&&xhr.status<300){try{resolve(JSON.parse(xhr.responseText||"{}"));}catch(error){reject(error);}}else{let detail=xhr.responseText||("HTTP "+xhr.status);try{const parsed=JSON.parse(detail);detail=parsed.error?.message||detail;}catch(_){}reject(Error("Firebase Storage metadata HTTP "+xhr.status+": "+detail));}};
-    xhr.onerror=()=>reject(Error("Firebase Storage metadata CORS/network error."));
-    xhr.ontimeout=()=>reject(Error("Firebase Storage metadata update timeout."));
-    xhr.send(JSON.stringify({cacheControl:"public,max-age=31536000",metadata:{firebaseStorageDownloadTokens:token}}));
-   });
-   await withTimeout(metadataPromise,"Logo metadata",35000);
+   const uploaded=await withTimeout(uploadPromise,"Logo upload",130000);
+   label.textContent="Step 2/4: Logo URL mil raha hai…";
    next.logo="https://firebasestorage.googleapis.com/v0/b/"+encodeURIComponent(bucket)+"/o/"+encodeURIComponent(objectPath)+"?alt=media&token="+encodeURIComponent(token);
   }
   label.textContent="Step 3/4: Flash settings Firestore mein save ho rahi hain…";
