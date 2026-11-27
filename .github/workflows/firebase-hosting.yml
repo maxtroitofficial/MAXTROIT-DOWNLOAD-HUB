@@ -25,5 +25,5 @@ jobs:
         uses: google-github-actions/setup-gcloud@v2
       - name: Install Firebase CLI
         run: npm install -g firebase-tools
-      - name: Deploy original Hosting site and security rules
-        run: firebase deploy --only hosting,firestore:rules,storage --project maxtroit-download-hub --non-interactive
+      - name: Deploy original Hosting site
+        run: firebase deploy --only hosting --project maxtroit-download-hub --non-interactive
