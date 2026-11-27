@@ -11,7 +11,7 @@ service cloud.firestore {
     }
     match /siteConfig/{configId} {
       // Public download pages must read the shared unlock actions.
-      allow read: if configId == "public" || configId == "unlockLinkSettings";
+      allow read: if configId == "public" || configId == "unlockLinkSettings" || configId == "flashLogo";
       // Only the configured admin account may change site settings.
       allow create, update, delete: if isAdmin();
     }
