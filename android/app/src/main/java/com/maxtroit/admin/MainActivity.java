@@ -47,6 +47,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         FrameLayout root = new FrameLayout(this);
         webView = new WebView(this);
+        webView.addJavascriptInterface(new AndroidIconBridge(), "AndroidIconBridge");
         root.addView(webView, new FrameLayout.LayoutParams(-1, -1));
         Button iconButton = new Button(this);
         iconButton.setText("APP ICON");
@@ -61,7 +62,7 @@ public class MainActivity extends Activity {
         FrameLayout.LayoutParams bp = new FrameLayout.LayoutParams(-2, 42, Gravity.TOP | Gravity.END);
         bp.setMargins(0, 12, 12, 0);
         root.addView(iconButton, bp);
-        iconButton.setOnClickListener(v -> showIconPicker());
+        iconButton.setVisibility(View.GONE);
         setContentView(root);
 
         WebSettings settings = webView.getSettings();
