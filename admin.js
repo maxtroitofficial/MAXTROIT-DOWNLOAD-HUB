@@ -61,16 +61,16 @@ function setLogoSettingsMode(open){
  ["flash-editor-tab","design-studio-tab","music-admin-tab","downloads-admin-tab","analytics-admin-tab","social-admin-tab"].forEach(id=>{const el=$("#"+id);if(el)el.setAttribute("aria-pressed","false")});
  if(open)loadLogoSettings();
 }
-let siteLogoDraft="",siteLogoSavedSize=64;
+let siteLogoDraft="",siteLogoSavedSize=64,siteLogoFileDraft=null,siteLogoPreviewUrl="";
 function renderSiteLogoPreview(){
  const img=$("#site-logo-preview"),fallback=$("#site-logo-fallback"),size=Math.max(32,Math.min(120,Number($("#site-logo-size").value)||64));
  $("#site-logo-size-value").textContent=size+" px";
- img.style.width=size+"px";img.style.height=size+"px";
- if(siteLogoDraft){img.src=siteLogoDraft;img.hidden=false;fallback.hidden=true}else{img.hidden=true;fallback.hidden=false}
+ img.style.width=size+"px";img.style.height=size+"px";img.style.objectFit="contain";
+ if(siteLogoDraft){img.src=siteLogoPreviewUrl||siteLogoDraft;img.hidden=false;fallback.hidden=true}else{img.hidden=true;fallback.hidden=false}
 }
 async function loadLogoSettings(){
  const out=$("#site-logo-status");out.textContent="Logo settings load ho rahi hain…";
- try{const snap=await hubCloud.db.collection("siteConfig").doc("public").get(),data=snap.data()||{};siteLogoDraft=String(data.logo||"");siteLogoSavedSize=Math.max(32,Math.min(120,Number(data.siteLogoSize)||64));$("#site-logo-size").value=siteLogoSavedSize;renderSiteLogoPreview();out.textContent=siteLogoDraft?"Saved website logo load ho gaya.":"Abhi custom website logo set nahi hai."}
+ try{const snap=await hubCloud.db.collection("siteConfig").doc("public").get(),data=snap.data()||{};siteLogoDraft=String(data.logo||"");siteLogoSavedSize=Math.max(32,Math.min(120,Number(data.siteLogoSize)||64));siteLogoFileDraft=null;$("#site-logo-size").value=siteLogoSavedSize;renderSiteLogoPreview();out.textContent=siteLogoDraft?"Saved website logo load ho gaya.":"Abhi custom website logo set nahi hai."}
  catch(e){out.textContent="Logo settings load failed: "+e.message}
 }
 $("#logo-settings-tab").addEventListener("click",()=>setLogoSettingsMode($("#logo-settings-panel").hidden));
@@ -78,15 +78,34 @@ $("#site-logo-size").addEventListener("input",renderSiteLogoPreview);
 $("#site-logo-file").addEventListener("change",e=>{
  const file=e.target.files?.[0];if(!file)return;
  if(!/^image\/(png|jpeg|webp|gif)$/.test(file.type)){ $("#site-logo-status").textContent="PNG, JPG, WebP ya GIF image select karein.";e.target.value="";return}
- if(file.size>650000){$("#site-logo-status").textContent="Image 650 KB se chhoti honi chahiye.";e.target.value="";return}
- const reader=new FileReader();reader.onload=()=>{siteLogoDraft=String(reader.result||"");renderSiteLogoPreview();$("#site-logo-status").textContent="Preview update ho gaya. Website par apply karne ke liye Save dabayein."};reader.onerror=()=>{$("#site-logo-status").textContent="Image read nahi ho saki."};reader.readAsDataURL(file);e.target.value="";
+ if(file.size>5*1024*1024){$("#site-logo-status").textContent="Image 5 MB se chhoti honi chahiye.";e.target.value="";return}
+ if(siteLogoPreviewUrl)URL.revokeObjectURL(siteLogoPreviewUrl);
+ siteLogoFileDraft=file;siteLogoPreviewUrl=URL.createObjectURL(file);siteLogoDraft="pending-upload";
+ renderSiteLogoPreview();$("#site-logo-status").textContent="Preview update ho gaya. Website par apply karne ke liye Save & Apply dabayein.";e.target.value="";
 });
-$("#site-logo-remove").addEventListener("click",()=>{siteLogoDraft="";renderSiteLogoPreview();$("#site-logo-status").textContent="Logo remove preview. Save & Apply dabakar confirm karein."});
+$("#site-logo-remove").addEventListener("click",()=>{siteLogoFileDraft=null;if(siteLogoPreviewUrl){URL.revokeObjectURL(siteLogoPreviewUrl);siteLogoPreviewUrl=""}siteLogoDraft="";renderSiteLogoPreview();$("#site-logo-status").textContent="Logo remove preview. Save & Apply dabakar confirm karein."});
 $("#site-logo-save").addEventListener("click",async()=>{
  const button=$("#site-logo-save"),out=$("#site-logo-status");if(!authOk(hubCloud.auth.currentUser)){out.textContent="Admin login required.";return}
- button.disabled=true;out.textContent="Website logo save ho raha hai…";
- try{const ref=hubCloud.db.collection("siteConfig").doc("public"),size=Math.max(32,Math.min(120,Number($("#site-logo-size").value)||64));await ref.set({logo:siteLogoDraft,siteLogoSize:size},{merge:true});const check=await ref.get(),saved=check.data()||{};if(String(saved.logo||"")!==siteLogoDraft||Number(saved.siteLogoSize)!==size)throw Error("Save verify nahi hua");siteLogoSavedSize=size;out.textContent="Website logo save aur verify ho gaya. Public website par apply ho gaya.";if(frame?.contentWindow)frame.contentWindow.location.reload()}
- catch(e){out.textContent="Logo save failed: "+e.message}
+ button.disabled=true;out.textContent="Website logo upload aur save ho raha hai…";
+ try{
+  const uid=hubCloud.auth.currentUser.uid,ref=hubCloud.db.collection("siteConfig").doc("public"),size=Math.max(32,Math.min(120,Number($("#site-logo-size").value)||64));
+  let finalLogo=siteLogoDraft;
+  if(siteLogoFileDraft){
+   if(!window.firebase?.storage)throw Error("Firebase Storage SDK load nahi hua. Page refresh karke dobara try karein.");
+   const ext=({ "image/png":"png","image/jpeg":"jpg","image/webp":"webp","image/gif":"gif" })[siteLogoFileDraft.type];
+   if(!ext)throw Error("Unsupported image format.");
+   const storageRef=firebase.storage().ref().child("builder-media/"+uid+"/site-logo-"+Date.now()+"."+ext);
+   const uploaded=await storageRef.put(siteLogoFileDraft,{contentType:siteLogoFileDraft.type,cacheControl:"public,max-age=31536000"});
+   finalLogo=await uploaded.ref.getDownloadURL();
+  }
+  await ref.set({logo:finalLogo,siteLogoSize:size},{merge:true});
+  const check=await ref.get(),saved=check.data()||{};
+  if(String(saved.logo||"")!==finalLogo||Number(saved.siteLogoSize)!==size)throw Error("Save verify nahi hua");
+  siteLogoDraft=finalLogo;siteLogoFileDraft=null;siteLogoSavedSize=size;
+  if(siteLogoPreviewUrl){URL.revokeObjectURL(siteLogoPreviewUrl);siteLogoPreviewUrl=""}
+  renderSiteLogoPreview();out.textContent="Website logo save, upload aur verify ho gaya. Public website par apply ho gaya.";
+  if(frame?.contentWindow)frame.contentWindow.location.reload();
+ }catch(e){out.textContent="Logo save failed: "+(e.code?e.code+" — ":"")+(e.message||e)}
  finally{button.disabled=false}
 });
 
