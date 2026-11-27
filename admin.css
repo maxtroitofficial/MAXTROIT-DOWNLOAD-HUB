@@ -1119,7 +1119,7 @@ input,select,textarea{font-size:16px}
  #admin-app .we-right{display:flex!important;flex-direction:column!important}
  #admin-app .we-inspector-section{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;width:100%!important}
  #admin-app .we-inspector-section>b{grid-column:1/-1}
- #app-icon-panel:not([hidden]),#brand-logo-panel:not([hidden]){display:block!important;width:100%!important;height:auto!important;overflow:visible!important}
- #app-icon-panel .brand-logo-card,#brand-logo-panel .brand-logo-card{width:100%!important;max-width:none!important}
+  #brand-logo-panel:not([hidden]){display:block!important;width:100%!important;height:auto!important;overflow:visible!important}
+ #brand-logo-panel .brand-logo-card{width:100%!important;max-width:none!important}
  #admin-app>.tool-dock{height:auto!important;overflow:visible!important}
 }
