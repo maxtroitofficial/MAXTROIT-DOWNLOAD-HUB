@@ -1,0 +1,32 @@
+name: Deploy Firebase Hosting and Firestore Rules
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Deploy Hosting and Firestore rules
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        run: |
+          if [ -z "$FIREBASE_TOKEN" ]; then
+            echo "::error::GitHub repository secret FIREBASE_TOKEN is missing."
+            exit 1
+          fi
+          firebase deploy --only hosting,firestore:rules --project maxtroit-download-hub --non-interactive --token "$FIREBASE_TOKEN"
