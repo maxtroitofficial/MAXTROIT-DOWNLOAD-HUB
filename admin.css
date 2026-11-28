@@ -1072,3 +1072,91 @@ body.flash-editor-workspace #flash-editor-panel .fs-stage-wrap{
 
 /* Main website logo settings workspace */
 .logo-settings-panel{flex:1;overflow:auto;padding:22px;background:#f3f5f9;color:#182033}.logo-settings-panel[hidden]{display:none!important}.logo-settings-card{max-width:720px;margin:10px auto;padding:24px;background:#fff;border:1px solid #dce2ed;border-radius:18px;box-shadow:0 12px 34px #17203312;display:grid;gap:18px}.logo-settings-card h2{margin:4px 0 8px}.logo-settings-card p{margin:4px 0;color:#647087}.logo-upload-control{display:grid;gap:8px;font-weight:700}.logo-settings-preview-wrap{display:grid;gap:8px;font-weight:700}.logo-settings-preview{min-height:150px;border:1px dashed #b9c4d6;border-radius:14px;background:linear-gradient(135deg,#111827,#31245c);display:flex;align-items:center;justify-content:center;gap:10px;color:white;overflow:hidden}.logo-settings-preview img{object-fit:contain}.logo-size-control{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;font-weight:700}.logo-size-control input{grid-column:1/-1;width:100%}.logo-settings-actions{display:flex;gap:10px;flex-wrap:wrap}.logo-settings-note{font-size:12px}
+
+
+/* D-Hub Admin mobile-first workspace refinement */
+@media(max-width:767px){
+  html,body{width:100%;overflow-x:hidden;background:#f4f6fb}
+  #admin-app{width:100%;min-width:0;overflow-x:clip}
+  #admin-app>.topbar{
+    position:sticky;top:0;z-index:50;display:flex;flex-direction:column;
+    align-items:stretch;gap:9px;height:auto;min-height:0;padding:10px 12px;
+    background:#111c32;color:#fff;border:0;box-shadow:0 3px 14px #101a3028
+  }
+  .brand{align-items:center;justify-content:space-between;gap:8px}
+  .brand strong{font-size:16px;color:#fff;letter-spacing:.2px}
+  .brand span{font-size:10px;color:#aebbd2;letter-spacing:1px}
+  .top-actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;width:100%}
+  .top-actions button{min-width:0;min-height:42px;padding:8px 4px;font-size:11px;border-radius:9px;white-space:normal}
+  #save{background:#087f58;color:white;border-color:#087f58}
+  #publish{background:#1769e8;color:white;border-color:#1769e8}
+  #logout{background:#fff;color:#b42336;border-color:#f0c5cc}
+  #admin-back{grid-column:span 1}
+  #reload{grid-column:span 1}
+  #undo,#redo{font-size:16px}
+  #admin-app>.preview-area{
+    display:flex;flex-direction:column;gap:10px;width:100%;height:auto;min-height:0;
+    padding:10px 9px 18px;overflow:visible
+  }
+  .preview-heading{
+    position:sticky;top:116px;z-index:35;display:flex;flex-direction:column;
+    align-items:stretch;gap:8px;padding:8px;border:1px solid #e0e6f0;
+    border-radius:12px;background:#fff;box-shadow:0 3px 12px #17233a0d
+  }
+  #preview-mode-title{font-size:14px}
+  #editor-status{font-size:11px;line-height:1.4;overflow-wrap:anywhere}
+  .preview-flash-toggle{
+    display:flex!important;flex-wrap:nowrap!important;gap:7px;width:100%;
+    max-width:100%;overflow-x:auto!important;overflow-y:hidden!important;
+    padding:2px 1px 5px;scrollbar-width:thin;-webkit-overflow-scrolling:touch
+  }
+  .preview-flash-toggle button{
+    display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;
+    min-width:max-content;min-height:42px;padding:9px 12px;font-size:12px;
+    border-radius:10px;white-space:nowrap
+  }
+  #site-preview{width:100%;height:58dvh;min-height:390px;max-height:680px;flex:none;border-radius:12px}
+  #admin-app>.logo-settings-panel,#admin-app>.design-studio,
+  #admin-app>.music-admin,#admin-app>.social-admin,
+  #admin-app>.downloads-admin,#admin-app>.analytics-admin{
+    width:auto;max-width:100%;margin:9px;padding:12px;border-radius:14px;
+    max-height:none;overflow:visible
+  }
+  .logo-settings-card{margin:0;padding:16px;border-radius:14px}
+  .design-studio-grid{grid-template-columns:minmax(0,1fr)!important}
+  .design-presets{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .design-studio-head{align-items:flex-start;gap:10px;flex-direction:column}
+  .downloads-admin-form,.downloads-media-fields{grid-template-columns:minmax(0,1fr)!important}
+  .downloads-admin-form>*{grid-column:1!important}
+  .downloads-admin-actions{display:grid;grid-template-columns:1fr}
+  .download-admin-row{grid-template-columns:56px minmax(0,1fr)!important;gap:8px}
+  .download-admin-row .row-actions{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  .music-admin-grid,.music-admin-options,.social-admin-add{grid-template-columns:minmax(0,1fr)!important}
+  #music-admin .music-art-editor{grid-template-columns:minmax(0,1fr)!important;padding:12px}
+  .analytics-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .analytics-lists{grid-template-columns:minmax(0,1fr)!important}
+  .analytics-table-wrap{max-width:100%;overflow-x:auto}
+  .analytics-table{min-width:760px}
+  .we-sidebar{width:100%;max-width:none;min-width:0;margin:0;padding:10px;border-radius:12px}
+  .we-shape-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .we-inspector-section{padding:10px 0}
+  .we-action{min-height:42px}
+  #advanced-builder{padding:8px;overflow:visible}
+  #advanced-builder .mb-head{position:sticky;top:0;z-index:30;display:flex;flex-direction:column;gap:8px;padding:10px;background:#111c32;color:white;border-radius:12px}
+  #advanced-builder .mb-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  #advanced-builder .mb-actions>*{min-width:0;min-height:42px;font-size:12px}
+  #advanced-builder .mb-workspace{display:flex!important;flex-direction:column!important;gap:10px}
+  #advanced-builder .mb-workspace>*{width:100%!important;max-height:none!important;position:static!important}
+  #advanced-builder .mb-canvas-wrap{min-height:55dvh;order:2}
+  #advanced-builder .mb-workspace>.mb-panel:first-child{order:1}
+  #advanced-builder .mb-workspace>.mb-inspector{order:3}
+  #advanced-builder .mb-panel .mb-blocks{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  #advanced-builder .mb-panel .mb-shape-tools{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+@media(max-width:390px){
+  .top-actions{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .top-actions button{font-size:10px;padding:7px 2px}
+  .preview-flash-toggle button{font-size:11px;padding:8px 10px}
+  .analytics-stats{grid-template-columns:minmax(0,1fr)!important}
+  .design-presets{grid-template-columns:minmax(0,1fr)!important}
+}
