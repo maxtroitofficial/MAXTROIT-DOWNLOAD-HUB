@@ -182,50 +182,6 @@ async function applyPresetDesign(id){
 $("#design-studio-tab").addEventListener("click",()=>setDesignStudioMode($("#design-studio").hidden));
 $("#design-studio-close").addEventListener("click",()=>setDesignStudioMode(false));
 document.querySelectorAll("[data-template]").forEach(b=>b.addEventListener("click",()=>applyPresetDesign(b.dataset.template)));
-$("#design-download-ai-prompt").addEventListener("click",()=>{
- const prompt=`You are MAXTROIT OFFICIAL's senior front-end engineer. Your task is to redesign the EXISTING MAXTROIT DOWNLOAD HUB user panel, not create a replacement website.
-
-FIRST: inspect the source files/screenshots/reference that the user provides. The user wants this same existing user panel redesigned in the visual style they describe. If the user has not provided the current user-panel source or a usable reference, ask them to provide index.html, styles.css, app.js and relevant page assets (or a full-page screenshot) BEFORE writing code. Do not guess what the existing website contains.
-
-USER'S DESIGN REQUEST:
-[The user will describe the unique design they want here. Follow their description while retaining the existing panel's structure and functionality.]
-
-NON-NEGOTIABLE PRESERVATION RULES:
-1. Preserve EVERY existing feature, section, content area, control, navigation item, download card, category, search/filter, logo/branding element, footer, social link, music player, startup/flash screen, and other working behavior found in the supplied existing panel. Do not silently omit, simplify, rename, hide, or replace anything.
-2. This is a visual redesign only unless the user explicitly asks for a functional change. Keep the existing Firebase/database integration, data loading, authentication, routes, download IDs, click handlers, event listeners, and all existing JavaScript behavior unchanged.
-3. Never replace real/dynamic content with demo cards, sample downloads, fake counts, placeholder links, or hard-coded categories. Existing live data must continue to populate the redesigned UI.
-4. Keep all existing element IDs, classes, data attributes, integration hooks, and script/style references that the supplied JavaScript depends on. Do not rename or remove them. If a layout needs new wrappers, add them without breaking selectors.
-5. Preserve the exact existing brand identity and text unless the user specifically asks to change it. Brand: MAXTROIT OFFICIAL. Exact tagline: "Your digital world. One download hub."
-6. Retain the existing labels where present: "Browse by category", "All categories", "THE LIBRARY", "Explore downloads", and "Find what you need, without the clutter."
-7. Keep the result responsive on mobile, tablet, and desktop. Do not sacrifice mobile usability for desktop styling.
-8. Do not touch the admin panel, download-details/unlock flow, templates editor, or unrelated pages unless the user explicitly requests it.
-9. Do not add external frameworks, trackers, analytics, API keys, Firebase config, credentials, or unrelated dependencies.
-10. If the provided source is split across files, do not pretend a single HTML file can safely replace all of them. Explain exactly which file(s) need changing and return complete updated file contents while preserving existing code. If the user's template builder specifically requires one HTML file, produce one complete HTML file and preserve the builder's MAXTROIT integration bridge/data hooks.
-
-MAXTROIT TEMPLATE BUILDER INTEGRATION:
-- If outputting a single custom HTML file for the existing MAXTROIT Templates uploader, include a working integration bridge.
-- Listen for the parent window message with type "MAXTROIT_INIT".
-- Read dynamic downloads from data.items. Each item may contain id, title, description, category, thumbnail, and url.
-- Render the real supplied items into the existing design; do not fabricate items.
-- Preserve the user's supplied brandName and socialLinks values from the init message.
-- Search controls must use data-maxtroit-search (or data-maxtroit-search-form with a nested data-maxtroit-search input).
-- Category control must use data-maxtroit-category.
-- The downloads container must use data-maxtroit-downloads.
-- Every download action must use data-maxtroit-download-id with that item's real id. Clicking it must postMessage to the parent: {type:"MAXTROIT_NAVIGATE_DOWNLOAD", id: "..."}.
-- On load, postMessage {type:"MAXTROIT_TEMPLATE_READY"} to the parent. After the real items have rendered, postMessage {type:"MAXTROIT_RENDERED"}.
-- For social links, render the actual values from data.socialLinks; do not invent URLs.
-- Do not remove or bypass these hooks. The parent builder supplies data and handles download navigation.
-
-DELIVERY AND VALIDATION:
-1. Compare the result against the supplied original source feature-by-feature. Make a checklist of every existing section/control/behavior and confirm it remains.
-2. Check for missing IDs, selectors, data attributes, scripts, and broken event handlers.
-3. Return the complete updated source file(s), not partial snippets. If one-file template upload is requested, return only the complete HTML document.
-4. Do not claim Firebase integration/deployment has been completed unless it was actually tested and deployed.
-5. If essential source files are missing, stop and ask the user to provide them rather than inventing a replacement.
-`;
- const blob=new Blob([prompt],{type:"text/plain;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="MAXTROIT-AI-Template-Prompt.txt";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
- $("#design-studio-status").textContent="AI prompt download ho gaya. Is TXT ko kisi bhi AI ko bhejo, apna design idea add karo, aur generated HTML yahan upload karo.";
-});
 $("#design-html-file").addEventListener("change",async e=>{
  const file=e.target.files?.[0];if(!file)return;
  if(!/\.html?$/i.test(file.name)){e.target.value="";$("#design-studio-status").textContent="Sirf .html ya .htm file upload karo.";return}
